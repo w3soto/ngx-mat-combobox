@@ -24,7 +24,12 @@ import { ControlValueAccessor, FormControl, NgControl, Validators } from "@angul
 import { BooleanInput, coerceBooleanProperty, coerceNumberProperty, NumberInput } from "@angular/cdk/coercion";
 import { SelectionModel } from "@angular/cdk/collections";
 import { Overlay, OverlayConfig, OverlayRef } from "@angular/cdk/overlay";
-import { ActiveDescendantKeyManager, FocusMonitor } from "@angular/cdk/a11y";
+import {
+  ActiveDescendantKeyManager,
+  ConfigurableFocusTrap,
+  ConfigurableFocusTrapFactory,
+  FocusMonitor
+} from "@angular/cdk/a11y";
 import { TemplatePortal } from "@angular/cdk/portal";
 import { DOWN_ARROW, ENTER, ESCAPE, TAB, UP_ARROW } from "@angular/cdk/keycodes";
 
@@ -842,16 +847,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
   onClick(e: MouseEvent) {
     //console.log('onClick', e.target);
     if (!this.disabled) {
-      //this._focused = true;
-
-      // open only if not clicked on chip... is this desired behaviour?
-      const isChipClick = (e.target as HTMLElement).closest('mat-chip') != null;
-      if (!isChipClick) {
-        if (this._loaded) {
-          this.openDropdown();
-        } else {
-          this.search();
-        }
+      if (this._loaded) {
+        this.openDropdown();
+      } else {
+        this.search();
       }
     }
     this._stateChanges.next();

@@ -19,7 +19,7 @@
         {{ readOptionDisplay(o) }}
         <button
           matChipRemove
-          (click)="onClick($event)"
+          (click)="$event.stopPropagation(); focus();"
           (focus)="onFocus($event)"
           (blur)="onBlur($event)">
           <mat-icon>cancel</mat-icon>
