@@ -1,0 +1,21 @@
+
+.ngx-mat-combobox-option {
+
+  display: block;
+  padding: 0 16px;
+  line-height: 3em;
+  height: 3em;
+  cursor: pointer;
+
+  &-selected {
+    background-color: #e5e5e5;
+  }
+
+  //&:focus,
+  //&:hover,
+  &-active {
+    background: rgba(0,0,0,.04);
+    //border: solid 1px red;
+  }
+
+}

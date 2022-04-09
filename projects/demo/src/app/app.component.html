@@ -1,0 +1,216 @@
+
+<div>
+  <mat-card>
+    <mat-card-title>Example 1</mat-card-title>
+    <mat-card-content>
+
+      <p class="description">Single selection, no autocomplete</p>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" (click)="example1 = 3">Set value to 3</button>
+        <button mat-stroked-button (click)="example1Combo.clear()">Clear</button>
+        Model = {{ example1 }}
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Single selection</mat-label>
+        <ngx-mat-combobox
+          #example1Combo
+          required
+          optionValue="id"
+          optionLabel="name"
+
+          [(ngModel)]="example1"
+          (openedChange)="dropdownOpened($event)"
+          useChips
+          dropdownTrapFocus
+          placeholder="Please select some value"
+          [dataSource]="getDatasource()">
+
+          <div ngxMatComboboxHeader class="custom-header">
+            <input #customSearchInput placeholder="Type here..." (input)="typeAhead($event)" />
+            <div class="mat-caption">
+              <mat-slide-toggle>Search in Name</mat-slide-toggle>
+              &nbsp;
+              <mat-slide-toggle>Search in Description</mat-slide-toggle>
+            </div>
+          </div>
+
+          <div ngxMatComboboxFooter class="custom-footer">
+            <button mat-flat-button><mat-icon>navigate_before</mat-icon>&nbsp;previous</button>
+            <button mat-flat-button>next&nbsp;<mat-icon>navigate_next</mat-icon></button>
+          </div>
+
+        </ngx-mat-combobox>
+        <mat-icon matPrefix>person</mat-icon>
+        <mat-icon matSuffix>face</mat-icon>
+      </mat-form-field>
+
+    </mat-card-content>
+  </mat-card>
+
+
+  <mat-card>
+    <mat-card-title>Example 2</mat-card-title>
+    <mat-card-content>
+
+      <p class="description">Single selection with autocomplete</p>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" (click)="example2 = 5">Set value to 5</button>
+        <button mat-stroked-button (click)="example2Combo.clear()">Clear</button>
+        Model = {{ example2 }}
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Single selection</mat-label>
+        <ngx-mat-combobox
+          #example2Combo
+          optionValue="id"
+          optionLabel="name"
+          [(ngModel)]="example2"
+          [autocomplete]="true"
+          useChips
+          placeholder="Type to search..."
+          [dataSource]="getDatasource()">
+        </ngx-mat-combobox>
+        <mat-icon matPrefix>person</mat-icon>
+        <mat-icon matSuffix>face</mat-icon>
+      </mat-form-field>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div>
+  <mat-card style="width: 480px">
+    <mat-card-title>Example 3</mat-card-title>
+    <mat-card-content>
+
+      <p class="description">Multi selection, no autocomplete</p>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" (click)="example3 = [4,3,2]">Set value to [4,3,2]</button>
+        <button mat-stroked-button (click)="example3Combo.clear()">Clear</button>
+        Model = {{ example3 }}
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Multi selection</mat-label>
+        <ngx-mat-combobox
+          #example3Combo
+          optionValue="id"
+          optionLabel="name"
+          [(ngModel)]="example3"
+          [multiple]="true"
+          [noWrap]="true"
+          placeholder="Please select at least one value"
+          [dataSource]="getDatasource()">
+        </ngx-mat-combobox>
+        <mat-icon matPrefix>person</mat-icon>
+        <mat-icon matSuffix>face</mat-icon>
+      </mat-form-field>
+
+    </mat-card-content>
+  </mat-card>
+
+
+  <mat-card style="width: 480px">
+    <mat-card-title>Example 4</mat-card-title>
+    <mat-card-content>
+
+      <p class="description">Multi selection with chips, no autocomplete</p>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" (click)="example4 = [2,3,4]">Set value to [2,3,4]</button>
+        <button mat-stroked-button (click)="example4Combo.clear()">Clear</button>
+        Model = {{ example4 }}
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Multi selection</mat-label>
+        <ngx-mat-combobox
+          #example4Combo
+          optionValue="id"
+          optionLabel="name"
+          [(ngModel)]="example4"
+          [multiple]="true"
+          [useChips]="true"
+          chipColor="accent"
+          placeholder="Select something..."
+          [dataSource]="getDatasource()">
+        </ngx-mat-combobox>
+        <mat-icon matPrefix>person</mat-icon>
+        <mat-icon matSuffix>face</mat-icon>
+      </mat-form-field>
+
+    </mat-card-content>
+  </mat-card>
+
+</div>
+
+<div>
+  <mat-card style="width: 480px">
+    <mat-card-title>Example 5</mat-card-title>
+    <mat-card-content>
+
+      <p class="description">Multi selection with autocomplete</p>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" (click)="example5 = [7,8,9]">Set value to [7,8,9]</button>
+        <button mat-stroked-button (click)="example5Combo.clear()">Clear</button>
+        Model = {{ example5 }}
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Multi selection</mat-label>
+        <ngx-mat-combobox
+          #example5Combo
+          optionValue="id"
+          optionLabel="name"
+          [(ngModel)]="example5"
+          [multiple]="true"
+          [autocomplete]="true"
+          [dataSource]="getDatasource()">
+        </ngx-mat-combobox>
+        <mat-icon matPrefix>person</mat-icon>
+        <mat-icon matSuffix>face</mat-icon>
+      </mat-form-field>
+
+    </mat-card-content>
+  </mat-card>
+
+
+  <mat-card style="width: 480px">
+    <mat-card-title>Example 6</mat-card-title>
+    <mat-card-content>
+
+      <p class="description">Multi selection with chips with autocomplete</p>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" (click)="example6 = [7,8,9]">Set value to [7,8,9]</button>
+        <button mat-stroked-button (click)="example6Combo.clear()">Clear</button>
+        Model = {{ example6 }}
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Multi selection</mat-label>
+        <ngx-mat-combobox
+          #example6Combo
+          optionValue="id"
+          optionLabel="name"
+          [(ngModel)]="example6"
+          [multiple]="true"
+          [useChips]="true"
+          dropdownClass="my-super-dropdown"
+          [autocomplete]="true"
+          [dataSource]="getDatasource()">
+        </ngx-mat-combobox>
+        <mat-icon matPrefix>person</mat-icon>
+        <mat-icon matSuffix>face</mat-icon>
+      </mat-form-field>
+
+    </mat-card-content>
+  </mat-card>
+
+</div>

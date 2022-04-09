@@ -1,0 +1,136 @@
+
+  <div class="ngx-mat-combobox-display">
+
+    <div
+      *ngIf="!autocomplete && empty && shouldLabelFloat"
+      class="ngx-mat-combobox-placeholder">{{ placeholder }}
+    </div>
+
+    <mat-chip-list
+      *ngIf="useChips"
+      [tabIndex]="-1">
+      <mat-chip
+        *ngFor="let o of selectedOptions | async; trackBy: _trackSelectedOptionBy.bind(this)"
+        [disableRipple]="disableRipple"
+        [selectable]="false"
+        [selected]="chipColor"
+        [color]="chipColor"
+        (removed)="deselectOption(o);">
+        {{ readOptionDisplay(o) }}
+        <button
+          matChipRemove
+          (click)="onClick($event)"
+          (focus)="onFocus($event)"
+          (blur)="onBlur($event)">
+          <mat-icon>cancel</mat-icon>
+        </button>
+<!--        <mat-icon matChipRemove (focus)="onFocus($event)" (blur)="onBlur($event)">cancel</mat-icon>-->
+      </mat-chip>
+      <input
+        *ngIf="autocomplete"
+        ngxMatComboboxInput
+        type="text"
+        [tabindex]="tabIndex"
+        [placeholder]="placeholder"
+        [readonly]="readonly">
+    </mat-chip-list>
+
+    <div
+      *ngIf="!useChips"
+      class="ngx-mat-combobox-values"
+      [class.ngx-mat-combobox-values-nowrap]="noWrap">
+
+      <ng-container *ngIf="multiple || !autocomplete">
+        <div
+          *ngIf="noWrap && !empty"
+          class="ngx-mat-combobox-value-item">
+          <ng-container
+            *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: _trackSelectedOptionBy.bind(this)">
+            {{ readOptionDisplay(o) }}<ng-container *ngIf="!l">, </ng-container>
+          </ng-container>
+        </div>
+        <ng-container *ngIf="!noWrap">
+          <span
+            *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: _trackSelectedOptionBy.bind(this)"
+            class="ngx-mat-combobox-value-item">
+            {{ readOptionDisplay(o) }}<ng-container *ngIf="!l">, </ng-container>
+          </span>
+        </ng-container>
+      </ng-container>
+
+      <input
+        *ngIf="autocomplete"
+        ngxMatComboboxInput
+        [tabindex]="tabIndex"
+        type="text"
+        [placeholder]="placeholder"
+        [disabled]="disabled"
+        [readonly]="readonly">
+    </div>
+
+  </div>
+
+  <div
+    *ngIf="showLoadingSpinner && loading"
+    class="ngx-mat-combobox-loading-spinner">
+    <mat-spinner
+      [diameter]="loadingSpinnerDiameter"
+      [strokeWidth]="loadingSpinnerStrokeWidth"
+      color="primary"></mat-spinner>
+  </div>
+
+  <div
+    *ngIf="showToggleTrigger && !(showLoadingSpinner && loading)"
+    class="ngx-mat-combobox-trigger"
+    [class.ngx-mat-combobox-trigger-opened]="opened">
+  </div>
+
+  <ng-template #dropdownTpl>
+    <div
+      #dropdown
+      [cdkTrapFocus]="dropdownTrapFocus"
+      class="ngx-mat-combobox-dropdown">
+
+      <ng-content select="[ngxMatComboboxHeader],[ngx-mat-combobox-header]"></ng-content>
+
+      <div #dropdownBody class="ngx-mat-combobox-dropdown-body">
+
+        <ngx-mat-combobox-option
+          matRipple
+          [matRippleDisabled]="disableRipple"
+          *ngFor="let o of filteredOptions | async; trackBy: _trackFilteredOptionBy.bind(this)"
+          [selected]="isSelected(o)"
+          (click)="onDropdownOptionClick(o)">
+
+          <ng-content select="ng-template[ngxMatComboboxOption]"></ng-content>
+
+          <ng-template #defaultOptionTpl let-option>
+            <mat-pseudo-checkbox
+              *ngIf="multiple"
+              [state]="isSelected(option) ? 'checked' : 'unchecked'"></mat-pseudo-checkbox>
+            {{ readOptionLabel(option) }}
+          </ng-template>
+
+          <ng-container
+            [ngTemplateOutlet]="customOptionTpl ? customOptionTpl : defaultOptionTpl"
+            [ngTemplateOutletContext]="{option: o, $implicit: o}"
+          ></ng-container>
+
+        </ngx-mat-combobox-option>
+
+        <div
+          #dropdownNoOption
+          *ngIf="!loading && filteredOptionsCount == 0"
+          class="ngx-mat-combobox-dropdown-no-option">{{ noOptionText }}</div>
+
+      </div>
+
+      <ng-content select="[ngxMatComboboxFooter],[ngx-mat-combobox-footer]"></ng-content>
+
+      <div
+        #drodpwnOverlay
+        *ngIf="loading"
+        class="ngx-mat-combobox-dropdown-overlay"></div>
+
+    </div>
+  </ng-template>

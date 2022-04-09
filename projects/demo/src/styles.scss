@@ -1,0 +1,26 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+html, body {
+  background-color: #fafafa;
+}
+
+//@function get-input-font-size() {
+//
+//  $typography: mat.define-typography-config();
+//
+//  $font-size: map.get(mat.typography-level($typography, input), font-size);
+//
+//  @if $font-size == inherit {
+//    $font-size: map.get(mat.typography-level($typography, body-1), font-size);
+//  }
+//
+//  @return $font-size;
+//}
+//
+//
+//// Use the default configuration.
+//$body-font-size: get-input-font-size();
+//
+//@debug $body-font-size;
