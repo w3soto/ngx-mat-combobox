@@ -611,20 +611,40 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
   @ViewChild('dropdownTpl', {static: true})
   private _dropdownTpl!: TemplateRef<any>;
 
+  @ViewChild('dropdown')
+  private _dropdown?: ElementRef;
+
+  get dropdown(): ElementRef | undefined {
+    return this._dropdown;
+  }
+
   @ViewChild('dropdownBody')
   private _dropdownBody?: ElementRef;
 
+  get dropdownBody(): ElementRef | undefined {
+    return this._dropdownBody;
+  }
+
   @ViewChildren(NgxMatComboboxOption)
-  private _dropdownOptions: QueryList<NgxMatComboboxOption> = new QueryList<NgxMatComboboxOption>();
+  readonly dropdownOptions: QueryList<NgxMatComboboxOption> = new QueryList<NgxMatComboboxOption>();
+
+  get dropdownOverlay(): OverlayRef | undefined {
+    return this._dropdownOverlay;
+  }
+  private _dropdownOverlay?: OverlayRef;
+
+  get dropdownKeyManager(): ActiveDescendantKeyManager<NgxMatComboboxOption> | undefined {
+    return this._dropdownKeyManager;
+  }
+  private _dropdownKeyManager?: ActiveDescendantKeyManager<NgxMatComboboxOption>;
+
+  private _dropdownFocusTrap?: ConfigurableFocusTrap;
+
+  private _dropdownOverlayDestroyed?: Subject<void>;
 
   // current & last used search query
   private _searchQuery: string = '';
   private _lastSearchQuery: string | null = null;
-
-  // dropdown/overlay
-  private _dropdownOverlay?: OverlayRef;
-  private _dropdownOverlayDestroyed?: Subject<void>;
-  private _dropdownKeyManager?: ActiveDescendantKeyManager<NgxMatComboboxOption>;
 
   private _destroyed: Subject<void> = new Subject<void>();
 
@@ -635,6 +655,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
     private _changeDetectorRef: ChangeDetectorRef,
     private _ngZone: NgZone,
     private _focusMonitor: FocusMonitor,
+    private _focusTrapFactory: ConfigurableFocusTrapFactory,
     @Optional() @Inject(NGX_MAT_COMBOBOX_DEFAULT_OPTIONS) private _defaults: NgxMatComboboxDefaultOptions,
     @Attribute('tabindex') tabIndex: string,
     @Optional() @Self() public ngControl: NgControl,
@@ -1073,7 +1094,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
 
   scrollToOption(index: number) {
     const panelEl = this._dropdownBody?.nativeElement;
-    const optionEl = this._dropdownOptions.get(index)?.nativeElement;
+    const optionEl = this.dropdownOptions.get(index)?.nativeElement;
 
     if (panelEl && index < 0) {
       panelEl.scrollTop = 0;
@@ -1330,7 +1351,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
       takeUntil(this._dropdownOverlayDestroyed)
     ).subscribe();
 
-    this._dropdownKeyManager = new ActiveDescendantKeyManager<NgxMatComboboxOption>(this._dropdownOptions)
+    this._dropdownKeyManager = new ActiveDescendantKeyManager<NgxMatComboboxOption>(this.dropdownOptions)
       .withWrap();
 
     if (!this.autocomplete) {
@@ -1342,21 +1363,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
       takeUntil(this._dropdownOverlayDestroyed)
     ).subscribe();
 
-    this._activateDropdownOption();
+    // trap focus
+    if (this._dropdownTrapFocus) {
+      this._dropdownFocusTrap = this._focusTrapFactory.create(this._dropdown!.nativeElement);
+      this._dropdownFocusTrap.focusFirstTabbableElement();
+    }
 
-    // monitor focus
-    // this._focusMonitor.monitor(this._dropdownOverlay.hostElement, true).pipe(
-    //   tap((origin) => {
-    //     console.log('FOCUS OVERLAY origin', origin);
-    //     if (origin) {
-    //       this._focused = true;
-    //     }
-    //     else {
-    //       this._focused = false;
-    //     }
-    //   }),
-    //   takeUntil(this._dropdownOverlayDestroyed)
-    // ).subscribe();
+    this._activateDropdownOption();
 
     this._ngZone.runOutsideAngular(() => {
 
@@ -1417,6 +1430,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
   }
 
   private _destroyDropdown() {
+    this._dropdownFocusTrap?.destroy();
     this._dropdownOverlayDestroyed?.next();
     this._dropdownOverlayDestroyed?.complete();
     this._dropdownOverlay?.dispose();
