@@ -115,6 +115,62 @@ export class NgxMatComboboxInputDirective implements AfterViewInit, OnDestroy{
 
 }
 
+@Directive({
+  selector: '[ngxMatComboboxOptionRemove]',
+  host: {
+    'class': 'ngx-mat-combobox-option-remove'
+  }
+})
+export class NgxMatComboboxOptionRemoveDirective implements OnDestroy, AfterViewInit{
+
+  @Input('ngxMatComboboxOptionRemove')
+  set option(option: any) {
+    this._option = option;
+  }
+  private _option?: any;
+
+  private _destroyed: Subject<void> = new Subject<void>();
+
+  constructor(
+    public _elementRef: ElementRef,
+    public _combo: NgxMatCombobox,
+    private _ngZone: NgZone
+  ) {}
+
+  ngAfterViewInit(): void {
+
+    fromEvent<any>(this._elementRef.nativeElement, 'click', {capture: true}).pipe(
+      tap(e => {
+        e.preventDefault();
+        if (this._option) {
+          this._combo.deselectOption(this._option);
+        }
+        this._ngZone.runTask(() => {
+          this._combo.focus()
+        });
+      }),
+      takeUntil(this._destroyed)
+    ).subscribe();
+
+    fromEvent<MouseEvent>(this._elementRef.nativeElement, 'focus').pipe(
+      tap(e => this._combo.onFocus(e)),
+      takeUntil(this._destroyed)
+    ).subscribe();
+
+    fromEvent<MouseEvent>(this._elementRef.nativeElement, 'blur').pipe(
+      tap(e => this._combo.onBlur(e)),
+      takeUntil(this._destroyed)
+    ).subscribe();
+
+  }
+
+  ngOnDestroy(): void {
+    this._destroyed.next();
+    this._destroyed.complete();
+  }
+
+}
+
 
 @Directive({
   selector: 'ng-template[ngxMatComboboxDisplay]',
@@ -744,12 +800,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
           tap(() => {
             console.log('monitor, origin=', origin);
 
-            let focused = true;
-            if (!origin && !this._opened &&
-              !(this._elementRef.nativeElement.contains(document.activeElement)
-                || this.formField?._elementRef.nativeElement.contains(document.activeElement))) {
-              focused = false;
-            }
+            // let focused = true;
+            // if (!origin && !this._opened &&
+            //   !(this._elementRef.nativeElement.contains(document.activeElement)
+            //     || this.formField?._elementRef.nativeElement.contains(document.activeElement))) {
+            //   focused = false;
+            // }
+            const focused = !!origin && !this._opened;
 
             if (this._focused != focused) {
               this._focused = focused;
@@ -854,7 +911,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   onFocus(e: Event) {
     //console.log('onFocus', e.target, e);
     if (!this.disabled) {
-      //this._focused = true;
+      this._focused = true;
       this._stateChanges.next();
     }
   }
@@ -871,8 +928,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   }
 
   onClick(e: MouseEvent) {
-    //console.log('onClick', e.target);
     if (!this.disabled) {
+      this._focused = true;
       if (this._loaded) {
         this.openDropdown();
       } else {
@@ -914,32 +971,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
     this._focused = true;
 
-    // if opened close on tab... next hit will focus following input element
-    // if (e.code == 'Tab') {
-    //   console.log('TAB');
-    //   this.closeDropdown();
-    //   //this._updateSearchInput();
-    //
-    //   this._searchQuery = '';
-    //   this._lastSearchQuery = null;
-    //   this._loaded = false;
-    //   this._dataSourceLoadSub?.unsubscribe();
-    //   this._dataSourceAutocompleteSub?.unsubscribe();
-    //   // this._ngZone.onStable.pipe(
-    //   //   tap(() => {
-    //   // if (!this._focused) {
-    //   //   this.searchInput?.setValue('');
-    //   // }
-    //   //   }),
-    //   //   first()
-    //   // ).subscribe();
-    //
-    //   //e.preventDefault();
-    //   //e.stopPropagation();
-    // }
-
-    //e.preventDefault();
-    //e.stopPropagation();
   }
 
   onDropdownKeydown(e: KeyboardEvent): void {
@@ -1015,7 +1046,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     if (!isInside) {
       this.closeDropdown();
       this._updateSearchInput();
-      this._elementRef.nativeElement.dispatchEvent(new Event('blur'));
+      //  this._elementRef.nativeElement.dispatchEvent(new Event('blur'));
       e.stopPropagation();
       e.preventDefault();
     }
@@ -1033,6 +1064,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       else {
         this._elementRef.nativeElement.focus();
       }
+      this._focused = true;
+      this._stateChanges.next();
     });
   }
 
@@ -1134,6 +1167,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     const scrollTop = panelEl.scrollTop;
     const optionHeight = optionEl.offsetHeight;
     const optionTop = optionEl.offsetTop;
+
     // top
     if (optionTop < scrollTop) {
       panelEl.scrollTop = optionTop;

@@ -18,19 +18,14 @@
           [disableRipple]="disableRipple"
           [selectable]="false"
           [selected]="chipColor"
-          [color]="chipColor"
-          (removed)="deselectOption(o);">
+          [color]="chipColor">
           {{ readOptionDisplay(o) }}
           <button
             matChipRemove
-            ngxMatComboboxOptionRemove
-            (click)="$event.stopPropagation(); focus();"
-            (focus)="onFocus($event)"
-            (blur)="onBlur($event)">
+            [ngxMatComboboxOptionRemove]="o">
             <mat-icon>cancel</mat-icon>
           </button>
-  <!--        <mat-icon matChipRemove (focus)="onFocus($event)" (blur)="onBlur($event)">cancel</mat-icon>-->
-        </mat-chip>
+          </mat-chip>
         <input
           *ngIf="autocomplete"
           ngxMatComboboxInput

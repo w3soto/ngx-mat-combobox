@@ -1,8 +1,11 @@
 import { NgModule } from '@angular/core';
 import {
-  NgxMatCombobox, NgxMatComboboxDisplayDirective, NgxMatComboboxInputDirective,
-  NgxMatComboboxOptionDirective,
-  NgxMatComboboxSpinnerDirective
+  NgxMatCombobox,
+  NgxMatComboboxDisplayDirective,
+  NgxMatComboboxFooterDirective,
+  NgxMatComboboxHeaderDirective,
+  NgxMatComboboxInputDirective,
+  NgxMatComboboxOptionDirective, NgxMatComboboxOptionRemoveDirective,
 } from './ngx-mat-combobox.component';
 import { NgxMatComboboxOption } from "./ngx-mat-combobox-option.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -24,7 +27,9 @@ import { A11yModule } from "@angular/cdk/a11y";
     NgxMatComboboxInputDirective,
     NgxMatComboboxDisplayDirective,
     NgxMatComboboxOptionDirective,
-    NgxMatComboboxSpinnerDirective
+    NgxMatComboboxHeaderDirective,
+    NgxMatComboboxFooterDirective,
+    NgxMatComboboxOptionRemoveDirective
   ],
   imports: [
     CommonModule,
@@ -47,7 +52,9 @@ import { A11yModule } from "@angular/cdk/a11y";
     NgxMatComboboxInputDirective,
     NgxMatComboboxDisplayDirective,
     NgxMatComboboxOptionDirective,
-    NgxMatComboboxSpinnerDirective
+    NgxMatComboboxHeaderDirective,
+    NgxMatComboboxFooterDirective,
+    NgxMatComboboxOptionRemoveDirective
   ]
 })
 export class NgxMatComboboxModule {
