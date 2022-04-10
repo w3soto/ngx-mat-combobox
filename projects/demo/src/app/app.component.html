@@ -1,4 +1,30 @@
 
+
+<div>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Fill</mat-label>
+    <input matInput >
+    <mat-icon matPrefix>person</mat-icon>
+    <mat-icon matSuffix>face</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Outline</mat-label>
+    <input matInput >
+    <mat-icon matPrefix>person</mat-icon>
+    <mat-icon matSuffix>face</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+     <input matInput >
+    <mat-icon matPrefix>person</mat-icon>
+    <mat-icon matSuffix>face</mat-icon>
+  </mat-form-field>
+
+</div>
+
+
 <div>
   <mat-card>
     <mat-card-title>Example 1</mat-card-title>
@@ -7,7 +33,7 @@
       <p class="description">Single selection, no autocomplete</p>
 
       <div class="actions">
-        <button mat-stroked-button color="primary" (click)="example1 = 3">Set value to 3</button>
+        <button mat-stroked-button color="primary" (click)="example1 = [3,5,7,8]">Set value to [3,5,7,8]</button>
         <button mat-stroked-button (click)="example1Combo.clear()">Clear</button>
         Model = {{ example1 }}
       </div>
@@ -22,24 +48,66 @@
 
           [(ngModel)]="example1"
           (openedChange)="dropdownOpened($event)"
-          useChips
-          dropdownTrapFocus
+          multiple
+          autocomplete
+
           placeholder="Please select some value"
           [dataSource]="getDatasource()">
 
-          <div ngxMatComboboxHeader class="custom-header">
-            <input #customSearchInput placeholder="Type here..." (input)="typeAhead($event)" />
-            <div class="mat-caption">
-              <mat-slide-toggle>Search in Name</mat-slide-toggle>
-              &nbsp;
-              <mat-slide-toggle>Search in Description</mat-slide-toggle>
-            </div>
-          </div>
+          <ng-template ngxMatComboboxDisplay let-combo>
+<!--            <div style="display: flex; align-items: center; flex-wrap: wrap">-->
+<!--              <span-->
+<!--                *ngFor="let o of combo.selectedOptions.value.slice(0, 5); let i = index; let l = last; trackBy: combo.trackOptionFn"-->
+<!--                class="custom-option-display">-->
+<!--                <img style="width:25px; height: 25px; border-radius: 50%; object-fit: cover" [src]="o.image">-->
+<!--                {{ o.name }}-->
+<!--                <button [ngxMatComboboxOptionRemove]="o">X</button>-->
+<!--              </span>-->
+<!--              <span *ngIf="combo.selectedOptions.value.length > 5">-->
+<!--                &nbsp;and {{ combo.selectedOptions.value.length - 5 }} more&hellip;-->
+<!--              </span>-->
+<!--            </div>-->
+            <mat-chip-list>
+              <mat-chip
+                [selected]="true"
+                [selectable]="false"
+                color="primary"
+                *ngFor="let o of combo.selectedOptions.value; let i = index; trackBy: combo.trackOptionFn">
+                <mat-chip-avatar>
+                  <img style="width:24px; height: 24px; object-fit: cover" [src]="o.image">
+                </mat-chip-avatar>
+                {{ o.name }}
+                <button matChipRemove [ngxMatComboboxOptionRemove]="o"><mat-icon>cancel</mat-icon></button>
+              </mat-chip>
+            </mat-chip-list>
+          </ng-template>
 
-          <div ngxMatComboboxFooter class="custom-footer">
-            <button mat-flat-button><mat-icon>navigate_before</mat-icon>&nbsp;previous</button>
-            <button mat-flat-button>next&nbsp;<mat-icon>navigate_next</mat-icon></button>
-          </div>
+          <ng-template ngxMatComboboxHeader>
+            <div class="custom-header">
+              <input ngxMatComboboxInput style="width: auto" #customSearchInput cdkFocusInitial placeholder="Type here..." />
+              <div class="mat-caption">
+                <mat-slide-toggle>Search in Name</mat-slide-toggle>
+                &nbsp;&nbsp;&nbsp;
+                <mat-slide-toggle>Search in Description</mat-slide-toggle>
+              </div>
+<!--              <input #xcustomSearchInput placeholder="Type another things here..." cdkFocusInitial (input)="typeAhead($event)" />-->
+            </div>
+          </ng-template>
+
+          <ng-template ngxMatComboboxOption let-option let-combo="combo">
+            <div style="display: flex; gap: 8px; align-items: center">
+              <mat-icon>{{ combo.isSelected(option) ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+              <img style="width:24px; height: 24px; object-fit: cover; border-radius: 50%" [src]="option.image">
+              <span>{{ option.name }}</span>
+            </div>
+          </ng-template>
+
+          <ng-template ngxMatComboboxFooter>
+            <div class="custom-footer">
+              <button mat-flat-button><mat-icon>navigate_before</mat-icon>&nbsp;previous</button>
+              <button mat-flat-button>next&nbsp;<mat-icon>navigate_next</mat-icon></button>
+            </div>
+          </ng-template>
 
         </ngx-mat-combobox>
         <mat-icon matPrefix>person</mat-icon>
@@ -127,7 +195,7 @@
         Model = {{ example4 }}
       </div>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="fill">
         <mat-label>Multi selection</mat-label>
         <ngx-mat-combobox
           #example4Combo

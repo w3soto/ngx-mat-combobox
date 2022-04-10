@@ -6,29 +6,30 @@ import {
   NgxMatComboboxArrayDataSource,
   NgxMatComboboxDataSource
 } from "../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.model";
+import { NgxMatCombobox } from "../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.component";
 
 
 const USERS: object[] = [
-  {id: 13, name:"Annie Lennox"},
-  {id: 16, name:"Billy Corgan"},
-  {id: 8, name:"Bill Murray"},
-  {id: 6, name:"Bono Vox"},
-  {id: 12, name:"Dave Gahan"},
-  {id: 14, name:"James Hetfield"},
-  {id: 10, name:"Jimmy Hendrix"},
-  {id: 7, name:"Jimmy Page"},
-  {id: 9, name:"John Lennon"},
-  {id: 1, name:"John Travolta"},
-  {id: 20, name:"Keith Richards"},
-  {id: 4, name:"Martin Luther"},
-  {id: 5, name:"Michael Jackson"},
-  {id: 19, name:"Mick Jagger"},
-  {id: 15, name:"Patti Smith"},
-  {id: 2, name:"Peter Gabriel"},
-  {id: 3, name:"Peter Jackson"},
-  {id: 11, name:"Robert Plant"},
-  {id: 18, name:"Sinead O'Connor"},
-  {id: 17, name:"Stuart Staples"},
+  {id: 13, name:"Annie Lennox", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 16, name:"Billy Corgan", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 8, name:"Bill Murray", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 6, name:"Bono Vox", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 12, name:"Dave Gahan", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 14, name:"James Hetfield", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 10, name:"Jimmy Hendrix", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 7, name:"Jimmy Page", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 9, name:"John Lennon", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 1, name:"John Travolta", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 20, name:"Keith Richards", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 4, name:"Martin Luther", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 5, name:"Michael Jackson", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 19, name:"Mick Jagger", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 15, name:"Patti Smith", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 2, name:"Peter Gabriel", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 3, name:"Peter Jackson", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 11, name:"Robert Plant", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 18, name:"Sinead O'Connor", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
+  {id: 17, name:"Stuart Staples", image: "https://i1.sndcdn.com/artworks-8xGhRvr1FRzSASZ6-eCjEnA-t500x500.jpg"},
 ];
 
 class RemoteUsersDataSource implements NgxMatComboboxDataSource {
@@ -64,7 +65,7 @@ class RemoteUsersDataSource implements NgxMatComboboxDataSource {
 export class AppComponent implements OnInit {
   title = 'demo';
 
-  example1?: number | null = 2;
+  example1?: number[] = [1,2,3,4];
   example2?: number = 4;
 
   example3?: number[] = [9,11];
@@ -82,6 +83,13 @@ export class AppComponent implements OnInit {
   @ViewChild('customSearchInput')
   searchInput?: ElementRef;
 
+  @ViewChild('example1Combo', {static: true})
+  example1Combo!: NgxMatCombobox;
+
+  constructor(
+  ) {
+  }
+
   ngOnInit() {
   }
 
@@ -89,8 +97,8 @@ export class AppComponent implements OnInit {
     return this.datasourceType == 'local' ? this.localDatasource : this.remoteDatasource;
   }
 
-  dropdownOpened(state: boolean) {
-    this.searchInput?.nativeElement.focus()
+  dropdownOpened(opened: boolean) {
+
   }
 
   typeAhead(e: Event){

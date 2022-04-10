@@ -6,7 +6,6 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
-import { NgxMatComboboxModule } from "ngx-mat-combobox";
 import { MatInputModule } from "@angular/material/input";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatIconModule } from "@angular/material/icon";
@@ -16,6 +15,9 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatCardModule } from "@angular/material/card";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatSelectModule } from "@angular/material/select";
+
+import { NgxMatComboboxModule } from "../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.module";
+
 
 @NgModule({
   declarations: [
