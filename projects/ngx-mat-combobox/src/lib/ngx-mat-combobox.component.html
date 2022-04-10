@@ -124,7 +124,7 @@
 
           <ng-container
             [ngTemplateOutlet]="_customOptionTpl ? _customOptionTpl : defaultOptionTpl"
-            [ngTemplateOutletContext]="{option: o, $implicit: o}"
+            [ngTemplateOutletContext]="{option: o, $implicit: o, combo: this}"
           ></ng-container>
 
         </ngx-mat-combobox-option>
