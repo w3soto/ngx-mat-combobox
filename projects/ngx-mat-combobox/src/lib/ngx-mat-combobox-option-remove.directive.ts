@@ -28,6 +28,7 @@ export class NgxMatComboboxOptionRemoveDirective implements OnDestroy, AfterView
 
     fromEvent<any>(this._elementRef.nativeElement, 'click', {capture: true}).pipe(
       tap(e => {
+        e.stopPropagation();
         e.preventDefault();
         if (this._option) {
           this._combo.deselectOption(this._option);

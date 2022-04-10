@@ -28,7 +28,7 @@ import {
   ActiveDescendantKeyManager,
   ConfigurableFocusTrap,
   ConfigurableFocusTrapFactory,
-  FocusMonitor
+  FocusMonitor, InteractivityChecker
 } from "@angular/cdk/a11y";
 import { TemplatePortal } from "@angular/cdk/portal";
 
@@ -677,6 +677,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   private _searchQuery: string = '';
   private _lastSearchQuery: string | null = null;
 
+  // keep last focused element, it will gain focus when user close dropdown
+  private _lastFocusedElement?: HTMLElement | null;
+
   private _destroyed: Subject<void> = new Subject<void>();
 
   constructor(
@@ -687,6 +690,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     private _ngZone: NgZone,
     private _focusMonitor: FocusMonitor,
     private _focusTrapFactory: ConfigurableFocusTrapFactory,
+    private _interactivityChecker: InteractivityChecker,
     @Optional() @Inject(NGX_MAT_COMBOBOX_DEFAULT_OPTIONS) private _defaults: NgxMatComboboxDefaultOptions,
     @Attribute('tabindex') tabIndex: string,
     @Optional() @Self() public ngControl: NgControl,
@@ -735,29 +739,17 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       takeUntil(this._destroyed)
     ).subscribe();
 
-    // monitor focus
+    // monitor enter/leave state
     this._focusMonitor.monitor(this._elementRef, true).pipe(
       tap((origin) => {
-        this._ngZone.onStable.pipe(
-          tap(() => {
-            console.log('monitor, origin=', origin);
-
-            // let focused = true;
-            // if (!origin && !this._opened &&
-            //   !(this._elementRef.nativeElement.contains(document.activeElement)
-            //     || this.formField?._elementRef.nativeElement.contains(document.activeElement))) {
-            //   focused = false;
-            // }
-            const focused = !!origin && !this._opened;
-
-            if (this._focused != focused) {
-              this._focused = focused;
-              focused ? this.onEnter() : this.onLeave();
-              this._stateChanges.next();
-            }
-          }),
-          first()
-        ).subscribe();
+        this._ngZone.run(() => {
+          const focused = !!origin || this._opened;
+          if (this._focused != focused) {
+            this._focused = focused;
+            this._focused ? this.onEnter() : this.onLeave();
+            this._stateChanges.next();
+          }
+        });
       }),
       takeUntil(this._destroyed),
       finalize(() => this._focusMonitor.stopMonitoring(this._elementRef))
@@ -834,51 +826,52 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   onLeave() {
     console.log('onLeave');
 
-    this.searchInput?.setValue('');
-    this._searchQuery = '';
-    this._lastSearchQuery = null;
-    this._loaded = false;
-    this._dataSourceLoadSub?.unsubscribe();
-    this._dataSourceAutocompleteSub?.unsubscribe();
+    // this.searchInput?.setValue('');
+    // this._searchQuery = '';
+    // this._lastSearchQuery = null;
+    // this._loaded = false;
+    // this._dataSourceLoadSub?.unsubscribe();
+    // this._dataSourceAutocompleteSub?.unsubscribe();
+    //
+    // //this._stateChanges.next();
+    // if (!this.disabled) {
+    //   this._onTouched();
+    // }
 
     //this._stateChanges.next();
-    if (!this.disabled) {
-      this._onTouched();
-    }
-
-    this._stateChanges.next();
     //this._elementRef.nativeElement.tabIndex = this.tabIndex;
   }
 
   onFocus(e: Event) {
     //console.log('onFocus', e.target, e);
     if (!this.disabled) {
-      this._focused = true;
-      this._stateChanges.next();
+      this._keepFocusedState();
     }
   }
 
   onBlur(e: Event) {
-    //console.log('onBlur', e.target);
     if (this._opened) {
       return;
     }
+    //console.log('onBlur', e.target);
     if (!this.disabled) {
-      //this._focused = false;
       this._onTouched();
     }
   }
 
   onClick(e: MouseEvent) {
+    //console.log('onClick', e.target);
     if (!this.disabled) {
-      this._focused = true;
+      //this._focused = true;
+      this._keepLastActiveElement(e.target as HTMLElement);
       if (this._loaded) {
         this.openDropdown();
       } else {
         this.search();
       }
     }
-    this._stateChanges.next();
+
+    //this._setFocusedState();
 
     // when deleting selected options (chips) using mouse (or ENTER key)
     // we are loosing focus (DOM node is removed) so this will gain focus back
@@ -889,8 +882,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   }
 
   onKeydown(e: KeyboardEvent) {
+    //console.log('onKeydown', e.code);
 
-    //console.log('onKeydown', e.code)
+    this._keepLastActiveElement(e.target as HTMLElement);
 
     // open on arrow down key
     if (e.code == 'ArrowDown') {
@@ -911,18 +905,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       }
     }
 
-    this._focused = true;
-
+    //this._setFocusedState();
   }
 
   onDropdownKeydown(e: KeyboardEvent): void {
-    //console.log('onDropdownKeydown', e.code)
+    //console.log('onDropdownKeydown', e.code);
 
     const index = this._dropdownKeyManager?.activeItemIndex;
 
     if (e.code == 'Escape') {
-      this.closeDropdown();
-      this.focus();
+      this._closeDropdownAndFocus(true);
       e.stopPropagation();
       e.preventDefault();
       return;
@@ -930,8 +922,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
     if (e.code == 'Tab') {
       if (!this.dropdownTrapFocus) {
-        this.closeDropdown();
-        this.focus();
+        this._closeDropdownAndFocus(true);
         e.stopPropagation();
         e.preventDefault();
         return;
@@ -946,17 +937,24 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
         this.selectOption(this._filteredOptionsModel.value[index]);
       }
       // close on single selection mode
+      // focus host/or input element (can not focus last active element because list was re-rendered)
+      // must be called after filteredOptionsModel changes are propagated to view/DOM
       if (!this.multiple) {
-        this.closeDropdown();
+        this._ngZone.onStable.pipe(first()).subscribe(() => {
+          this._closeDropdownAndFocus(false);
+        });
       }
-
-      this.focus();
+      // keep focused host/or input element
+      else {
+        this._ngZone.onStable.pipe(first()).subscribe(() => this.focus());
+      }
 
       if (e.code == 'Enter') {
         e.preventDefault(); // prevent focused chip deletion
       }
       if (e.code == 'Space') {
-        e.stopImmediatePropagation(); // prevent search/typeahead for "space" character
+        //e.stopImmediatePropagation(); // prevent search/typeahead for "space" character
+        e.preventDefault();
       }
     }
 
@@ -965,32 +963,38 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   }
 
   onDropdownOptionClick(option: any, e?: MouseEvent) {
+    //console.log('onDropdownOptionClick', option);
     this.multiple ? this.toggleOption(option) : this.selectOption(option);
     this._dropdownKeyManager?.setActiveItem(this.getFilteredOptionIndex(option));
     // single selection
     if (!this.multiple) {
-      this.closeDropdown();
+      // must be called after filteredOptionsModel changes are propagated to view/DOM
+      this._ngZone.onStable.pipe(first()).subscribe(() => {
+        this._closeDropdownAndFocus(true);
+      });
     }
-    this.focus();
+    else {
+      this._focusLastActiveElement();
+    }
+
   }
 
   /**
    * Handle click outside dropdown & form field
    */
   onOutsideClick(e: MouseEvent) {
+    //console.log('onOutsideClick', e.target);
     const el = e.target as HTMLElement;
     const hostEl = this._elementRef.nativeElement;
-    const dropdownEl = this._dropdownOverlay?.hostElement;
     const formFieldEl = this.formField?._elementRef.nativeElement;
 
-    const isInside = dropdownEl?.contains(el) || formFieldEl?.contains(el) || hostEl.contains(el);
+    const isInside = formFieldEl?.contains(el) || hostEl.contains(el);
 
     if (!isInside) {
       this.closeDropdown();
       this._updateSearchInput();
-      //  this._elementRef.nativeElement.dispatchEvent(new Event('blur'));
-      e.stopPropagation();
-      e.preventDefault();
+      this._focused = false;
+      this._stateChanges.next();
     }
   }
 
@@ -999,16 +1003,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   //
 
   focus() {
-    this._ngZone.runTask(() => {
-      if (this.searchInput) {
-        this.searchInput.focus();
-      }
-      else {
-        this._elementRef.nativeElement.focus();
-      }
-      this._focused = true;
-      this._stateChanges.next();
-    });
+    //console.log('focus')
+    if (this.searchInput) {
+      //console.log('focus -> searchInput')
+      this.searchInput.focus();
+    }
+    else {
+      //console.log('focus -> host')
+      this._elementRef.nativeElement.focus();
+    }
+    this._keepFocusedState();
   }
 
   openDropdown() {
@@ -1135,6 +1139,45 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
   popLoading() {
     this._loading = Math.max(0, this._loading - 1);
+  }
+
+  private _keepLastActiveElement(e?: HTMLElement) {
+    let el = (e || document.activeElement) as HTMLElement;
+    this._lastFocusedElement = null;
+    if (el && this._elementRef.nativeElement.contains(el) && this._interactivityChecker.isFocusable(el)) {
+      this._lastFocusedElement = el;
+    }
+  }
+
+  private _focusLastActiveElement() {
+    if (this._lastFocusedElement) {
+      // can throw error if lastActiveElement was removed from DOM
+      try {
+        this._lastFocusedElement?.focus();
+        this._lastFocusedElement = null;
+      } catch (e) {
+        this.focus();
+      }
+    }
+    else {
+      this.focus();
+    }
+  }
+
+  private _keepFocusedState() {
+    if (!this._focused) {
+      this._focused = true;
+      this._stateChanges.next();
+    }
+  }
+
+  private _closeDropdownAndFocus(focusLastActiveElement: boolean) {
+    this.closeDropdown();
+    // refocus after dropdown is closed, so it will not re-focus input element inside dropdown if any
+    this._ngZone.onStable.pipe(first()).subscribe(() => {
+      focusLastActiveElement ? this._focusLastActiveElement() : this.focus();
+      this._keepFocusedState();
+    });
   }
 
   private _updateSelectedOptionsModel() {
@@ -1379,28 +1422,24 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       takeUntil(this._dropdownOverlayDestroyed)
     ).subscribe();
 
-    this._ngZone.runOutsideAngular(() => {
+    // handle outside click
+    this._dropdownOverlay._outsidePointerEvents.pipe(
+      tap((e: MouseEvent) => this.onOutsideClick(e)),
+      takeUntil(this._dropdownOverlayDestroyed)
+    ).subscribe();
 
-      // close dropdown on outside click
-      fromEvent<MouseEvent>(document, 'click').pipe(
-        tap((e: MouseEvent) => this.onOutsideClick(e)),
-        takeUntil(this._dropdownOverlayDestroyed!)
-      ).subscribe();
-
-      // handle overlay resize
-      new Observable(subscriber => {
-        const ro = new ResizeObserver(entries => subscriber.next(entries));
-        ro.observe(this._elementRef.nativeElement as HTMLElement);
-        return () => {
-          ro.unobserve(this._viewContainerRef.element.nativeElement as HTMLElement);
-          ro.disconnect();
-        }
-      }).pipe(
-        tap(() => this._updateDropdownLayout()),
-        takeUntil(this._dropdownOverlayDestroyed!)
-      ).subscribe()
-
-    });
+    // handle overlay resize
+    new Observable(subscriber => {
+      const ro = new ResizeObserver(entries => subscriber.next(entries));
+      ro.observe(this._elementRef.nativeElement as HTMLElement);
+      return () => {
+        ro.unobserve(this._viewContainerRef.element.nativeElement as HTMLElement);
+        ro.disconnect();
+      }
+    }).pipe(
+      tap(() => this._updateDropdownLayout()),
+      takeUntil(this._dropdownOverlayDestroyed!)
+    ).subscribe();
 
     // emit changes
     this._ngZone.onStable.pipe(
@@ -1444,10 +1483,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
     this._ngZone.onStable.pipe(
       delay(1),
-      tap(() => {
-        this.focus();
-        this.openedChange.next(false)
-      }),
+      tap(() => this.openedChange.next(false)),
       first()
     ).subscribe();
   }
