@@ -1,28 +1,28 @@
 import {
+  AfterViewChecked,
   AfterViewInit, Attribute,
   ChangeDetectorRef,
   Component,
   ContentChild,
   Directive,
-  ElementRef, EventEmitter, HostBinding, HostListener,
+  ElementRef, EventEmitter, HostBinding,
   Inject,
   Input,
   NgZone, OnChanges,
   OnDestroy,
   OnInit,
   Optional, Output,
-  QueryList, Renderer2,
+  QueryList,
   Self,
-  TemplateRef,
+  TemplateRef, TrackByFunction,
   ViewChild,
   ViewChildren,
   ViewContainerRef,
   ViewEncapsulation
 } from '@angular/core';
-import { ControlValueAccessor, FormControl, NgControl, Validators } from "@angular/forms";
+import { ControlValueAccessor, NgControl, Validators } from "@angular/forms";
 
 import { BooleanInput, coerceBooleanProperty, coerceNumberProperty, NumberInput } from "@angular/cdk/coercion";
-import { SelectionModel } from "@angular/cdk/collections";
 import { Overlay, OverlayConfig, OverlayRef } from "@angular/cdk/overlay";
 import {
   ActiveDescendantKeyManager,
@@ -31,7 +31,7 @@ import {
   FocusMonitor
 } from "@angular/cdk/a11y";
 import { TemplatePortal } from "@angular/cdk/portal";
-import { DOWN_ARROW, ENTER, ESCAPE, TAB, UP_ARROW } from "@angular/cdk/keycodes";
+
 
 import {
   BehaviorSubject,
@@ -65,31 +65,48 @@ import { MatInput } from "@angular/material/input";
     'class': 'ngx-mat-combobox-input mat-input-element'
   }
 })
-export class NgxMatComboboxInputDirective {
+export class NgxMatComboboxInputDirective implements AfterViewInit, OnDestroy{
 
   get nativeElement(): HTMLInputElement {
-    return this.elementRef.nativeElement;
+    return this._elementRef.nativeElement;
   }
 
+  isInitialized: boolean = false;
+
   constructor(
-    public elementRef: ElementRef<HTMLInputElement>
+    public _elementRef: ElementRef<HTMLInputElement>,
+    public _combo: NgxMatCombobox
   ) {
   }
 
+  ngAfterViewInit(): void {
+    // take focus from combobox element
+    this._combo._elementRef.nativeElement.tabIndex = -1;
+    this._elementRef.nativeElement.tabIndex = this._combo.tabIndex;
+
+    // initialize listeners
+    // TODO
+  }
+
+  ngOnDestroy(): void {
+    // renew focus
+    this._combo._elementRef.nativeElement.tabIndex = this._combo.tabIndex;
+  }
+
   focus() {
-    this.elementRef.nativeElement.focus();
+    this._elementRef.nativeElement.focus();
   }
 
   select(text?: string) {
-    this.elementRef.nativeElement.select();
+    this._elementRef.nativeElement.select();
   }
 
   setValue(val: string) {
-    this.elementRef.nativeElement.value = val || '';
+    this._elementRef.nativeElement.value = val || '';
   }
 
   getValue(): string {
-    return this.elementRef.nativeElement.value || '';
+    return this._elementRef.nativeElement.value || '';
   }
 
   hasValue(): boolean {
@@ -126,12 +143,6 @@ export class NgxMatComboboxHeaderDirective {
 export class NgxMatComboboxFooterDirective {
 }
 
-@Directive({
-  selector: 'ng-template[ngxMatComboboxSpinner]',
-})
-export class NgxMatComboboxSpinnerDirective {
-
-}
 
 @Component({
   selector: 'ngx-mat-combobox',
@@ -153,7 +164,7 @@ export class NgxMatComboboxSpinnerDirective {
   }],
   exportAs: 'ngxMatCombobox'
 })
-export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewInit,
+export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewChecked,
   ControlValueAccessor, MatFormFieldControl<any> {
 
   //
@@ -591,15 +602,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
   /**
    * Search/autocomplete input reference
    */
+  get searchInput(): NgxMatComboboxInputDirective | undefined {
+    return this._customSearchInput || this._searchInput;
+  }
+
   @ViewChild(NgxMatComboboxInputDirective)
-  private _searchInputRef?: NgxMatComboboxInputDirective;
+  private _searchInput?: NgxMatComboboxInputDirective;
 
   @ContentChild(NgxMatComboboxInputDirective)
-  private _customSearchInputRef?: NgxMatComboboxInputDirective;
-
-  get searchInput(): NgxMatComboboxInputDirective | undefined {
-    return this._customSearchInputRef || this._searchInputRef;
-  }
+  private _customSearchInput?: NgxMatComboboxInputDirective;
 
   /**
    * Custom option template
@@ -654,7 +665,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
   private _destroyed: Subject<void> = new Subject<void>();
 
   constructor(
-    private _elementRef: ElementRef,
+    public _elementRef: ElementRef,
     private _viewContainerRef: ViewContainerRef,
     private _overlay: Overlay,
     private _changeDetectorRef: ChangeDetectorRef,
@@ -719,7 +730,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
             let focused = true;
             if (!origin && !this._opened &&
               !(this._elementRef.nativeElement.contains(document.activeElement)
-                || this.formField._elementRef.nativeElement.contains(document.activeElement))) {
+                || this.formField?._elementRef.nativeElement.contains(document.activeElement))) {
               focused = false;
             }
 
@@ -738,10 +749,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
 
   }
 
-  ngAfterViewInit(): void {
-
-    // initialize search input element event listeners
-    if (this.searchInput) {
+  ngAfterViewChecked() {
+    // if found, initialize search input
+    if (this.searchInput && !this.searchInput.isInitialized) {
 
       fromEvent<string | KeyboardEvent>(this.searchInput!.nativeElement, 'input').pipe(
         map(_ => this.searchInput!.getValue().trim()),
@@ -760,8 +770,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewIn
         takeUntil(this._destroyed)
       ).subscribe();
 
-      this._elementRef.nativeElement.tabIndex = -1;
-
+      this.searchInput.isInitialized = true;
     }
   }
 
