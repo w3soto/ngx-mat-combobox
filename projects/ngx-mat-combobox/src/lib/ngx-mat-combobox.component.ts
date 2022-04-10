@@ -520,10 +520,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   private _dropdownMaxHeight?: number;
 
   @Input()
-  set dropdownClass(val: string) {
-    this._dropdownClass = val;
-  }
-  private _dropdownClass?: string;
+  dropdownClass?: string;
 
   @Input()
   set dropdownOffsetX(val: NumberInput) {
@@ -580,22 +577,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   /**
    * Selected/displayed options
    */
-  get selectedOptions(): Observable<any[]> {
+  get selectedOptions(): BehaviorSubject<any[]> {
     return this._selectedOptionsModel;
-  }
-  get selectedOptionsCount(): number {
-    return this._selectedOptionsModel.value.length;
   }
   private _selectedOptionsModel: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
   /**
    * Filtered/dropdown options
    */
-  get filteredOptions(): Observable<any[]> {
-    return this._filteredOptionsModel.asObservable();
-  }
-  get filteredOptionsCount(): number {
-    return this._filteredOptionsModel.value.length;
+  get filteredOptions(): BehaviorSubject<any[]> {
+    return this._filteredOptionsModel;
   }
   private _filteredOptionsModel: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
@@ -613,48 +604,74 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   private _customSearchInput?: NgxMatComboboxInputDirective;
 
   /**
-   * Custom option template
+   * Custom display/selection block template
    */
   @ContentChild(NgxMatComboboxDisplayDirective, {read: TemplateRef})
-  readonly customDisplayTpl?: TemplateRef<any>;
+  readonly _customDisplayTpl?: TemplateRef<any>;
 
   /**
-   * Custom option template
+   * Custom dropdown's option template
    */
   @ContentChild(NgxMatComboboxOptionDirective, {read: TemplateRef})
-  readonly customOptionTpl?: TemplateRef<any>;
+  readonly _customOptionTpl?: TemplateRef<any>;
 
-  @ViewChild('dropdownTpl', {static: true})
-  private _dropdownTpl!: TemplateRef<any>;
+  /**
+   * Custom dropdown's header template
+   */
+  @ContentChild(NgxMatComboboxHeaderDirective, {read: TemplateRef})
+  readonly _customDropdownHeaderTpl?: TemplateRef<any>;
 
-  @ViewChild('dropdown')
-  private _dropdown?: ElementRef;
+  /**
+   * Custom dropdown's footer template
+   */
+  @ContentChild(NgxMatComboboxFooterDirective, {read: TemplateRef})
+  readonly _customDropdownFooterTpl?: TemplateRef<any>;
 
+  /**
+   * Dropdown HTMLElement reference
+   */
   get dropdown(): ElementRef | undefined {
     return this._dropdown;
   }
 
-  @ViewChild('dropdownBody')
-  private _dropdownBody?: ElementRef;
+  @ViewChild('dropdown')
+  private _dropdown?: ElementRef;
 
-  get dropdownBody(): ElementRef | undefined {
-    return this._dropdownBody;
-  }
-
+  /**
+   * Rendered dropdown's options list
+   */
   @ViewChildren(NgxMatComboboxOption)
   readonly dropdownOptions: QueryList<NgxMatComboboxOption> = new QueryList<NgxMatComboboxOption>();
 
+  /**
+   * Dropdown's overlay
+   */
   get dropdownOverlay(): OverlayRef | undefined {
     return this._dropdownOverlay;
   }
   private _dropdownOverlay?: OverlayRef;
 
+  /**
+   * Dropdown's key manager
+   */
   get dropdownKeyManager(): ActiveDescendantKeyManager<NgxMatComboboxOption> | undefined {
     return this._dropdownKeyManager;
   }
   private _dropdownKeyManager?: ActiveDescendantKeyManager<NgxMatComboboxOption>;
 
+  /**
+   * Dropdown's focus trap manager
+   */
+  get dropdownFocusTrap() : ConfigurableFocusTrap | undefined {
+    return this._dropdownFocusTrap;
+  }
   private _dropdownFocusTrap?: ConfigurableFocusTrap;
+
+  @ViewChild('dropdownTpl', {static: true})
+  private _dropdownTpl!: TemplateRef<any>;
+
+  @ViewChild('dropdownBody')
+  private _dropdownBody?: ElementRef;
 
   private _dropdownOverlayDestroyed?: Subject<void>;
 
@@ -675,7 +692,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     @Optional() @Inject(NGX_MAT_COMBOBOX_DEFAULT_OPTIONS) private _defaults: NgxMatComboboxDefaultOptions,
     @Attribute('tabindex') tabIndex: string,
     @Optional() @Self() public ngControl: NgControl,
-    @Optional() @Inject(MAT_FORM_FIELD) public formField: MatFormField,
+    @Optional() @Inject(MAT_FORM_FIELD) public formField?: MatFormField,
   ) {
 
     if (this.ngControl != null) {
@@ -980,8 +997,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     // single selection
     if (!this.multiple) {
       this.closeDropdown();
-      this.focus();
     }
+    this.focus();
   }
 
   /**
@@ -1312,56 +1329,62 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   // Dropdown
   //
 
-  private _createDropdown() {
-    const positionStrategy = this._overlay.position()
-      .flexibleConnectedTo(this.formField.getConnectedOverlayOrigin())
+  private _createOverlayPositionStrategy() {
+    const origin: ElementRef = this.formField?.getConnectedOverlayOrigin() || this._elementRef;
+    const strategy = this._overlay.position()
+      .flexibleConnectedTo(origin)
       .withPositions([
         // bottom position
         {
           originX: "start",
           originY: "bottom",
           overlayX: "start",
-          overlayY: "top",
-          offsetX: this._dropdownOffsetX,
-          offsetY: this._dropdownOffsetY
+          overlayY: "top"
         },
         // top position
         {
           originX: "start",
           originY: "top",
           overlayX: "start",
-          overlayY: "bottom",
-          offsetX: this._dropdownOffsetX,
-          offsetY: this._dropdownOffsetY ? (-1 * this._dropdownOffsetY) : undefined
+          overlayY: "bottom"
         }
       ]);
+    if (this._dropdownOffsetX) {
+      strategy.withDefaultOffsetX(this._dropdownOffsetX);
+    }
+    if (this._dropdownOffsetY) {
+      strategy.withDefaultOffsetY(this._dropdownOffsetY);
+    }
+    return strategy;
+  }
 
+  private _createDropdown() {
+    const positionStrategy = this._createOverlayPositionStrategy();
     const scrollStrategy = this._overlay.scrollStrategies.reposition();
-
     const config: OverlayConfig = {
       positionStrategy: positionStrategy,
       scrollStrategy: scrollStrategy,
-      panelClass: this._dropdownClass,
+      panelClass: this.dropdownClass,
       minHeight: this._dropdownMinHeight,
       maxHeight: this._dropdownMaxHeight
     };
 
+    // render
     this._dropdownOverlay = this._overlay.create(config);
+    this._dropdownOverlay.attach(new TemplatePortal(this._dropdownTpl, this._viewContainerRef));
+    this._changeDetectorRef.detectChanges();
 
     this._dropdownOverlayDestroyed = new Subject<void>();
 
-    this._dropdownOverlay.attach(new TemplatePortal(this._dropdownTpl, this._viewContainerRef));
+    // trap focus
+    this._dropdownFocusTrap = this._focusTrapFactory.create(this._dropdown!.nativeElement);
+    if (this._dropdownTrapFocus) {
+      this._dropdownFocusTrap._enable();
+    }
+    this._dropdownFocusTrap.focusInitialElement();
 
-    this._changeDetectorRef.detectChanges();
-
-    this._dropdownOverlay.keydownEvents().pipe(
-      tap((e: KeyboardEvent) => this.onDropdownKeydown(e)),
-      takeUntil(this._dropdownOverlayDestroyed)
-    ).subscribe();
-
-    this._dropdownKeyManager = new ActiveDescendantKeyManager<NgxMatComboboxOption>(this.dropdownOptions)
-      .withWrap();
-
+    // key manager
+    this._dropdownKeyManager = new ActiveDescendantKeyManager<NgxMatComboboxOption>(this.dropdownOptions).withWrap();
     if (!this.autocomplete) {
       this._dropdownKeyManager.withTypeAhead();
     }
@@ -1371,13 +1394,14 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       takeUntil(this._dropdownOverlayDestroyed)
     ).subscribe();
 
-    // trap focus
-    if (this._dropdownTrapFocus) {
-      this._dropdownFocusTrap = this._focusTrapFactory.create(this._dropdown!.nativeElement);
-      this._dropdownFocusTrap.focusFirstTabbableElement();
-    }
-
+    // activate first option (must be called after KeyManager is initialized
     this._activateDropdownOption();
+
+    // key events
+    this._dropdownOverlay.keydownEvents().pipe(
+      tap((e: KeyboardEvent) => this.onDropdownKeydown(e)),
+      takeUntil(this._dropdownOverlayDestroyed)
+    ).subscribe();
 
     this._ngZone.runOutsideAngular(() => {
 
@@ -1389,10 +1413,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
       // handle overlay resize
       new Observable(subscriber => {
-        const ro = new ResizeObserver(entries => {
-          subscriber.next(entries);
-        });
-        ro.observe(this._elementRef.nativeElement);
+        const ro = new ResizeObserver(entries => subscriber.next(entries));
+        ro.observe(this._elementRef.nativeElement as HTMLElement);
         return () => {
           ro.unobserve(this._viewContainerRef.element.nativeElement as HTMLElement);
           ro.disconnect();
@@ -1404,6 +1426,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
     });
 
+    // emit changes
     this._ngZone.onStable.pipe(
       delay(1),
       tap(() => this.openedChange.next(true)),
@@ -1424,16 +1447,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       this._dropdownKeyManager?.setFirstItemActive();
       index = this._dropdownKeyManager?.activeItemIndex || -1;
     }
-    this.scrollToOption(index);
+
+    this._ngZone.onStable.pipe(
+      tap(() => this.scrollToOption(index)),
+      first()
+    ).subscribe();
   }
 
   private _updateDropdownLayout(reattach?: boolean) {
-    if (reattach) {
-      this._dropdownOverlay?.detach();
-      this._dropdownOverlay?.attach(new TemplatePortal(this._dropdownTpl, this._viewContainerRef));
-      this._changeDetectorRef.detectChanges();
-    }
-    this._dropdownOverlay?.updateSize({minWidth: this.formField._elementRef.nativeElement.offsetWidth});
+    const originElement: HTMLElement = this.formField?._elementRef.nativeElement || this._elementRef.nativeElement;
+    this._dropdownOverlay?.updateSize({minWidth: originElement.offsetWidth});
     this._dropdownOverlay?.updatePosition();
   }
 
@@ -1445,17 +1468,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
     this._ngZone.onStable.pipe(
       delay(1),
-      tap(() => this.openedChange.next(false)),
+      tap(() => {
+        this.focus();
+        this.openedChange.next(false)
+      }),
       first()
     ).subscribe();
   }
 
-  _trackFilteredOptionBy(index: number, option: any) {
-    return 'filtered-' + this._readOption(option, this.optionTrackBy || this.optionValue || this.optionLabel);
-  }
-
-  _trackSelectedOptionBy(index: number, option: any) {
-    return 'selected-' + this._readOption(option, this.optionTrackBy || this.optionValue || this.optionLabel);
+  trackOptionFn: TrackByFunction<any> = (index: number, option: any) => {
+    return 'ngx-combobox-option-' + this._readOption(option, this.optionTrackBy || this.optionValue || this.optionLabel);
   }
 
 }

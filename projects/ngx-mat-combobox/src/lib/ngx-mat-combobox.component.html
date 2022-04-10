@@ -6,67 +6,77 @@
       class="ngx-mat-combobox-placeholder">{{ placeholder }}
     </div>
 
-    <mat-chip-list
-      *ngIf="useChips"
-      [tabIndex]="-1">
-      <mat-chip
-        *ngFor="let o of selectedOptions | async; trackBy: _trackSelectedOptionBy.bind(this)"
-        [disableRipple]="disableRipple"
-        [selectable]="false"
-        [selected]="chipColor"
-        [color]="chipColor"
-        (removed)="deselectOption(o);">
-        {{ readOptionDisplay(o) }}
-        <button
-          matChipRemove
-          (click)="$event.stopPropagation(); focus();"
-          (focus)="onFocus($event)"
-          (blur)="onBlur($event)">
-          <mat-icon>cancel</mat-icon>
-        </button>
-<!--        <mat-icon matChipRemove (focus)="onFocus($event)" (blur)="onBlur($event)">cancel</mat-icon>-->
-      </mat-chip>
-      <input
-        *ngIf="autocomplete"
-        ngxMatComboboxInput
-        type="text"
-        [tabindex]="tabIndex"
-        [placeholder]="placeholder"
-        [readonly]="readonly">
-    </mat-chip-list>
+    <ng-content select="ng-template[ngxMaxComboboxDisplay]"></ng-content>
 
-    <div
-      *ngIf="!useChips"
-      class="ngx-mat-combobox-values"
-      [class.ngx-mat-combobox-values-nowrap]="noWrap">
+    <ng-template #defaultDisplayTpl>
+      <mat-chip-list
+        *ngIf="useChips"
+        style="flex: 1"
+        [tabIndex]="-1">
+        <mat-chip
+          *ngFor="let o of selectedOptions | async; trackBy: trackOptionFn"
+          [disableRipple]="disableRipple"
+          [selectable]="false"
+          [selected]="chipColor"
+          [color]="chipColor"
+          (removed)="deselectOption(o);">
+          {{ readOptionDisplay(o) }}
+          <button
+            matChipRemove
+            ngxMatComboboxOptionRemove
+            (click)="$event.stopPropagation(); focus();"
+            (focus)="onFocus($event)"
+            (blur)="onBlur($event)">
+            <mat-icon>cancel</mat-icon>
+          </button>
+  <!--        <mat-icon matChipRemove (focus)="onFocus($event)" (blur)="onBlur($event)">cancel</mat-icon>-->
+        </mat-chip>
+        <input
+          *ngIf="autocomplete"
+          ngxMatComboboxInput
+          type="text"
+          [tabindex]="tabIndex"
+          [placeholder]="placeholder"
+          [readonly]="readonly">
+      </mat-chip-list>
 
-      <ng-container *ngIf="multiple || !autocomplete">
-        <div
-          *ngIf="noWrap && !empty"
-          class="ngx-mat-combobox-value-item">
-          <ng-container
-            *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: _trackSelectedOptionBy.bind(this)">
-            {{ readOptionDisplay(o) }}<ng-container *ngIf="!l">, </ng-container>
-          </ng-container>
-        </div>
-        <ng-container *ngIf="!noWrap">
-          <span
-            *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: _trackSelectedOptionBy.bind(this)"
+      <div
+        *ngIf="!useChips"
+        class="ngx-mat-combobox-values"
+        [class.ngx-mat-combobox-values-nowrap]="noWrap">
+
+        <ng-container *ngIf="multiple || !autocomplete">
+          <div
+            *ngIf="noWrap && !empty"
             class="ngx-mat-combobox-value-item">
-            {{ readOptionDisplay(o) }}<ng-container *ngIf="!l">, </ng-container>
-          </span>
+            <ng-container
+              *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: trackOptionFn">
+              {{ readOptionDisplay(o) }}<ng-container *ngIf="!l">, </ng-container>
+            </ng-container>
+          </div>
+          <ng-container *ngIf="!noWrap">
+            <span
+              *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: trackOptionFn"
+              class="ngx-mat-combobox-value-item">
+              {{ readOptionDisplay(o) }}<ng-container *ngIf="!l">, </ng-container>
+            </span>
+          </ng-container>
         </ng-container>
-      </ng-container>
 
-      <input
-        *ngIf="autocomplete"
-        ngxMatComboboxInput
-        [tabindex]="tabIndex"
-        type="text"
-        [placeholder]="placeholder"
-        [disabled]="disabled"
-        [readonly]="readonly">
-    </div>
+        <input
+          *ngIf="autocomplete"
+          ngxMatComboboxInput
+            [tabindex]="tabIndex"
+          type="text"
+          [placeholder]="placeholder"
+          [disabled]="disabled"
+          [readonly]="readonly">
+      </div>
+    </ng-template>
+
+    <ng-container
+      [ngTemplateOutlet]="_customDisplayTpl ? _customDisplayTpl : defaultDisplayTpl"
+      [ngTemplateOutletContext]="{$implicit: this, combo: this, selection: selectedOptions}"></ng-container>
 
   </div>
 
@@ -88,16 +98,22 @@
   <ng-template #dropdownTpl>
     <div
       #dropdown
-      class="ngx-mat-combobox-dropdown">
+      class="ngx-mat-combobox-dropdown"
+      [class]="dropdownClass">
 
-      <ng-content select="[ngxMatComboboxHeader],[ngx-mat-combobox-header]"></ng-content>
+      <ng-content select="ng-template[ngxMatComboboxHeader],ng-template[ngx-mat-combobox-header]"></ng-content>
+      <ng-container
+        *ngIf="_customDropdownHeaderTpl"
+        [ngTemplateOutlet]="_customDropdownHeaderTpl"
+        [ngTemplateOutletContext]="{$implicit: this}"></ng-container>
 
       <div #dropdownBody class="ngx-mat-combobox-dropdown-body">
 
         <ngx-mat-combobox-option
           matRipple
           [matRippleDisabled]="disableRipple"
-          *ngFor="let o of filteredOptions | async; trackBy: _trackFilteredOptionBy.bind(this)"
+          class="mat-primary"
+          *ngFor="let o of filteredOptions | async; trackBy: trackOptionFn"
           [selected]="isSelected(o)"
           (click)="onDropdownOptionClick(o)">
 
@@ -106,30 +122,33 @@
           <ng-template #defaultOptionTpl let-option>
             <mat-pseudo-checkbox
               *ngIf="multiple"
+              class="ngx-mat-combobox-option-checkbox"
               [state]="isSelected(option) ? 'checked' : 'unchecked'"></mat-pseudo-checkbox>
-            {{ readOptionLabel(option) }}
+            <span class="ngx-mat-combobox-option-text">{{ readOptionLabel(option) }}</span>
           </ng-template>
 
           <ng-container
-            [ngTemplateOutlet]="customOptionTpl ? customOptionTpl : defaultOptionTpl"
+            [ngTemplateOutlet]="_customOptionTpl ? _customOptionTpl : defaultOptionTpl"
             [ngTemplateOutletContext]="{option: o, $implicit: o}"
           ></ng-container>
 
         </ngx-mat-combobox-option>
 
         <div
-          #dropdownNoOption
-          *ngIf="!loading && filteredOptionsCount == 0"
+          *ngIf="!loading && filteredOptions.value.length == 0"
           class="ngx-mat-combobox-dropdown-no-option">{{ noOptionText }}</div>
 
       </div>
 
-      <ng-content select="[ngxMatComboboxFooter],[ngx-mat-combobox-footer]"></ng-content>
+      <ng-content select="ng-template[ngxMatComboboxFooter],ng-template[ngx-mat-combobox-footer]"></ng-content>
+      <ng-container
+        *ngIf="_customDropdownFooterTpl"
+        [ngTemplateOutlet]="_customDropdownFooterTpl"
+        [ngTemplateOutletContext]="{$implicit: this}"></ng-container>
 
       <div
-        #drodpwnOverlay
         *ngIf="loading"
-        class="ngx-mat-combobox-dropdown-overlay"></div>
+        class="ngx-mat-combobox-dropdown-loading"></div>
 
     </div>
   </ng-template>

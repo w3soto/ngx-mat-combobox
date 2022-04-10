@@ -1,7 +1,9 @@
 
 .ngx-mat-combobox-option {
 
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 0 16px;
   line-height: 3em;
   height: 3em;
