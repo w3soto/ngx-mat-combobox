@@ -54,9 +54,7 @@ import {
   NgxMatComboboxDataSource, NgxMatComboboxDefaultOptions
 } from "./ngx-mat-combobox.model";
 import { NgxMatComboboxOption } from "./ngx-mat-combobox-option.component";
-import { MatChipList } from "@angular/material/chips";
-import { delay, filter, finalize, isEmpty, map, skip, startWith } from "rxjs/operators";
-import { MatInput } from "@angular/material/input";
+import { delay, finalize, map, skip  } from "rxjs/operators";
 
 
 @Directive({
@@ -111,62 +109,6 @@ export class NgxMatComboboxInputDirective implements AfterViewInit, OnDestroy{
 
   hasValue(): boolean {
     return this.getValue().trim() != '';
-  }
-
-}
-
-@Directive({
-  selector: '[ngxMatComboboxOptionRemove]',
-  host: {
-    'class': 'ngx-mat-combobox-option-remove'
-  }
-})
-export class NgxMatComboboxOptionRemoveDirective implements OnDestroy, AfterViewInit{
-
-  @Input('ngxMatComboboxOptionRemove')
-  set option(option: any) {
-    this._option = option;
-  }
-  private _option?: any;
-
-  private _destroyed: Subject<void> = new Subject<void>();
-
-  constructor(
-    public _elementRef: ElementRef,
-    public _combo: NgxMatCombobox,
-    private _ngZone: NgZone
-  ) {}
-
-  ngAfterViewInit(): void {
-
-    fromEvent<any>(this._elementRef.nativeElement, 'click', {capture: true}).pipe(
-      tap(e => {
-        e.preventDefault();
-        if (this._option) {
-          this._combo.deselectOption(this._option);
-        }
-        this._ngZone.runTask(() => {
-          this._combo.focus()
-        });
-      }),
-      takeUntil(this._destroyed)
-    ).subscribe();
-
-    fromEvent<MouseEvent>(this._elementRef.nativeElement, 'focus').pipe(
-      tap(e => this._combo.onFocus(e)),
-      takeUntil(this._destroyed)
-    ).subscribe();
-
-    fromEvent<MouseEvent>(this._elementRef.nativeElement, 'blur').pipe(
-      tap(e => this._combo.onBlur(e)),
-      takeUntil(this._destroyed)
-    ).subscribe();
-
-  }
-
-  ngOnDestroy(): void {
-    this._destroyed.next();
-    this._destroyed.complete();
   }
 
 }

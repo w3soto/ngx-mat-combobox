@@ -1,23 +1,27 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from "@angular/common";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+
+import { OverlayModule } from "@angular/cdk/overlay";
+import { A11yModule } from "@angular/cdk/a11y";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatIconModule } from "@angular/material/icon";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatPseudoCheckboxModule, MatRippleModule } from "@angular/material/core";
+
+
 import {
   NgxMatCombobox,
   NgxMatComboboxDisplayDirective,
   NgxMatComboboxFooterDirective,
   NgxMatComboboxHeaderDirective,
   NgxMatComboboxInputDirective,
-  NgxMatComboboxOptionDirective, NgxMatComboboxOptionRemoveDirective,
+  NgxMatComboboxOptionDirective,
 } from './ngx-mat-combobox.component';
 import { NgxMatComboboxOption } from "./ngx-mat-combobox-option.component";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatIconModule } from "@angular/material/icon";
-import { MatChipsModule } from "@angular/material/chips";
-import { OverlayModule } from "@angular/cdk/overlay";
-import { CommonModule } from "@angular/common";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatPseudoCheckboxModule, MatRippleModule } from "@angular/material/core";
-import { A11yModule } from "@angular/cdk/a11y";
+import { NgxMatComboboxOptionRemoveDirective } from "./ngx-mat-combobox-option-remove.directive";
 
 
 @NgModule({
