@@ -1,9 +1,9 @@
 import {
-  AfterViewChecked,
+  AfterContentInit,
   AfterViewInit, Attribute,
   ChangeDetectorRef,
   Component,
-  ContentChild,
+  ContentChild, ContentChildren,
   Directive,
   ElementRef, EventEmitter, HostBinding,
   Inject,
@@ -36,9 +36,7 @@ import { TemplatePortal } from "@angular/cdk/portal";
 import {
   BehaviorSubject,
   debounceTime,
-  distinctUntilChanged,
   first,
-  fromEvent,
   Observable,
   Subject,
   Subscription,
@@ -63,35 +61,29 @@ const LOG_TAG = '[NgxMatCombobox]';
 @Directive({
   selector: 'input[ngxMatComboboxInput]',
   host: {
-    'class': 'ngx-mat-combobox-input mat-input-element'
+    'class': 'ngx-mat-combobox-input mat-input-element',
+    '(input)': '_handleChanges($event)'
   }
 })
-export class NgxMatComboboxInputDirective implements AfterViewInit, OnDestroy{
+export class NgxMatComboboxInputDirective implements OnDestroy{
 
   get nativeElement(): HTMLInputElement {
     return this._elementRef.nativeElement;
   }
 
-  isInitialized: boolean = false;
+  @Output()
+  readonly valueChanges: EventEmitter<string> = new EventEmitter<string>();
+
+  _initialized: boolean = false;
 
   constructor(
-    public _elementRef: ElementRef<HTMLInputElement>,
-    public _combo: NgxMatCombobox
+    public _elementRef: ElementRef<HTMLInputElement>
   ) {
   }
 
-  ngAfterViewInit(): void {
-    // take focus from combobox element
-    this._combo._elementRef.nativeElement.tabIndex = -1;
-    this._elementRef.nativeElement.tabIndex = this._combo.tabIndex;
-
-    // initialize listeners
-    // TODO
-  }
-
   ngOnDestroy(): void {
-    // renew focus
-    this._combo._elementRef.nativeElement.tabIndex = this._combo.tabIndex;
+    //console.log('DESTROYING INPUT');
+    this.valueChanges.complete();
   }
 
   focus() {
@@ -112,6 +104,10 @@ export class NgxMatComboboxInputDirective implements AfterViewInit, OnDestroy{
 
   hasValue(): boolean {
     return this.getValue().trim() != '';
+  }
+
+  _handleChanges(event: InputEvent) {
+    this.valueChanges.emit(this._elementRef.nativeElement.value);
   }
 
 }
@@ -165,7 +161,7 @@ export class NgxMatComboboxFooterDirective {
   }],
   exportAs: 'ngxMatCombobox'
 })
-export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewChecked,
+export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterContentInit,
   ControlValueAccessor, MatFormFieldControl<any> {
 
   //
@@ -604,15 +600,23 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   /**
    * Search/autocomplete input reference
    */
-  get searchInput(): NgxMatComboboxInputDirective | undefined {
-    return this._customSearchInput || this._searchInput;
+  @ViewChild(NgxMatComboboxInputDirective)
+  set _viewSearchInput(val: NgxMatComboboxInputDirective) {
+    this._searchInput = val;
+    this._initializeSearchInput();
   }
 
-  @ViewChild(NgxMatComboboxInputDirective)
+  @ContentChild(NgxMatComboboxInputDirective)
+  set _contentSearchInput(val: NgxMatComboboxInputDirective) {
+    this._searchInput = val;
+    this._initializeSearchInput();
+  }
+
+  get searchInput(): NgxMatComboboxInputDirective | undefined {
+    return this._searchInput;
+  }
   private _searchInput?: NgxMatComboboxInputDirective;
 
-  @ContentChild(NgxMatComboboxInputDirective)
-  private _customSearchInput?: NgxMatComboboxInputDirective;
 
   /**
    * Custom display/selection block template
@@ -770,29 +774,19 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
   }
 
-  ngAfterViewChecked() {
-    // if found, initialize search input
-    if (this.searchInput && !this.searchInput.isInitialized) {
+  _initializeSearchInput() {
 
-      fromEvent<string | KeyboardEvent>(this.searchInput!.nativeElement, 'input').pipe(
-        map(_ => this.searchInput!.getValue().trim()),
+    if (this.searchInput && !this.searchInput._initialized) {
+      this.searchInput.valueChanges.pipe(
+        map(val => val || ''),
         debounceTime(400),
         tap((query: string) => this._onSearchInputQuery(query)),
         takeUntil(this._destroyed)
       ).subscribe();
-
-      fromEvent<Event>(this.searchInput!.nativeElement, 'focus').pipe(
-        tap((e: Event) => this.onFocus(e)),
-        takeUntil(this._destroyed)
-      ).subscribe();
-
-      fromEvent<Event>(this.searchInput!.nativeElement, 'blur').pipe(
-        tap((e: Event) => this.onBlur(e)),
-        takeUntil(this._destroyed)
-      ).subscribe();
-
-      this.searchInput.isInitialized = true;
+      this.searchInput._initialized = true;
     }
+
+    this._elementRef.nativeElement.tabIndex = this.searchInput ? -1 : this.tabIndex;
   }
 
   ngOnDestroy(): void {
