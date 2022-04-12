@@ -109,7 +109,7 @@
           [matRippleDisabled]="disableRipple"
           class="mat-primary"
           *ngFor="let o of filteredOptions | async; trackBy: trackOptionFn"
-          [selected]="isSelected(o)"
+          [selected]="isOptionSelected(o)"
           (click)="onDropdownOptionClick(o)">
 
           <ng-content select="ng-template[ngxMatComboboxOption]"></ng-content>
@@ -118,7 +118,7 @@
             <mat-pseudo-checkbox
               *ngIf="multiple"
               class="ngx-mat-combobox-option-checkbox"
-              [state]="isSelected(option) ? 'checked' : 'unchecked'"></mat-pseudo-checkbox>
+              [state]="isOptionSelected(option) ? 'checked' : 'unchecked'"></mat-pseudo-checkbox>
             <span class="ngx-mat-combobox-option-text">{{ readOptionLabel(option) }}</span>
           </ng-template>
 

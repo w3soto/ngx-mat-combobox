@@ -1087,8 +1087,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     this._valueModel.next([]);
   }
 
-  isSelected(option: any): boolean {
-    return this._valueModel.value.indexOf(this.readOptionValue(option)) > -1;
+  isOptionSelected(option: any): boolean {
+    //console.log(this._valueModel.value);
+    return this._selectedOptionsModel.value.includes(option);
+    //return this._valueModel.value.includes(this._useValue ? this.readOptionValue(option) : option);
   }
 
   getSelectedOptionIndex(option: any): number {
