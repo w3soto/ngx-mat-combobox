@@ -995,8 +995,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     const el = e.target as HTMLElement;
     const hostEl = this._elementRef.nativeElement;
     const formFieldEl = this.formField?._elementRef.nativeElement;
+    const dropdownEl = this._dropdown?.nativeElement;
 
-    const isInside = formFieldEl?.contains(el) || hostEl.contains(el);
+    const isInside = hostEl.contains(el) || formFieldEl?.contains(el) || dropdownEl?.contains(el);
 
     if (!isInside) {
       this.closeDropdown();
@@ -1438,8 +1439,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       takeUntil(this._dropdownOverlayDestroyed)
     ).subscribe();
 
-    // handle outside click
-    this._dropdownOverlay._outsidePointerEvents.pipe(
+    // handle outside click, note that outsidePointerEvents() works with body element (why?)
+    this._dropdownOverlay.outsidePointerEvents().pipe(
       tap((e: MouseEvent) => this.onOutsideClick(e)),
       takeUntil(this._dropdownOverlayDestroyed)
     ).subscribe();
