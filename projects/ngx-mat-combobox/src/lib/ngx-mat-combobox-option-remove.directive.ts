@@ -1,6 +1,7 @@
 import { AfterViewInit, Directive, ElementRef, Input, NgZone, OnDestroy } from '@angular/core';
 import { NgxMatCombobox } from "./ngx-mat-combobox.component";
 import { fromEvent, Subject, takeUntil, tap } from "rxjs";
+import { first } from "rxjs/operators";
 
 @Directive({
   selector: '[ngxMatComboboxOptionRemove]',
@@ -26,12 +27,17 @@ export class NgxMatComboboxOptionRemoveDirective implements OnDestroy, AfterView
 
   ngAfterViewInit(): void {
 
+    // TODO - process in combobox !!!
+    // emit events via @Output() and handle inside combobox component
+    // using @ContentChildren + @ViewChildren
+
     fromEvent<any>(this._elementRef.nativeElement, 'click', {capture: true}).pipe(
       tap(e => {
         e.stopPropagation();
         e.preventDefault();
         if (this._option) {
           this._combo.deselectOption(this._option);
+          this._ngZone.onStable.pipe(first()).subscribe(() => this._combo.alignDropdown());
         }
         this._ngZone.runTask(() => {
           this._combo.focus()

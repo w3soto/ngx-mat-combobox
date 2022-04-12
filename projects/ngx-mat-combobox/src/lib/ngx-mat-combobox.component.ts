@@ -247,6 +247,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     else if (this.multiple && this.maxValues > 0) {
       value.splice(this.maxValues, value.length - this.maxValues);
     }
+    // parse
+    if (this._useValue) {
+      value = (value as Array<any>).map(o => this.readOptionValue(o));
+    }
     // !!! update only on changes !!!
     if (JSON.stringify(value) != JSON.stringify(this._valueModel.value)) {
       this._valueModel.next([...value]);
@@ -350,6 +354,12 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
    */
   @Input()
   optionTrackBy?: string | Function;
+
+  @Input()
+  set useValue(val: BooleanInput) {
+    this._useValue = coerceBooleanProperty(val);
+  }
+  private _useValue: boolean = false;
 
   @Input()
   set autoExpand(val: BooleanInput) {
@@ -829,20 +839,17 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   onLeave() {
     console.log('onLeave');
 
-    // this.searchInput?.setValue('');
+    this.searchInput?.setValue('');
     // this._searchQuery = '';
     // this._lastSearchQuery = null;
     // this._loaded = false;
-    // this._dataSourceLoadSub?.unsubscribe();
-    // this._dataSourceAutocompleteSub?.unsubscribe();
+    this._dataSourceLoadSub?.unsubscribe();
+    this._dataSourceAutocompleteSub?.unsubscribe();
     //
     // //this._stateChanges.next();
     // if (!this.disabled) {
     //   this._onTouched();
     // }
-
-    //this._stateChanges.next();
-    //this._elementRef.nativeElement.tabIndex = this.tabIndex;
   }
 
   onFocus(e: Event) {
@@ -951,7 +958,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       else {
         this._ngZone.onStable.pipe(first()).subscribe(() => {
           this.focus();
-          this._updateDropdownLayout();
+          this.alignDropdown();
         });
       }
 
@@ -983,7 +990,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
     this._ngZone.onStable.pipe(first()).subscribe(() => {
       this._focusLastActiveElement();
-      this._updateDropdownLayout()
+      this.alignDropdown()
     });
   }
 
@@ -1043,27 +1050,19 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
   }
 
   selectOption(option: any) {
-    this.selectValue(this.readOptionValue(option));
-  }
-
-  deselectOption(option: any) {
-    this.deselectValue(this.readOptionValue(option));
-  }
-
-  toggleOption(option: any) {
-    this.toggleValue(this.readOptionValue(option));
-  }
-
-  selectValue(value: any) {
+    const value = this._useValue ? this.readOptionValue(option) : option;
     if (this.multiple) {
-      this._valueModel.next([...this._valueModel.value, value]);
+      if (this._maxValues > 0 && this._valueModel.value.length < this._maxValues) {
+        this._valueModel.next([...this._valueModel.value, value]);
+      }
     }
     else {
       this._valueModel.next([value]);
     }
   }
 
-  deselectValue(value: any) {
+  deselectOption(option: any) {
+    const value = this._useValue ? this.readOptionValue(option) : option;
     const values = this._valueModel.value;
     const index = values.indexOf(value);
     if (index > -1) {
@@ -1072,7 +1071,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     }
   }
 
-  toggleValue(value: any) {
+  toggleOption(option: any) {
+    const value = this._useValue ? this.readOptionValue(option) : option;
     const values = this._valueModel.value;
     const index = values.indexOf(value);
     if (index > -1) {
@@ -1193,50 +1193,69 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
 
   private _updateSelectedOptionsModel() {
     if (this._dataSource) {
-
-      // check if we have all options available
-      // calculate missing options
-      const requiredValues = this._valueModel.value;
-      const missingValues: any[] = [];
-
-      const availableOptions = Array.from(
-        new Set([...this._selectedOptionsModel.value, ...this._filteredOptionsModel.value])
-      );
-      const requiredOptions: any[] = [];
-
-      requiredValues.forEach(val => {
-        let options = availableOptions.filter(o => this.readOptionValue(o) == val);
-        if (options.length) {
-          requiredOptions.push(options[0]);
-        }
-        else {
-          missingValues.push(val);
-        }
-      });
-
-      // load missing options
-      this._dataSourceLoadSub?.unsubscribe();
-      if (missingValues.length) {
+      const values = this._valueModel.value;
+      if (this._useValue) {
         this._loading++;
-        this._dataSourceLoadSub = this._dataSource.loadByValue(missingValues).pipe(
-          tap((missingOptions: any[]) => {
-            // sort by required values
-            const options = [...requiredOptions, ...missingOptions];
-            const optionsSorted: any[] = [];
-            requiredValues.forEach(val => {
-              let idx = options.findIndex(o => this.readOptionValue(o) == val);
-              optionsSorted.push(options[idx]);
-            });
-            this._selectedOptionsModel.next(optionsSorted);
-          }),
+        this._dataSourceLoadSub = this._dataSource.loadByValue(values).pipe(
+          tap((options: any[]) => this._selectedOptionsModel.next(options)),
           first(),
           finalize(() => this._loading--)
         ).subscribe();
       }
-      // update selection
       else {
-        this._selectedOptionsModel.next([...requiredOptions]);
+        this._selectedOptionsModel.next([...values]);
       }
+
+      // // check if we have all options available
+      // // calculate missing options
+      // const requiredValues = this._valueModel.value;
+      // const missingValues: any[] = [];
+      //
+      // const availableOptions = Array.from(
+      //   new Set([...this._selectedOptionsModel.value, ...this._filteredOptionsModel.value])
+      // );
+      // const requiredOptions: any[] = [];
+      //
+      // requiredValues.forEach(val => {
+      //   let options = availableOptions.filter(o => {
+      //     if (this._useValue) {
+      //       return this.readOptionValue(o) == val;
+      //     }
+      //     return o == val
+      //   });
+      //   if (options.length) {
+      //     requiredOptions.push(options[0]);
+      //   }
+      //   else {
+      //     missingValues.push(val);
+      //   }
+      // });
+      //
+      // // load missing options
+      // this._dataSourceLoadSub?.unsubscribe();
+      // if (missingValues.length) {
+      //   this._loading++;
+      //   this._dataSourceLoadSub = this._dataSource.loadByValue(missingValues).pipe(
+      //     tap((missingOptions: any[]) => {
+      //       // sort by required values
+      //       console.log('r + m', requiredValues, requiredOptions, missingOptions)
+      //       const options = [...requiredOptions, ...missingOptions];
+      //       const optionsSorted: any[] = [];
+      //       requiredValues.forEach(val => {
+      //         let idx = options.findIndex(o => this.readOptionValue(o) == val);
+      //         optionsSorted.push(options[idx]);
+      //       });
+      //       console.log('sorted', optionsSorted);
+      //       this._selectedOptionsModel.next(optionsSorted);
+      //     }),
+      //     first(),
+      //     finalize(() => this._loading--)
+      //   ).subscribe();
+      // }
+      // // update selection
+      // else {
+      //   this._selectedOptionsModel.next([...requiredOptions]);
+      // }
     }
   }
 
@@ -1263,7 +1282,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       tap(options => {
         this._filteredOptionsModel.next(options);
         if (this._opened) {
-          this._updateDropdownLayout(true);
+          this.alignDropdown();
           this._activateDropdownOption();
         }
         else {
@@ -1454,7 +1473,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
         ro.disconnect();
       }
     }).pipe(
-      tap(() => this._updateDropdownLayout()),
+      tap(() => this.alignDropdown()),
       takeUntil(this._dropdownOverlayDestroyed!)
     ).subscribe();
 
@@ -1486,7 +1505,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
     ).subscribe();
   }
 
-  private _updateDropdownLayout(reattach?: boolean) {
+  /**
+   * Align dropdown
+   */
+  public alignDropdown() {
     const originElement: HTMLElement = this.formField?._elementRef.nativeElement || this._elementRef.nativeElement;
     this._dropdownOverlay?.updateSize({minWidth: originElement.offsetWidth});
     this._dropdownOverlay?.updatePosition();
