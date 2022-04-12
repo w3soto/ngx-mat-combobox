@@ -949,7 +949,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       }
       // keep focused host/or input element
       else {
-        this._ngZone.onStable.pipe(first()).subscribe(() => this.focus());
+        this._ngZone.onStable.pipe(first()).subscribe(() => {
+          this.focus();
+          this._updateDropdownLayout();
+        });
       }
 
       if (e.code == 'Enter') {
@@ -975,11 +978,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       this._ngZone.onStable.pipe(first()).subscribe(() => {
         this._closeDropdownAndFocus(true);
       });
-    }
-    else {
-      this._focusLastActiveElement();
+      return;
     }
 
+    this._ngZone.onStable.pipe(first()).subscribe(() => {
+      this._focusLastActiveElement();
+      this._updateDropdownLayout()
+    });
   }
 
   /**
