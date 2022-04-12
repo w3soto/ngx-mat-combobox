@@ -7,7 +7,7 @@ import {
   Directive,
   ElementRef, EventEmitter, HostBinding,
   Inject,
-  Input,
+  Input, isDevMode,
   NgZone, OnChanges,
   OnDestroy,
   OnInit,
@@ -55,6 +55,9 @@ import {
 } from "./ngx-mat-combobox.model";
 import { NgxMatComboboxOption } from "./ngx-mat-combobox-option.component";
 import { delay, finalize, map, skip  } from "rxjs/operators";
+
+
+const LOG_TAG = '[NgxMatCombobox]';
 
 
 @Directive({
@@ -1338,7 +1341,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterViewCh
       }
       else if (typeof option == 'object') {
         const key = '' + keyOrFn;
-        return key in option ? option[key] : undefined;
+        if (key in option) {
+          return option[key];
+        }
+        if (isDevMode()) {
+          console.warn(LOG_TAG, 'property [' + key + '] not found in option', option);
+        }
+        return undefined;
       }
     }
     return option;
