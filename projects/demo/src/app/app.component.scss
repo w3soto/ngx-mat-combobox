@@ -12,6 +12,9 @@
     top: 0;
     display: flex;
     gap: 8px;
+    h1 {
+      flex: 1;
+    }
   }
 
   .menu {

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -10,7 +10,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { HIGHLIGHT_OPTIONS, HighlightModule } from "ngx-highlightjs";
 
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { MatIconModule } from "@angular/material/icon";
+import { MatIconModule, MatIconRegistry } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
@@ -76,4 +76,14 @@ import { MatListModule } from "@angular/material/list";
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+  constructor(
+    iconRegistry: MatIconRegistry,
+    domSanitizer: DomSanitizer) {
+
+    iconRegistry.addSvgIcon('github',
+      domSanitizer.bypassSecurityTrustResourceUrl(`./assets/github.svg`));
+  }
+
+}
