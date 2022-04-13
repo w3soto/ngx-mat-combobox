@@ -1,0 +1,68 @@
+<div class="example-viewer">
+
+  <div class="example-viewer__header">
+
+    <mat-icon>web_asset</mat-icon>
+    <h2>{{ title }}</h2>
+
+<!--    <button mat-flat-button color="primary" (click)="showCode = !showCode">-->
+<!--      <mat-icon>{{ showCode ? 'web_asset' : 'code' }}</mat-icon>-->
+<!--      {{ showCode ? 'View Example' : 'View Code' }}-->
+<!--    </button>-->
+
+  </div>
+
+  <mat-tab-group dynamicHeight color="primary">
+
+    <mat-tab label="EXAMPLE">
+      <div class="example-viewer__body">
+        <ng-content></ng-content>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="HTML">
+      <code
+        class="example-viewer__code"
+        [highlight]="htmlCode"
+        [languages]="['xml']"></code>
+      <button class="example-viewer__copy-btn" matTooltip="Copy example Source" mat-icon-button (click)="copyCode(htmlCode)">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-tab>
+
+    <mat-tab label="TS">
+      <code
+        class="example-viewer__code"
+        [highlight]="tsCode"
+        [languages]="['typescript']"></code>
+      <button class="example-viewer__copy-btn" matTooltip="Copy example Source" mat-icon-button (click)="copyCode(tsCode)">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-tab>
+
+    <mat-tab label="CSS">
+      <code
+        class="example-viewer__code"
+        [highlight]="scssCode"
+        [languages]="['scss']"></code>
+      <button class="example-viewer__copy-btn" matTooltip="Copy example Source" mat-icon-button (click)="copyCode(scssCode)">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-tab>
+
+  </mat-tab-group>
+
+<!--  <div *ngIf="!showCode" class="example-viewer__body">-->
+
+<!--    <ng-content></ng-content>-->
+
+<!--  </div>-->
+
+<!--  <div *ngIf="showCode" class="example-viewer__code">-->
+
+<!--    <ng-content *ngIf="showCode" select="app-code-loader"></ng-content>-->
+<!--&lt;!&ndash;    <app-code-loader forComponent="app-single-selection"></app-code-loader>&ndash;&gt;-->
+
+<!--  </div>-->
+
+</div>

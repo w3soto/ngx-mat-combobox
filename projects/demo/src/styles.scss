@@ -2,74 +2,12 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
+@import '~highlight.js/styles/github-dark.css';
+
 html, body {
-  background-color: #fafafa;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  color: #666;
 }
-
-mat-form-field {
-  .mat-form-field-flex {
-    gap: .25em;
-  }
-}
-
-
-mat-form-field[appearance=outline] {
-
-  &.mat-form-field-appearance-outline {
-    .mat-form-field-wrapper {
-      margin: 0;
-    }
-    &.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-outline-gap {
-      border-color: currentColor;
-    }
-    .mat-form-field-outline {
-      top: 0;
-    }
-    .mat-form-field-flex {
-      margin-top: 0;
-      padding: 0.375em 0.75em;
-      align-items: center;
-    }
-    .mat-form-field-infix {
-      padding: 0.125em 0 .875em;
-    }
-    .mat-form-field-prefix,
-    .mat-form-field-suffix {
-      top: 0;
-    }
-
-    &.mat-form-field-has-label {
-      &.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
-      &.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
-        transform: translateY(-0.59375em) scale(0.75);
-      }
-      .mat-form-field-infix {
-        padding: 0.5em 0;
-      }
-      .mat-form-field-label {
-        top: 1.09375em;
-        margin-top: -0.125em;
-      }
-    }
-  }
-}
-
-//@function get-input-font-size() {
-//
-//  $typography: mat.define-typography-config();
-//
-//  $font-size: map.get(mat.typography-level($typography, input), font-size);
-//
-//  @if $font-size == inherit {
-//    $font-size: map.get(mat.typography-level($typography, body-1), font-size);
-//  }
-//
-//  @return $font-size;
-//}
-//
-//
-//// Use the default configuration.
-//$body-font-size: get-input-font-size();
-//
-//@debug $body-font-size;

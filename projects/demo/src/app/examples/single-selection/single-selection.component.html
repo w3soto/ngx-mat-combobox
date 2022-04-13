@@ -1,0 +1,19 @@
+<div class="actions">
+  <button mat-flat-button color="primary" (click)="setRandomValue()">Set random value</button>
+  <button mat-stroked-button (click)="clearValue()">Reset</button>
+</div>
+
+<p>model = {{ model | json }}</p>
+
+<mat-form-field appearance="outline">
+  <mat-label>Single selection</mat-label>
+  <ngx-mat-combobox
+    required
+    [(ngModel)]="model"
+    [options]="options"
+    placeholder="Please select actor..."
+  ></ngx-mat-combobox>
+</mat-form-field>
+
+
+
