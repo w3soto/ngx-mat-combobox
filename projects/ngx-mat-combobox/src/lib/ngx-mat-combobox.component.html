@@ -40,7 +40,7 @@
         class="ngx-mat-combobox-values"
         [class.ngx-mat-combobox-values-nowrap]="noWrap">
 
-        <ng-container *ngIf="multiple || !autocomplete">
+        <ng-container *ngIf="!fillInput">
           <div
             *ngIf="noWrap && !empty"
             class="ngx-mat-combobox-value-item">

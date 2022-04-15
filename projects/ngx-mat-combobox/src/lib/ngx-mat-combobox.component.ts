@@ -358,6 +358,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
   private _useValue: boolean = false;
 
   @Input()
+  set fillInput(val: BooleanInput) {
+    this._fillInput = coerceBooleanProperty(val);
+  }
+  get fillInput(): boolean {
+    return this._fillInput;
+  }
+  private _fillInput: boolean = false;
+
+  @Input()
   set autoExpand(val: BooleanInput) {
     this._autoExpand = coerceBooleanProperty(val);
   }
@@ -830,19 +839,11 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
   }
 
   onLeave() {
-    console.log('onLeave');
-
-    this.searchInput?.setValue('');
-    // this._searchQuery = '';
-    // this._lastSearchQuery = null;
-    // this._loaded = false;
-    this._dataSourceLoadSub?.unsubscribe();
-    this._dataSourceAutocompleteSub?.unsubscribe();
-    //
-    // //this._stateChanges.next();
-    // if (!this.disabled) {
-    //   this._onTouched();
-    // }
+    if (!this.fillInput) {
+      this.searchInput?.setValue('');
+    }
+    this._mapOptionsSub?.unsubscribe();
+    this._filterOptionsSub?.unsubscribe();
   }
 
   onFocus(e: Event) {
@@ -902,9 +903,18 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
     }
 
     if (e.code == 'Backspace') {
-      // when single selection mode without autocomplete input => clear value
-      if (!this.autocomplete && !this.multiple) {
-        this._valueModel.next([]);
+      // with autocomplete and empty input
+      if (this.autocomplete &&
+        (this.searchInput?.empty() || this.fillInput && this.searchInput?.getValue().length == 1)) {
+        // remove last value
+        if (this.multiple) {
+          const selection = this._selectedOptionsModel.value;
+          this.deselectOption(selection[selection.length - 1]);
+        }
+        // clear
+        else {
+          this.clear();
+        }
       }
     }
 
@@ -916,20 +926,14 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
 
     const index = this._dropdownKeyManager?.activeItemIndex;
 
-    if (e.code == 'Escape') {
+    if (e.code == 'Escape' || e.code == 'Tab' && !this.dropdownTrapFocus) {
+      if (!this.fillInput) {
+        this.searchInput?.setValue('');
+      }
       this._closeDropdownAndFocus(true);
       e.stopPropagation();
       e.preventDefault();
       return;
-    }
-
-    if (e.code == 'Tab') {
-      if (!this.dropdownTrapFocus) {
-        this._closeDropdownAndFocus(true);
-        e.stopPropagation();
-        e.preventDefault();
-        return;
-      }
     }
 
     if ((e.code == 'Enter' || e.code == 'Space') && index != null && index > -1) {
@@ -1305,8 +1309,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
     }
     // single selection
     else {
-      if (this.searchInput) {
-        let value = '';
+      if (this.fillInput) {
         if (this._selectedOptionsModel.value.length) {
           value = this.readOptionDisplay(this._selectedOptionsModel.value[0])
         }
