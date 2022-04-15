@@ -452,7 +452,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
   private _useChips: boolean = false;
 
   @Input()
-  chipColor?: string;
+  chipsColor?: string = 'primary';
 
   // allowChipDelete: boolean = false;
   //
@@ -558,6 +558,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
     return this._noOptionText
   }
   private _noOptionText: string;
+
+  @Input()
+  optionsCheckboxColor?: string;
 
   /**
    * Whether loading data from dataSource

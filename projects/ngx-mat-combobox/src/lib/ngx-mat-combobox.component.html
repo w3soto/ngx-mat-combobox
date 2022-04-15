@@ -17,8 +17,8 @@
           *ngFor="let o of selectedOptions | async; trackBy: trackOptionFn"
           [disableRipple]="disableRipple"
           [selectable]="false"
-          [selected]="chipColor"
-          [color]="chipColor">
+          [selected]="chipsColor"
+          [color]="chipsColor">
           {{ readOptionDisplay(o) }}
           <button
             matChipRemove
@@ -107,7 +107,7 @@
         <ngx-mat-combobox-option
           matRipple
           [matRippleDisabled]="disableRipple"
-          class="mat-primary"
+          [class]="optionsCheckboxColor ? ('mat-' + optionsCheckboxColor) : ''"
           *ngFor="let o of filteredOptions | async; trackBy: trackOptionFn"
           [selected]="isOptionSelected(o)"
           (click)="onDropdownOptionClick(o)">
