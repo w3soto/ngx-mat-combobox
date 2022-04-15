@@ -15,7 +15,7 @@
         [tabIndex]="-1">
         <mat-chip
           *ngFor="let o of selectedOptions | async; trackBy: trackOptionFn"
-          [disableRipple]="disableRipple"
+          [disableRipple]="disableChipsRipple"
           [selectable]="false"
           [selected]="chipsColor"
           [color]="chipsColor">
@@ -106,7 +106,7 @@
 
         <ngx-mat-combobox-option
           matRipple
-          [matRippleDisabled]="disableRipple"
+          [matRippleDisabled]="disableOptionsRipple"
           [class]="optionsCheckboxColor ? ('mat-' + optionsCheckboxColor) : ''"
           *ngFor="let o of filteredOptions | async; trackBy: trackOptionFn"
           [selected]="isOptionSelected(o)"

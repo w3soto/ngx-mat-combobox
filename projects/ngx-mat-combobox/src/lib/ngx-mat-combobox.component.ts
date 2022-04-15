@@ -458,7 +458,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
   //
   // allowChipDeleteFocus: boolean = false;
   //
-  // disableChipRipple:boolean = false;
+
+  @Input()
+  set disableChipsRipple(val: BooleanInput) {
+    this._disableChipsRipple = coerceBooleanProperty(val);
+  }
+  get disableChipsRipple():boolean {
+    return this._disableChipsRipple;
+  }
+  private _disableChipsRipple:boolean = false;
 
   /**
    * Show toggle indicator
@@ -506,25 +514,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, AfterConten
    * Disable ripple
    */
   @Input()
-  set disableRipple(val: BooleanInput) {
-    this._disableRipple = coerceBooleanProperty(val);
+  set disableOptionsRipple(val: BooleanInput) {
+    this._disableOptionsRipple = coerceBooleanProperty(val);
   }
-  get disableRipple(): boolean {
-    return this._disableRipple;
+  get disableOptionsRipple(): boolean {
+    return this._disableOptionsRipple;
   }
-  private _disableRipple: boolean = false;
-
-  @Input()
-  set dropdownMinHeight(val: NumberInput) {
-    this._dropdownMinHeight = coerceNumberProperty(val, undefined);
-  }
-  private _dropdownMinHeight?: number;
-
-  @Input()
-  set dropdownMaxHeight(val: NumberInput) {
-    this._dropdownMaxHeight = coerceNumberProperty(val, undefined);
-  }
-  private _dropdownMaxHeight?: number;
+  private _disableOptionsRipple: boolean = false;
 
   @Input()
   dropdownClass?: string;
