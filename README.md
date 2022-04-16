@@ -2,7 +2,11 @@
 
 Customizable Combobox component for Angular Material
 
-[Demo](https://ngx-mat-combobox.web.app/)
+
+!!! WORK IN PROGRESS !!!
+
+
+[Demo + code examples](https://ngx-mat-combobox.web.app/)
 
 ![Screenshot](https://raw.githubusercontent.com/w3soto/ngx-mat-combobox/master/readme.png "Screenshot")
 
@@ -10,7 +14,19 @@ Customizable Combobox component for Angular Material
 * Single & Multiple selection :)
 * Autocomplete
 * Chips
-* Custom templates for options, header, footer etc..
+* Custom templates for options, header, footer, loading overlay, no options etc..
+
+## TODO
+* Tests
+* Documentation 
+* More examples
+* Handle error state
+* Fix issues with key events (Enter) inside header and footer templates
+* Add support for select/deselect multiple options 
+* Config dropdown size
+* Config key navigation
+* ...
+
 
 ## Installation
 ```shell
@@ -30,10 +46,10 @@ For more details see *projects/demo* application
 | **options** | any[] | List of strings or complex objects. Default []. |
 | **valueAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'value' or *NgxMatComboboxAccessorFn*. |
 | **labelAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'label' or *NgxMatComboboxAccessorFn*. |
-| **displayAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'selected label' or *NgxMatComboboxAccessorFn*. If not defined **labelAccessor** will be used. |
+| **displayAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'selected label' or *NgxMatComboboxAccessorFn*. If not defined *labelAccessor* will be used. |
 | **disabledAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'disabled state' or *NgxMatComboboxAccessorFn*. |
 | **autoSelect** | boolean | If set, value model is updated when option is activated (e.g. focused by key navigation). Default false. |
-| **fillInput** | boolean | If set, search input is updated using *selectedLabelAccessor* value. Works only in single selection mode. Default false. |
+| **fillInput** | boolean | If set, search input is updated using *displayAccessor* value. Works only in single selection mode. Default false. |
 | **multiple** | boolean | Multiple selection mode. Default false. |
 | **maxValues** | number | Limit maximum selected options. Default 0 (no limit). |
 | **autocomplete** | boolean | Autocomplete mode. Default false. |
@@ -53,15 +69,15 @@ For more details see *projects/demo* application
 
 | @Output | Type | Description |
 | ------- | ---- | ----------- |
+| **openedChange** | boolean | |
+| **selectionChange** | any[] | |
 
 
 | Property | Type | Description |
 | -------- | ---- | ----------- |
 | **opened** | boolean | |
-| **openedChange** | Observable<boolean> | |
 | **selectedOptions** | Observable<any[]> | |
 | **filteredOptions** | Observable<any[]> | |
-| **selectionChange** | Observable<any[]> | |
 | **input?** | NgxMatComboboxInput | |
 
 
@@ -86,6 +102,10 @@ Exported as **ngxMatCombobox**
 
 Exported as **ngxMatComboboxInput**
 
+* **ngxMatComboboxRemove** or **ngx-mat-combobox-remove**
+
+Exported as **ngxMatComboboxRemove**
+
 
 ## Custom content templates
 
@@ -100,4 +120,31 @@ Exported as **ngxMatComboboxInput**
 * **ngxMatComboboxFooter** or **ngx-mat-combobox-footer**
 
 * **ngxMatComboboxLoading** or **ngx-mat-combobox-loading**
+
+
+## Interfaces
+
+Function to access object options properties.
+```typescript
+export type NgxMatComboboxAccessorFn = (option: any) => any;
+```
+
+Function to map model values to the option objects. 
+```typescript
+export type NgxMatComboboxMapOptionsFn = (value: any[], options: any[]) => Observable<any[]> | any[];
+```
+
+Autocomplete filter function.
+```typescript
+export type NgxMatComboboxFilterOptionsFn = (query: string, options: any[]) => Observable<any[]> | any[];
+```
+
+Function to compare two options. By default *[valueAccessor]* is used internally.
+```typescript
+export type NgxMatComboboxCompareOptionsFn = (o1: any, o2: any) => boolean;
+```
+
+
+## Global configuration
+
 
