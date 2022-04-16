@@ -1,0 +1,87 @@
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
+// global dropdown panel class
+::ng-deep .users-dropdown {
+  max-height: 400px !important;
+
+  &__header,
+  &__footer,
+  &__no-option {
+    padding: 0 16px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__header {
+    border-bottom: solid 1px lightgrey;
+
+    mat-icon {
+      margin-left: 4px;
+    }
+  }
+
+  &__footer {
+    border-top: solid 1px lightgrey;
+
+    > span {
+      flex: 1;
+      font-size: .8em;
+    }
+  }
+
+  &__no-option {
+    flex-direction: column;
+    padding: 16px;
+    > span {
+      line-height: 1em;
+    }
+  }
+
+
+  .user {
+    flex: 1;
+    line-height: 1em;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 4px;
+
+    &__image {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: solid 1px lightgrey;
+      background-color: #f5f5f5;
+    }
+
+    &__name {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: flex-end;
+    }
+
+    &__email {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: flex-start;
+      opacity: .75;
+      font-size: .8em;
+    }
+  }
+}

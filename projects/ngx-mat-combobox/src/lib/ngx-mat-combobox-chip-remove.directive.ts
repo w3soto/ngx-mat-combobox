@@ -4,14 +4,14 @@ import { fromEvent, Subject, takeUntil, tap } from "rxjs";
 import { first } from "rxjs/operators";
 
 @Directive({
-  selector: '[ngxMatComboboxOptionRemove]',
+  selector: '[ngxMatComboboxChipRemove]',
   host: {
-    'class': 'ngx-mat-combobox-option-remove'
+    'class': 'ngx-mat-combobox-chip-remove'
   }
 })
-export class NgxMatComboboxOptionRemoveDirective implements OnDestroy, AfterViewInit{
+export class NgxMatComboboxChipRemoveDirective implements OnDestroy, AfterViewInit{
 
-  @Input('ngxMatComboboxOptionRemove')
+  @Input('ngxMatComboboxChipRemove')
   set option(option: any) {
     this._option = option;
   }

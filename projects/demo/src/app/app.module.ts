@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 
+
 import { AppComponent } from './app.component';
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
@@ -15,15 +15,26 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTabsModule } from "@angular/material/tabs";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatSidenavModule } from "@angular/material/sidenav";
+import { MatListModule } from "@angular/material/list";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatInputModule } from "@angular/material/input";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatSelectModule } from "@angular/material/select";
 
 import { NgxMatComboboxModule } from "../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.module";
 import { ExampleViewerComponent } from './example-viewer/example-viewer.component';
 
+import { AppRoutingModule } from "./app-routing.module";
+
 import { SingleSelectionComponent } from './examples/single-selection/single-selection.component';
 import { MultipleSelectionComponent } from "./examples/multiple-selection/multiple-selection.component";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatListModule } from "@angular/material/list";
+import { SingleSelectionWithAutocompleteComponent } from './examples/single-selection-with-autocomplete/single-selection-with-autocomplete.component';
+import { WithChipsComponent } from './examples/with-chips/with-chips.component';
+import { InteractiveDemoComponent } from './examples/interactive-demo/interactive-demo.component';
+import { RemoteDataDemoComponent } from "./examples/remote-data-demo/remote-data-demo.component";
+import { WithObjectOptionsComponent } from "./examples/with-object-options/with-object-options.component";
 
 
 // @ts-ignore
@@ -31,9 +42,13 @@ import { MatListModule } from "@angular/material/list";
   declarations: [
     AppComponent,
     ExampleViewerComponent,
-
     SingleSelectionComponent,
     MultipleSelectionComponent,
+    SingleSelectionWithAutocompleteComponent,
+    WithChipsComponent,
+    WithObjectOptionsComponent,
+    InteractiveDemoComponent,
+    RemoteDataDemoComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +60,7 @@ import { MatListModule } from "@angular/material/list";
     HighlightModule,
 
     MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatTabsModule,
@@ -52,7 +68,12 @@ import { MatListModule } from "@angular/material/list";
     MatSnackBarModule,
     MatToolbarModule,
     MatSidenavModule,
+    MatSlideToggleModule,
+    MatSelectModule,
+    MatChipsModule,
     MatListModule,
+
+    AppRoutingModule,
 
     NgxMatComboboxModule
   ],

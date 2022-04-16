@@ -1,13 +1,18 @@
 <div class="actions">
   <button mat-flat-button color="primary" (click)="setRandomValue()">Set random value</button>
   <button mat-stroked-button (click)="clearValue()">Reset</button>
+  <mat-slide-toggle (change)="combo.readonly = !combo.readonly" [checked]="combo.readonly">Readonly</mat-slide-toggle>
+  <mat-slide-toggle (change)="combo.disabled = !combo.disabled" [checked]="combo.disabled">Disabled</mat-slide-toggle>
 </div>
 
-<p>model = {{ model | json }}</p>
+<p>
+  <code>model = {{ model | json }}</code>
+</p>
 
 <mat-form-field appearance="outline" style="width: 480px">
   <mat-label>Multiple selection</mat-label>
   <ngx-mat-combobox
+    #combo
     required
     multiple
     [(ngModel)]="model"

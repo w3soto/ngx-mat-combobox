@@ -16,6 +16,10 @@
 
     <mat-tab label="EXAMPLE">
       <div class="example-viewer__body">
+        <ng-content select="ng-template[description]"></ng-content>
+        <div *ngIf="descriptionTpl" class="example-viewer__description">
+          <ng-container *ngTemplateOutlet="descriptionTpl"></ng-container>
+        </div>
         <ng-content></ng-content>
       </div>
     </mat-tab>

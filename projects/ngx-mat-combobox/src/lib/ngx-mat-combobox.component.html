@@ -14,15 +14,17 @@
         style="flex: 1"
         [tabIndex]="-1">
         <mat-chip
-          *ngFor="let o of selectedOptions | async; trackBy: trackOptionFn"
-          [disableRipple]="disableChipsRipple"
+          *ngFor="let o of selectedOptions | async; trackBy: _trackOptionByFn"
+          [disabled]="disabled"
+          [disableRipple]="disabled || disableChipsRipple"
           [selectable]="false"
           [selected]="chipsColor"
           [color]="chipsColor">
           {{ readOptionDisplay(o) }}
           <button
+            *ngIf="!disabled && !readonly && !disableChipsRemove"
             matChipRemove
-            [ngxMatComboboxOptionRemove]="o">
+            [ngxMatComboboxChipRemove]="o">
             <mat-icon>cancel</mat-icon>
           </button>
           </mat-chip>
@@ -32,6 +34,7 @@
           type="text"
           [tabindex]="tabIndex"
           [placeholder]="placeholder"
+          [disabled]="disabled"
           [readonly]="readonly">
       </mat-chip-list>
 
@@ -45,13 +48,13 @@
             *ngIf="noWrap && !empty"
             class="ngx-mat-combobox-value-item">
             <ng-container
-              *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: trackOptionFn">
+              *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: _trackOptionByFn">
               {{ readOptionDisplay(o) }}<ng-container *ngIf="!l">, </ng-container>
             </ng-container>
           </div>
           <ng-container *ngIf="!noWrap">
             <span
-              *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: trackOptionFn"
+              *ngFor="let o of selectedOptions | async; let i = index; let l = last; trackBy: _trackOptionByFn"
               class="ngx-mat-combobox-value-item">
               {{ readOptionDisplay(o) }}<ng-container *ngIf="!l">, </ng-container>
             </span>
@@ -61,8 +64,8 @@
         <input
           *ngIf="autocomplete"
           ngxMatComboboxInput
-            [tabindex]="tabIndex"
           type="text"
+          [tabindex]="tabIndex"
           [placeholder]="placeholder"
           [disabled]="disabled"
           [readonly]="readonly">
@@ -71,7 +74,8 @@
 
     <ng-container
       [ngTemplateOutlet]="_customDisplayTpl ? _customDisplayTpl : defaultDisplayTpl"
-      [ngTemplateOutletContext]="{$implicit: this, combo: this, selection: selectedOptions}"></ng-container>
+      [ngTemplateOutletContext]="{combo: this, selection: selectedOptions.value, $implicit: selectedOptions.value}">
+    </ng-container>
 
   </div>
 
@@ -97,20 +101,25 @@
       [class]="dropdownClass">
 
       <ng-content select="ng-template[ngxMatComboboxHeader],ng-template[ngx-mat-combobox-header]"></ng-content>
-      <ng-container
+      <div
         *ngIf="_customDropdownHeaderTpl"
-        [ngTemplateOutlet]="_customDropdownHeaderTpl"
-        [ngTemplateOutletContext]="{$implicit: this}"></ng-container>
+        #dropdownHeader
+        class="ngx-mat-combobox-dropdown-header">
+        <ng-container
+          [ngTemplateOutlet]="_customDropdownHeaderTpl"
+          [ngTemplateOutletContext]="{combo: this, $implicit: this}"></ng-container>
+      </div>
 
       <div #dropdownBody class="ngx-mat-combobox-dropdown-body">
 
         <ngx-mat-combobox-option
           matRipple
+          [multiple]="multiple"
           [matRippleDisabled]="disableOptionsRipple"
-          [class]="optionsCheckboxColor ? ('mat-' + optionsCheckboxColor) : ''"
-          *ngFor="let o of filteredOptions | async; trackBy: trackOptionFn"
+
+          *ngFor="let o of filteredOptions | async; trackBy: _trackOptionByFn"
           [selected]="isOptionSelected(o)"
-          (click)="onDropdownOptionClick(o)">
+          (click)="onDropdownOptionClick(o, $event)">
 
           <ng-content select="ng-template[ngxMatComboboxOption]"></ng-content>
 
@@ -119,31 +128,50 @@
               *ngIf="multiple"
               class="ngx-mat-combobox-option-checkbox"
               [state]="isOptionSelected(option) ? 'checked' : 'unchecked'"></mat-pseudo-checkbox>
-            <span class="ngx-mat-combobox-option-text">{{ readOptionLabel(option) }}</span>
+            <span class="mat-primary ngx-mat-combobox-option-text">{{ readOptionLabel(option) }}</span>
           </ng-template>
 
           <ng-container
             [ngTemplateOutlet]="_customOptionTpl ? _customOptionTpl : defaultOptionTpl"
-            [ngTemplateOutletContext]="{option: o, $implicit: o, combo: this}"
+            [ngTemplateOutletContext]="{combo: this, option: o, $implicit: o}"
           ></ng-container>
 
         </ngx-mat-combobox-option>
 
+
         <div
-          *ngIf="!loading && filteredOptions.value.length == 0"
-          class="ngx-mat-combobox-dropdown-no-option">{{ noOptionText }}</div>
+          *ngIf="filteredOptions.value.length == 0"
+          class="ngx-mat-combobox-dropdown-no-option">
+
+          <ng-content select="ng-template[ngxMatComboboxNoOption],ng-template[ngx-mat-combobox-no-option]"></ng-content>
+          <ng-container
+            *ngIf="_customNoOptionTpl"
+            [ngTemplateOutlet]="_customNoOptionTpl"
+            [ngTemplateOutletContext]="{combo: this, $implicit: this}"
+          ></ng-container>
+          <ng-container *ngIf="!_customNoOptionTpl">{{ noOptionText }}</ng-container>
+
+        </div>
+
+        <div
+          *ngIf="loading"
+          class="ngx-mat-combobox-dropdown-loading">
+          <mat-spinner
+            [diameter]="24"
+            [strokeWidth]="2" color="primary"></mat-spinner>
+        </div>
 
       </div>
 
       <ng-content select="ng-template[ngxMatComboboxFooter],ng-template[ngx-mat-combobox-footer]"></ng-content>
-      <ng-container
-        *ngIf="_customDropdownFooterTpl"
-        [ngTemplateOutlet]="_customDropdownFooterTpl"
-        [ngTemplateOutletContext]="{$implicit: this}"></ng-container>
-
       <div
-        *ngIf="loading"
-        class="ngx-mat-combobox-dropdown-loading"></div>
+        *ngIf="_customDropdownFooterTpl"
+        #dropdownFooter
+        class="ngx-mat-combobox-dropdown-footer">
+        <ng-container
+          [ngTemplateOutlet]="_customDropdownFooterTpl"
+          [ngTemplateOutletContext]="{combo: this, $implicit: this}"></ng-container>
+      </div>
 
     </div>
   </ng-template>

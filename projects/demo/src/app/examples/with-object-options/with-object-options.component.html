@@ -1,0 +1,74 @@
+<div class="actions">
+  <button mat-flat-button color="primary" (click)="setRandomValue()">Set random value</button>
+  <button mat-stroked-button (click)="clearValue()">Reset</button>
+  <mat-slide-toggle (change)="readonly = !readonly" [checked]="readonly">Readonly</mat-slide-toggle>
+  <mat-slide-toggle (change)="disabled = !disabled" [checked]="disabled">Disabled</mat-slide-toggle>
+</div>
+
+<p>
+  <code>singleModel = {{ singleModel | json }}</code>
+</p>
+
+<mat-form-field appearance="outline" style="width: 480px;">
+  <mat-label>Single selection</mat-label>
+  <ngx-mat-combobox
+    required
+    autocomplete
+    fillInput
+    [(ngModel)]="singleModel"
+    [readonly]="readonly"
+    [disabled]="disabled"
+    [options]="options"
+    valueAccessor="id"
+    labelAccessor="title"
+    placeholder="Please select movie..."
+  ></ngx-mat-combobox>
+</mat-form-field>
+
+<p>
+  <code>multiModel = {{ multiModel | json }}</code>
+</p>
+
+<mat-form-field appearance="outline" style="width: 480px;">
+  <mat-label>Multiple selection</mat-label>
+  <ngx-mat-combobox
+    required
+    useChips
+    autocomplete
+    multiple
+    [(ngModel)]="multiModel"
+    [readonly]="readonly"
+    [disabled]="disabled"
+    [options]="options"
+    valueAccessor="id"
+    labelAccessor="title"
+    placeholder="Please select movies..."
+  ></ngx-mat-combobox>
+</mat-form-field>
+
+
+<p>
+  With <code>[useValue]="true"</code>.
+</p>
+
+<p>
+  <code>valueMultiModel = {{ valueMultiModel | json }}</code>
+</p>
+
+<mat-form-field appearance="outline" style="width: 480px;">
+  <mat-label>Multiple selection</mat-label>
+  <ngx-mat-combobox
+    required
+    useChips
+    useValue
+    autocomplete
+    multiple
+    [(ngModel)]="valueMultiModel"
+    [readonly]="readonly"
+    [disabled]="disabled"
+    [options]="options"
+    valueAccessor="id"
+    labelAccessor="title"
+    placeholder="Please select movies..."
+  ></ngx-mat-combobox>
+</mat-form-field>

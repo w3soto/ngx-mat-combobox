@@ -3,7 +3,7 @@
   <button mat-icon-button (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
-  <h1>NgxMatCombobox examples</h1>
+  <h1>NgxMatCombobox examples <small>(package version {{ $any(pkg).version }})</small></h1>
   <a mat-icon-button target="_blank" href="https://github.com/w3soto/ngx-mat-combobox">
     <mat-icon svgIcon="github"></mat-icon>
   </a>
@@ -15,8 +15,15 @@
 
     <mat-nav-list>
       <a mat-list-item href="#single-selection" (click)="scrollTo($event)">Single Selection</a>
-      <a mat-list-item href="#single-selection-autocomplete" (click)="scrollTo($event)">Single Selection Autocomplete</a>
+      <a mat-list-item href="#single-selection-with-autocomplete" (click)="scrollTo($event)">Single Selection with Autocomplete</a>
       <a mat-list-item href="#multiple-selection" (click)="scrollTo($event)">Multiple Selection</a>
+
+      <a mat-list-item href="#with-object-options" (click)="scrollTo($event)">With Object Options</a>
+
+      <a mat-list-item href="#with-chips" (click)="scrollTo($event)">With Chips</a>
+
+      <a mat-list-item href="#interactive-demo" (click)="scrollTo($event)">Interactive Demo</a>
+      <a mat-list-item href="#remote-data-demo" (click)="scrollTo($event)">Remote data Demo</a>
     </mat-nav-list>
 
   </mat-drawer>
@@ -31,10 +38,10 @@
     </app-example-viewer>
 
     <app-example-viewer
-      id="single-selection-autocomplete"
-      forComponent="app-single-selection"
+      id="single-selection-with-autocomplete"
+      forComponent="app-single-selection-with-autocomplete"
       title="Single Selection with Autocomplete">
-      <app-single-selection></app-single-selection>
+      <app-single-selection-with-autocomplete></app-single-selection-with-autocomplete>
     </app-example-viewer>
 
     <app-example-viewer
@@ -42,6 +49,34 @@
       forComponent="app-multiple-selection"
       title="Multiple Selection">
       <app-multiple-selection></app-multiple-selection>
+    </app-example-viewer>
+
+    <app-example-viewer
+      id="with-object-options"
+      forComponent="app-with-object-options"
+      title="With Object Options">
+      <app-with-object-options></app-with-object-options>
+    </app-example-viewer>
+
+    <app-example-viewer
+      id="with-chips"
+      forComponent="app-with-chips"
+      title="With Chips">
+      <app-with-chips></app-with-chips>
+    </app-example-viewer>
+
+    <app-example-viewer
+      id="interactive-demo"
+      forComponent="interactive-demo"
+      title="Interactive demo">
+      <app-interactive-demo></app-interactive-demo>
+    </app-example-viewer>
+
+    <app-example-viewer
+      id="remote-data-demo"
+      forComponent="remote-data-demo"
+      title="Remote data demo">
+      <app-remote-data-demo></app-remote-data-demo>
     </app-example-viewer>
 
   </div>

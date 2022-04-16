@@ -9,8 +9,8 @@ export class MultipleSelectionComponent implements OnInit {
 
   options: string[] = [
     'Tom Hanks', 'Jack Nicholson', 'Anthony Hopkins', 'Morgan Freeman', 'Al Pacino',
-    'Samuel L. Jackson', 'Dustin Hoffman', 'Robin Williams', 'Kyle MacLachlan'
-  ];
+    'Samuel L. Jackson', 'Dustin Hoffman', 'John Malkovich', 'Robin Williams', 'Kyle MacLachlan'
+  ].sort((a, b) => a.localeCompare(b));
 
   model: string[] = [];
 

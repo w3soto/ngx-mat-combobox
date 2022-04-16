@@ -1,99 +1,44 @@
-import { Observable, of } from "rxjs";
+import { Observable } from "rxjs";
 import { InjectionToken } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
 
 
 export const NGX_MAT_COMBOBOX_DEFAULT_OPTIONS: InjectionToken<NgxMatComboboxDefaultOptions>
   = new InjectionToken('NGX_MAT_COMBOBOX_DEFAULT_OPTIONS');
 
 
+export type NgxMatComboboxAccessorFn = (option: any) => any;
+
+
+export type NgxMatComboboxMapOptionsFn = (value: any[], options: any[]) => Observable<any[]> | any[];
+
+
+export type NgxMatComboboxFilterOptionsFn = (query: string, options: any[]) => Observable<any[]> | any[];
+
+
+export type NgxMatComboboxCompareOptionsFn = (o1: any, o2: any) => boolean;
+
+
 export interface NgxMatComboboxDefaultOptions {
+
+  valueAccessor?: string | NgxMatComboboxAccessorFn,
+  labelAccessor?: string | NgxMatComboboxAccessorFn,
+  selectedLabelAccessor?: string | NgxMatComboboxAccessorFn,
+  disabledAccessor?: string | NgxMatComboboxAccessorFn,
+
   noOptionText?: string;
 
   loadingSpinnerDiameter?: number,
   loadingSpinnerStrokeWidth?: number,
   loadingSpinnerColor?: string,
 
-  dropdownMinHeight?: number,
-  dropdownMaxHeight?: number,
   dropdownClass?: string,
 
-  disableRipple?: boolean,
+  disableOptionsRipple?: boolean,
+  // chips
+  useChips: false,
+  chipsColor?: string,
+  disableChipsRemove?: boolean,
+  disableChipsRipple?: boolean,
 }
 
-
-export interface NgxMatComboboxDataSource {
-
-  loading?: Observable<boolean>;
-  selectedOptions?: Observable<any[]>;
-  filteredOptions?: Observable<any[]>;
-
-  //select(value: any)
-  //deselect(value: any)
-  //toggle(value: any)
-  //filter(query: string)
-  //create(text: string)
-
-  // loadSelectedOptions(value: any): void
-  // loadFilteredOptions(query: string): void
-
-  // get display options
-  loadByValue(value: any): Observable<any[]>,
-  // get filtered options
-  loadByQuery(query: string): Observable<any[]>
-
-  //addNew(text: string): Observable<any>
-}
-
-export class NgxMatComboboxArrayDataSource implements NgxMatComboboxDataSource {
-
-  get selectedOptions(): Observable<any[]> {
-    return this._selectedOptions as Observable<any[]>;
-  }
-  private _selectedOptions: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-
-  get filteredOptions(): Observable<any[]> {
-    return this._selectedOptions as Observable<any[]>;
-  }
-  private _filteredOptions: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-
-  constructor(
-    public data: any[],
-    public displayOptionPredicate?: (option: any, value: any) => boolean,
-    public filterOptionPredicate?: (option: any, query: string) => boolean,
-  ) {
-  }
-
-  loadByValue(value: any) {
-    if (!Array.isArray(value)) {
-      value = [value];
-    }
-    if (this.displayOptionPredicate) {
-      const data = this.data.filter(o => {
-        return value.filter((v: any) => this.displayOptionPredicate!(o, v)).length > 0
-      });
-      this._selectedOptions.next([...data]);
-      return of([...data]);
-    }
-    this._selectedOptions.next([...value]);
-    return of([...value]);
-  }
-
-  loadByQuery(query: string) {
-    if (typeof query === 'undefined' && query === null) {
-      query = '';
-    }
-    query = ('' + query).toLowerCase();
-    if (this.filterOptionPredicate) {
-      const data = this.data.filter(o => this.filterOptionPredicate!(o, query));
-      this._filteredOptions.next([...data]);
-      return of([...data]);
-    }
-    else {
-      this._filteredOptions.next([...this.data]);
-    }
-    return of([...this.data]);
-  }
-
-}
 

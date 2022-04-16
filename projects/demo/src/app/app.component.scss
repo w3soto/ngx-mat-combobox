@@ -24,10 +24,13 @@
     top: 0;
     left: 0;
     padding-top: 64px;
+    .mat-list-item {
+      font-size: 14px !important;
+    }
   }
 
   .content {
-    padding: 64px 48px;
+    padding: 64px 48px 50vh;
     display: flex;
     flex-direction: column;
     gap: 48px;

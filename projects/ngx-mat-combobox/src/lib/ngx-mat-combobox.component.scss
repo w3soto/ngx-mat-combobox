@@ -19,6 +19,13 @@ $icon-size: 1.125em;
       display: inline-block;
       opacity: 0;
     }
+    .mat-chip {
+      box-shadow: none !important;
+      &.mat-standard-chip:hover::after,
+      &.mat-standard-chip:focus::after {
+        opacity: 0;
+      }
+    }
   }
 
   &-placeholder {
@@ -33,11 +40,11 @@ $icon-size: 1.125em;
   &-values {
     flex: 1;
     width: 0;
-    margin: -4px;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
+    margin: -4px;
     &-nowrap {
       flex-wrap: nowrap;
     }
@@ -47,12 +54,16 @@ $icon-size: 1.125em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #000000de;
+    //color: #000000de;
     margin: 4px;
   }
 
   &-input {
     flex: 1;
+    margin: 0 4px;
+    outline: none;
+    min-width: 100px;
+    text-overflow: ellipsis;
   }
 
   &-trigger {
@@ -106,9 +117,10 @@ $icon-size: 1.125em;
     width: 100%;
     background-color: #fff;
     box-shadow: 0 0 10px 5px rgba(0, 0, 0, .12);
+    border-radius: 4px;
 
     min-height: 48px;
-    max-height: 480px;
+    max-height: 240px;
 
     &-header {
     }
@@ -140,9 +152,23 @@ $icon-size: 1.125em;
       display: block;
       padding: 0 16px;
       line-height: 3em;
-      height: 3em;
+      min-height: 3em;
       cursor: default;
     }
   }
 
+}
+
+// readonly
+
+// disabled
+.ngx-mat-combobox.ngx-mat-combobox-disabled {
+  .ngx-mat-combobox-display {
+    cursor: default;
+    color: rgba(0,0,0,.38);
+  }
+  .ngx-mat-combobox-trigger {
+    cursor: default;
+    color: rgba(0,0,0,.38);
+  }
 }

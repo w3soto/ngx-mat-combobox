@@ -16,12 +16,12 @@ import {
   NgxMatCombobox,
   NgxMatComboboxDisplayDirective,
   NgxMatComboboxFooterDirective,
-  NgxMatComboboxHeaderDirective,
-  NgxMatComboboxInputDirective,
+  NgxMatComboboxHeaderDirective, NgxMatComboboxNoOptionDirective,
   NgxMatComboboxOptionDirective,
 } from './ngx-mat-combobox.component';
 import { NgxMatComboboxOption } from "./ngx-mat-combobox-option.component";
-import { NgxMatComboboxOptionRemoveDirective } from "./ngx-mat-combobox-option-remove.directive";
+import { NgxMatComboboxInputDirective } from "./ngx-mat-combobox-input.directive";
+import { NgxMatComboboxChipRemoveDirective } from "./ngx-mat-combobox-chip-remove.directive";
 
 
 @NgModule({
@@ -29,11 +29,12 @@ import { NgxMatComboboxOptionRemoveDirective } from "./ngx-mat-combobox-option-r
     NgxMatCombobox,
     NgxMatComboboxOption,
     NgxMatComboboxInputDirective,
+    NgxMatComboboxChipRemoveDirective,
     NgxMatComboboxDisplayDirective,
     NgxMatComboboxOptionDirective,
     NgxMatComboboxHeaderDirective,
     NgxMatComboboxFooterDirective,
-    NgxMatComboboxOptionRemoveDirective
+    NgxMatComboboxNoOptionDirective,
   ],
   imports: [
     CommonModule,
@@ -54,11 +55,12 @@ import { NgxMatComboboxOptionRemoveDirective } from "./ngx-mat-combobox-option-r
     NgxMatCombobox,
     NgxMatComboboxOption,
     NgxMatComboboxInputDirective,
+    NgxMatComboboxChipRemoveDirective,
     NgxMatComboboxDisplayDirective,
     NgxMatComboboxOptionDirective,
     NgxMatComboboxHeaderDirective,
     NgxMatComboboxFooterDirective,
-    NgxMatComboboxOptionRemoveDirective
+    NgxMatComboboxNoOptionDirective
   ]
 })
 export class NgxMatComboboxModule {

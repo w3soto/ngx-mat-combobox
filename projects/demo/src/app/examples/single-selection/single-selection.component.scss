@@ -3,11 +3,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
+  gap: 8px;
 
   .actions {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 16px;
   }
 
 }

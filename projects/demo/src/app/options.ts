@@ -6,7 +6,7 @@ export const ACTORS = [
 ];
 
 export const MOVIES = [
-  {id: 1, name: 'Drive My Car', year: 2021},
-  {id: 2, name: 'Dune', year: 2021},
-  {id: 3, name: 'Paris, 13th District', year: 2021},
+  {id: 1, name: 'Drive My Car'},
+  {id: 2, name: 'Dune'},
+  {id: 3, name: 'Paris, 13th District'},
 ];

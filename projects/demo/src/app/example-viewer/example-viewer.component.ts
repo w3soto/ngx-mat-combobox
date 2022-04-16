@@ -1,15 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ContentChild, Input, OnInit, TemplateRef } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-example-viewer',
   templateUrl: './example-viewer.component.html',
-  styleUrls: ['./example-viewer.component.scss']
+  styleUrls: ['./example-viewer.component.scss'],
 })
 export class ExampleViewerComponent implements OnInit {
 
   readonly baseDir: string = './app/examples';
+
+  @Input()
+  id: string = '';
 
   @Input()
   title: string = '';
@@ -19,6 +22,9 @@ export class ExampleViewerComponent implements OnInit {
     this._cmp = cmp.replace('app-', '');
   }
   private _cmp: string = '';
+
+  @ContentChild(TemplateRef)
+  descriptionTpl?: TemplateRef<any>;
 
   tsCode: string = '';
   htmlCode: string = '';

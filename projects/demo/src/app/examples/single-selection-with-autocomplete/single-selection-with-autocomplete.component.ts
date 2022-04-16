@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
-
 @Component({
-  selector: 'app-single-selection',
-  templateUrl: './single-selection.component.html',
-  styleUrls: ['./single-selection.component.scss']
+  selector: 'app-single-selection-with-autocomplete',
+  templateUrl: './single-selection-with-autocomplete.component.html',
+  styleUrls: ['./single-selection-with-autocomplete.component.scss']
 })
-export class SingleSelectionComponent implements OnInit {
+export class SingleSelectionWithAutocompleteComponent implements OnInit {
 
   options: string[] = [
     'Tom Hanks', 'Jack Nicholson', 'Anthony Hopkins', 'Morgan Freeman', 'Al Pacino',
@@ -15,7 +14,9 @@ export class SingleSelectionComponent implements OnInit {
 
   model: string | null = null;
 
-  disabled: boolean = true;
+  readonly: boolean = false;
+
+  disabled: boolean = false;
 
   constructor() {
   }

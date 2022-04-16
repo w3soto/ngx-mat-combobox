@@ -1,0 +1,45 @@
+<div class="actions">
+  <button mat-flat-button color="primary" (click)="setRandomValue()">Set random value</button>
+  <button mat-stroked-button (click)="clearValue()">Reset</button>
+  <mat-slide-toggle (change)="readonly = !readonly" [checked]="readonly">Readonly</mat-slide-toggle>
+  <mat-slide-toggle (change)="disabled = !disabled" [checked]="disabled">Disabled</mat-slide-toggle>
+</div>
+
+<p>
+  <code>model = {{ model | json }}</code>
+</p>
+
+<mat-form-field appearance="outline" style="width: 400px;">
+  <mat-label>Single selection</mat-label>
+  <ngx-mat-combobox
+    #combo1
+    required
+    autocomplete
+    [autocompleteMinChars]="1"
+    [(ngModel)]="model"
+    [readonly]="readonly"
+    [disabled]="disabled"
+    [options]="options"
+    placeholder="Type at least one character..."
+  ></ngx-mat-combobox>
+</mat-form-field>
+
+<p>With <code>[fillInput]="true"</code>.</p>
+
+<mat-form-field appearance="outline" style="width: 400px;">
+  <mat-label>Single selection</mat-label>
+  <ngx-mat-combobox
+    #combo2
+    required
+    autocomplete
+    fillInput
+    [(ngModel)]="model"
+    [readonly]="readonly"
+    [disabled]="disabled"
+    [options]="options"
+    placeholder="Please select actor..."
+  ></ngx-mat-combobox>
+</mat-form-field>
+
+
+

@@ -18,7 +18,7 @@ import { BooleanInput, coerceBooleanProperty } from "@angular/cdk/coercion";
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    'class': 'ngx-mat-combobox-option'
+    'class': 'mat-primary ngx-mat-combobox-option'
   }
 })
 export class NgxMatComboboxOption implements OnInit, Highlightable, ListKeyManagerOption {
@@ -42,7 +42,22 @@ export class NgxMatComboboxOption implements OnInit, Highlightable, ListKeyManag
   private _selected: boolean = false;
 
   @Input()
-  disabled: boolean | undefined;
+  set disabled(val: BooleanInput) {
+    this._disabled = coerceBooleanProperty(val);
+  }
+  get disabled(): boolean {
+    return  this._disabled;
+  }
+  private _disabled: boolean = false;
+
+  @Input()
+  set multiple(val: BooleanInput) {
+    this._multiple = coerceBooleanProperty(val);
+  }
+  get multiple(): boolean {
+    return  this._multiple;
+  }
+  private _multiple: boolean = false;
 
   @HostBinding('class.ngx-mat-combobox-option-selected')
   get _applySelectedClass(): boolean {
@@ -52,6 +67,11 @@ export class NgxMatComboboxOption implements OnInit, Highlightable, ListKeyManag
   @HostBinding('class.ngx-mat-combobox-option-active')
   get _applyActiveClass(): boolean {
     return this._active;
+  }
+
+  @HostBinding('class.ngx-mat-combobox-option-multiple')
+  get _applyMultipleClass(): boolean {
+    return this._multiple;
   }
 
   get nativeElement(): HTMLElement {
