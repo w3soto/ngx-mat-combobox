@@ -2,7 +2,7 @@
 
 Customizable Combobox component for Angular Material
 
-![Screenshot](./readme.png "Screenshot")
+![Screenshot](https://raw.githubusercontent.com/w3soto/ngx-mat-combobox/master/readme.png "Screenshot")
 
 ## Features
 * Single & Multiple selection :)
