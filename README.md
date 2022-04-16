@@ -2,6 +2,8 @@
 
 Customizable Combobox component for Angular Material
 
+[Demo](https://ngx-mat-combobox.web.app/)
+
 ![Screenshot](https://raw.githubusercontent.com/w3soto/ngx-mat-combobox/master/readme.png "Screenshot")
 
 ## Features
@@ -26,10 +28,10 @@ For more details see *projects/demo* application
 | @Input | Type | Description |
 | ------ | ---- | ----------- |
 | **options** | any[] | List of strings or complex objects. Default []. |
-| **valueAccessor** | string or Function | Property of option's object which holds the 'value' or *NgxMatComboboxAccessorFn*. |
-| **labelAccessor** | string or Function | Property of option's object which holds the 'label' or *NgxMatComboboxAccessorFn*. |
-| **displayAccessor** | or Function | Property of option's object which holds the 'selected label' or *NgxMatComboboxAccessorFn*. If not defined **labelAccessor** will be used. |
-| **disabledAccessor** |  or Function | Property of option's object which holds the 'disabled state' or *NgxMatComboboxAccessorFn*. |
+| **valueAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'value' or *NgxMatComboboxAccessorFn*. |
+| **labelAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'label' or *NgxMatComboboxAccessorFn*. |
+| **displayAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'selected label' or *NgxMatComboboxAccessorFn*. If not defined **labelAccessor** will be used. |
+| **disabledAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'disabled state' or *NgxMatComboboxAccessorFn*. |
 | **autoSelect** | boolean | If set, value model is updated when option is activated (e.g. focused by key navigation). Default false. |
 | **fillInput** | boolean | If set, search input is updated using *selectedLabelAccessor* value. Works only in single selection mode. Default false. |
 | **multiple** | boolean | Multiple selection mode. Default false. |
