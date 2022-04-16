@@ -40,6 +40,7 @@ export class NgxMatComboboxInputDirective implements OnDestroy{
 
   setValue(val: string) {
     this._elementRef.nativeElement.value = val || '';
+    this._value = val || '';
   }
 
   getValue(): string {
