@@ -1,85 +1,90 @@
-
 <mat-toolbar class="header mat-elevation-z8" color="primary">
   <button mat-icon-button (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
-  <h1>NgxMatCombobox examples <small>(package version {{ $any(pkg).version }})</small></h1>
+  <h1>NgxMatCombobox examples
+    <small>(package version {{ $any(pkg).version }})</small>
+  </h1>
   <a mat-icon-button target="_blank" href="https://github.com/w3soto/ngx-mat-combobox">
     <mat-icon svgIcon="github"></mat-icon>
   </a>
 </mat-toolbar>
 
-<mat-drawer-container autosize>
+<mat-sidenav-container class="body" autosize>
 
-  <mat-drawer #drawer mode="side" opened class="menu mat-elevation-z2">
+  <mat-sidenav #drawer mode="side" fixedInViewport opened class="mat-elevation-z2">
 
-    <mat-nav-list>
-      <a mat-list-item href="#single-selection" (click)="scrollTo($event)">Single Selection</a>
-      <a mat-list-item href="#single-selection-with-autocomplete" (click)="scrollTo($event)">Single Selection with Autocomplete</a>
-      <a mat-list-item href="#multiple-selection" (click)="scrollTo($event)">Multiple Selection</a>
+    <mat-nav-list class="menu">
+      <a mat-list-item href="#single-selection">Single Selection</a>
+      <a mat-list-item href="#single-selection-with-autocomplete">Single Selection with Autocomplete</a>
+      <a mat-list-item href="#multiple-selection">Multiple Selection</a>
 
-      <a mat-list-item href="#with-object-options" (click)="scrollTo($event)">With Object Options</a>
+      <a mat-list-item href="#with-object-options">With Object Options</a>
 
-      <a mat-list-item href="#with-chips" (click)="scrollTo($event)">With Chips</a>
+      <a mat-list-item href="#with-chips">With Chips</a>
 
-      <a mat-list-item href="#interactive-demo" (click)="scrollTo($event)">Interactive Demo</a>
-      <a mat-list-item href="#remote-data-demo" (click)="scrollTo($event)">Remote data Demo</a>
+      <a mat-list-item href="#interactive-demo">Interactive Demo</a>
+      <a mat-list-item href="#remote-data-demo">Remote data Demo</a>
     </mat-nav-list>
 
-  </mat-drawer>
+  </mat-sidenav>
 
-  <div #content class="content">
+  <mat-sidenav-content>
 
-    <app-example-viewer
-      id="single-selection"
-      forComponent="app-single-selection"
-      title="Single Selection">
-      <app-single-selection></app-single-selection>
-    </app-example-viewer>
+    <section class="content">
 
-    <app-example-viewer
-      id="single-selection-with-autocomplete"
-      forComponent="app-single-selection-with-autocomplete"
-      title="Single Selection with Autocomplete">
-      <app-single-selection-with-autocomplete></app-single-selection-with-autocomplete>
-    </app-example-viewer>
+      <app-example-viewer
+        id="single-selection"
+        forComponent="app-single-selection"
+        title="Single Selection">
+        <app-single-selection></app-single-selection>
+      </app-example-viewer>
 
-    <app-example-viewer
-      id="multiple-selection"
-      forComponent="app-multiple-selection"
-      title="Multiple Selection">
-      <app-multiple-selection></app-multiple-selection>
-    </app-example-viewer>
+      <app-example-viewer
+        id="single-selection-with-autocomplete"
+        forComponent="app-single-selection-with-autocomplete"
+        title="Single Selection with Autocomplete">
+        <app-single-selection-with-autocomplete></app-single-selection-with-autocomplete>
+      </app-example-viewer>
 
-    <app-example-viewer
-      id="with-object-options"
-      forComponent="app-with-object-options"
-      title="With Object Options">
-      <app-with-object-options></app-with-object-options>
-    </app-example-viewer>
+      <app-example-viewer
+        id="multiple-selection"
+        forComponent="app-multiple-selection"
+        title="Multiple Selection">
+        <app-multiple-selection></app-multiple-selection>
+      </app-example-viewer>
 
-    <app-example-viewer
-      id="with-chips"
-      forComponent="app-with-chips"
-      title="With Chips">
-      <app-with-chips></app-with-chips>
-    </app-example-viewer>
+      <app-example-viewer
+        id="with-object-options"
+        forComponent="app-with-object-options"
+        title="With Object Options">
+        <app-with-object-options></app-with-object-options>
+      </app-example-viewer>
 
-    <app-example-viewer
-      id="interactive-demo"
-      forComponent="interactive-demo"
-      title="Interactive demo">
-      <app-interactive-demo></app-interactive-demo>
-    </app-example-viewer>
+      <app-example-viewer
+        id="with-chips"
+        forComponent="app-with-chips"
+        title="With Chips">
+        <app-with-chips></app-with-chips>
+      </app-example-viewer>
 
-    <app-example-viewer
-      id="remote-data-demo"
-      forComponent="remote-data-demo"
-      title="Remote data demo">
-      <app-remote-data-demo></app-remote-data-demo>
-    </app-example-viewer>
+      <app-example-viewer
+        id="interactive-demo"
+        forComponent="interactive-demo"
+        title="Interactive demo">
+        <app-interactive-demo></app-interactive-demo>
+      </app-example-viewer>
 
-  </div>
+      <app-example-viewer
+        id="remote-data-demo"
+        forComponent="remote-data-demo"
+        title="Remote data demo">
+        <app-remote-data-demo></app-remote-data-demo>
+      </app-example-viewer>
 
-</mat-drawer-container>
+    </section>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
 

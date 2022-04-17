@@ -26,8 +26,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { NgxMatComboboxModule } from "../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.module";
 import { ExampleViewerComponent } from './example-viewer/example-viewer.component';
 
-import { AppRoutingModule } from "./app-routing.module";
-
 import { SingleSelectionComponent } from './examples/single-selection/single-selection.component';
 import { MultipleSelectionComponent } from "./examples/multiple-selection/multiple-selection.component";
 import { SingleSelectionWithAutocompleteComponent } from './examples/single-selection-with-autocomplete/single-selection-with-autocomplete.component';
@@ -72,8 +70,6 @@ import { WithObjectOptionsComponent } from "./examples/with-object-options/with-
     MatSelectModule,
     MatChipsModule,
     MatListModule,
-
-    AppRoutingModule,
 
     NgxMatComboboxModule
   ],

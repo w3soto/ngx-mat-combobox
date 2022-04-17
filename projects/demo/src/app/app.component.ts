@@ -23,17 +23,4 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  scrollTo(e: MouseEvent) {
-
-    const anchor = (e.target as HTMLElement).closest('a')!.getAttribute('href')!;
-    //console.log(e.target, anchor);
-    window.scrollTo({
-      top: (document.querySelector(anchor)! as HTMLElement).offsetTop - 64,
-      behavior: 'smooth'
-    });
-    history.pushState(anchor, '', anchor);
-
-    e.preventDefault();
-  }
-
 }
