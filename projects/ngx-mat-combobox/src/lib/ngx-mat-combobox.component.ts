@@ -371,14 +371,30 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   }
   private _fillInput: boolean = false;
 
+  /**
+   * If set, dropdown will be automatically opened when focused
+   */
   @Input()
-  set autoExpand(val: BooleanInput) {
-    this._autoExpand = coerceBooleanProperty(val);
+  set autoOpen(val: BooleanInput) {
+    this._autoOpen = coerceBooleanProperty(val);
   }
-  get autoExpand(): boolean {
-    return this._autoExpand;
+  get autoOpen(): boolean {
+    return this._autoOpen;
   }
-  private _autoExpand: boolean = false;
+  private _autoOpen: boolean = false;
+
+  /**
+   * If set, first option in dropdown will be automatically activated (if no option is selected). Works only in
+   * single selection mode without autocomplete mode.
+   */
+  @Input()
+  set autoActivate(val: BooleanInput) {
+    this._autoActivate = coerceBooleanProperty(val);
+  }
+  get autoActivate(): boolean {
+    return this._autoActivate;
+  }
+  _autoActivate = false;
 
   /**
    * If set, value will be updated (selected) as users moves with up/down arrows through dropdown list.
@@ -898,7 +914,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   //
 
   onEnter() {
-    if (this._autoExpand) {
+    if (this._autoOpen) {
       this.filter();
     }
   }
@@ -1519,7 +1535,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
       this._dropdownKeyManager?.setActiveItem(index);
     }
     // or activate first available option
-    else if (this._autoSelectFirst && index == -1 && this._filteredOptionsModel.value.length) {
+    else if (this._autoActivate && index == -1 && this._filteredOptionsModel.value.length) {
       this._dropdownKeyManager?.setFirstItemActive();
       index = this._dropdownKeyManager?.activeItemIndex || -1;
     }
