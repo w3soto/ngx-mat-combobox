@@ -108,7 +108,7 @@ export class NgxMatComboboxNoOptionDirective {
     'role': 'combobox',
     '[attr.id]': 'id',
     '[attr.tabindex]': 'tabIndex',
-    //'[attr.aria-controls]': 'opened ? id + "-dropdown" : null',
+    '[attr.aria-controls]': 'opened ? (id + "-dropdown") : null',
     '[attr.aria-expanded]': 'opened',
     '[attr.aria-describedby]': 'ariaDescribedby',
     //'[attr.aria-label]': 'ariaLabel || null',
