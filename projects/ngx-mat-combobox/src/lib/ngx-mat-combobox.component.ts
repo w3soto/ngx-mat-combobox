@@ -1198,6 +1198,27 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
     }
   }
 
+  /**
+   * Add provided options to selection (with respect to maxValues setting)
+   */
+  selectOptions(options: any[]) {
+    if (options.length) {
+      if (this._multiple) {
+        let newOptions = Array.from(new Set([...this._selectedOptionsModel.value, ...options]));
+        if (this._maxValues > 0) {
+          newOptions.splice(this._maxValues - 1, newOptions.length - this._maxValues);
+        }
+        this._selectedOptionsModel.next(newOptions);
+      }
+      else {
+        this._selectedOptionsModel.next([options[0]]);
+      }
+    }
+  }
+
+  /**
+   * Remove provided option from selection
+   */
   deselectOption(option: any) {
     const options = this._selectedOptionsModel.value;
     const index = this.getSelectedOptionIndex(option);
@@ -1205,6 +1226,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
       options.splice(index, 1);
       this._selectedOptionsModel.next([...options]);
     }
+  }
+
+  /**
+   * Remove provided options from selection
+   */
+  deselectOptions(options: any[]) {
+    const newOptions = this._selectedOptionsModel.value
+      .filter(a => options.find(b => !this._compareOptionsFn(a, b))).slice();
+    this._selectedOptionsModel.next(newOptions);
   }
 
   toggleOption(option: any) {
@@ -1222,6 +1252,18 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
         this._selectedOptionsModel.next([option]);
       }
     }
+  }
+
+  selectAllFilteredOptions() {
+    this.selectOptions(this._filteredOptionsModel.value);
+  }
+
+  deselectAllFilteredOptions() {
+    this.deselectOptions(this._filteredOptionsModel.value);
+  }
+
+  selectAllOptions() {
+    this.selectOptions(this._options);
   }
 
   clear() {
