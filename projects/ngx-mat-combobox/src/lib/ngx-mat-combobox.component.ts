@@ -261,10 +261,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   // Custom functionality
   //
 
-  get tabIndex(): number {
-    return this._tabIndex;
-  }
-  readonly _tabIndex: number = 0;
+  readonly tabIndex!: number;
 
   @Input()
   set readonly(val: BooleanInput) {
@@ -353,6 +350,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
     return 'ngx-combobox-option-' + (this._valueAccessor ? this._valueAccessor(option) : JSON.stringify(option));
   };
 
+  /**
+   * If set, component will emit option's value using provided valueAccessor.
+   */
   @Input()
   set useValue(val: BooleanInput) {
     this._useValue = coerceBooleanProperty(val);
@@ -362,6 +362,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   }
   private _useValue: boolean = false;
 
+  /**
+   * If set, autocomplete input will be filled with option's display or label value.
+   */
   @Input()
   set fillInput(val: BooleanInput) {
     this._fillInput = coerceBooleanProperty(val);
@@ -398,7 +401,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
 
   /**
    * If set, value will be updated (selected) as users moves with up/down arrows through dropdown list.
-   * Works only in single selection + no autocomplete mode. In multiple selection/autocomplete mode user has to to
+   * Works only in single selection without autocomplete mode. In multiple selection/autocomplete mode user has to
    * click or hit enter/space to select active option.
    */
   @Input()
@@ -558,7 +561,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   private _loadingSpinnerStrokeWidth: number = 2;
 
   @Input()
-  dropdownClass?: string;
+  loadingSpinnerColor: string = 'primary';
 
   /**
    * Disable options ripple
@@ -576,19 +579,37 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   optionsCheckboxColor?: string;
 
   /**
-   * Dropdown panel offset
+   * Dropdown panel class
+   */
+  @Input()
+  dropdownClass?: string;
+
+  /**
+   * Dropdown width based on field width
+   */
+  @Input()
+  set dropdownMatchFieldWidth(val: BooleanInput) {
+      this._dropdownMatchFieldWidth = coerceBooleanProperty(val);
+  }
+  private _dropdownMatchFieldWidth: boolean = true;
+
+  /**
+   * Dropdown X offset
    */
   @Input()
   set dropdownOffsetX(val: NumberInput) {
     this._dropdownOffsetX = coerceNumberProperty(val);
   }
-  private _dropdownOffsetX?: number;
+  private _dropdownOffsetX?: number = 0;
 
+  /**
+   * Dropdown Y offset
+   */
   @Input()
   set dropdownOffsetY(val: NumberInput) {
     this._dropdownOffsetY = coerceNumberProperty(val);
   }
-  private _dropdownOffsetY?: number;
+  private _dropdownOffsetY?: number = 0;
 
   /**
    * Autofocus first element in custom dropdown template
@@ -618,10 +639,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   get noOptionText(): string {
     return this._noOptionText
   }
-  private _noOptionText: string;
+  private _noOptionText: string = 'No Results';
 
   /**
-   * Whether loading data from dataSource
+   * Whether waiting for data from mapOptionsFn's or filterOptionsFn's observable
    */
   get loading(): boolean {
     return this._loading > 0;
@@ -636,9 +657,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   }
   private _opened: boolean = false;
 
+  /**
+   * Event emitted when the dropdown has been opened or closed
+   */
   @Output()
   readonly openedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  /**
+   * Event emitted when the selected value has been changed
+   */
   @Output()
   readonly selectionChange: EventEmitter<any[]> = new EventEmitter<any[]>();
 
@@ -659,8 +686,12 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   private _filteredOptionsModel: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
   /**
-   * Search/autocomplete input reference
+   * Autocomplete input reference
    */
+  get input(): NgxMatComboboxInputDirective | undefined {
+    return this._input;
+  }
+
   @ViewChild(NgxMatComboboxInputDirective)
   set _viewInput(val: NgxMatComboboxInputDirective) {
     this._initializeInput(val);
@@ -671,9 +702,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
     this._initializeInput(val);
   }
 
-  get input(): NgxMatComboboxInputDirective | undefined {
-    return this._input;
-  }
   private _input?: NgxMatComboboxInputDirective;
 
   /**
@@ -719,7 +747,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
    * Rendered dropdown's options list
    */
   @ViewChildren(NgxMatComboboxOption)
-  readonly dropdownOptions: QueryList<NgxMatComboboxOption> = new QueryList<NgxMatComboboxOption>();
+  readonly _dropdownOptions: QueryList<NgxMatComboboxOption> = new QueryList<NgxMatComboboxOption>();
 
   @ViewChild('dropdown')
   private _dropdown?: ElementRef;
@@ -773,7 +801,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
       this.ngControl.valueAccessor = this;
     }
 
-    this._tabIndex = parseInt(tabIndex) || 0;
+    this.tabIndex = parseInt(tabIndex) || 0;
 
     // defaults
     this._disableOptionsRipple = this._defaults?.disableOptionsRipple ?? false;
@@ -807,7 +835,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
       this._configCheckOptions(this._options);
     }
 
-    // calculate spinner size
+    // calculate auto spinner size
     if (typeof this._loadingSpinnerDiameter == 'undefined') {
       const computedStyle = window.getComputedStyle(this._elementRef.nativeElement);
       this._loadingSpinnerDiameter = Number.parseInt(computedStyle.lineHeight);
@@ -893,7 +921,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
         takeUntil(this._destroyed)
       ).subscribe();
     }
-    this._elementRef.nativeElement.tabIndex = el ? -1 : this._tabIndex;
+    this._elementRef.nativeElement.tabIndex = el ? -1 : this.tabIndex;
   }
 
   /**
@@ -1154,10 +1182,12 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
     this._opened ? this.closeDropdown() : this.openDropdown();
   }
 
+  /**
+   * Add provided option to selection (with respect to maxValues setting)
+   */
   selectOption(option: any) {
     if (this._multiple) {
       if (this._maxValues > 0 && this._selectedOptionsModel.value.length < this._maxValues) {
-        // check if option is already selected
         if (!this.isOptionSelected(option)) {
           this._selectedOptionsModel.next([...this._selectedOptionsModel.value, option]);
         }
@@ -1214,7 +1244,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
 
   scrollToOption(index: number) {
     const panelEl = this._dropdownBody?.nativeElement;
-    const optionEl = this.dropdownOptions.get(index)?.nativeElement;
+    const optionEl = this._dropdownOptions.get(index)?.nativeElement;
 
     if (panelEl && index < 0) {
       panelEl.scrollTop = 0;
@@ -1241,7 +1271,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   }
 
   /**
-   * Search (then open dropdown if not already opened)
+   * Filter options ba calling filterOptionsFn (then open dropdown if not already opened)
    */
   filter(query?: string) {
     query = query || '';
@@ -1405,7 +1435,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
    */
   readOptionDisabled(option: any): boolean {
     if (this._disabledAccessor) {
-      return this._disabledAccessor(option);
+      return !!this._disabledAccessor(option);
     }
     return false;
   }
@@ -1474,7 +1504,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
     }
 
     // key manager
-    this._dropdownKeyManager = new ActiveDescendantKeyManager<NgxMatComboboxOption>(this.dropdownOptions);
+    this._dropdownKeyManager = new ActiveDescendantKeyManager<NgxMatComboboxOption>(this._dropdownOptions);
 
     this._dropdownKeyManager.withWrap();
 
@@ -1524,8 +1554,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
     ).subscribe();
   }
 
-  _autoSelectFirst = false;
-
   private _activateDropdownOption() {
     let index = -1;
     let options = this._selectedOptionsModel.value;
@@ -1555,7 +1583,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
    */
   public alignDropdown() {
     const originElement: HTMLElement = this.formField?._elementRef.nativeElement || this._elementRef.nativeElement;
-    this._dropdownOverlay?.updateSize({minWidth: originElement.offsetWidth});
+    this._dropdownOverlay?.updateSize({
+      minWidth: this._dropdownMatchFieldWidth ? originElement.offsetWidth : 'auto'
+    });
     this._dropdownOverlay?.updatePosition();
     this._changeDetectorRef.markForCheck();
   }
