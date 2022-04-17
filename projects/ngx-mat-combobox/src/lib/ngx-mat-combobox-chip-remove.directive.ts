@@ -1,15 +1,14 @@
-import { AfterViewInit, Directive, ElementRef, Input, NgZone, OnDestroy } from '@angular/core';
-import { NgxMatCombobox } from "./ngx-mat-combobox.component";
-import { fromEvent, Subject, takeUntil, tap } from "rxjs";
-import { first } from "rxjs/operators";
+import { Directive, ElementRef, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { Subject } from "rxjs";
 
 @Directive({
   selector: '[ngxMatComboboxChipRemove]',
   host: {
-    'class': 'ngx-mat-combobox-chip-remove'
+    'class': 'ngx-mat-combobox-chip-remove',
+    '(click)': '_handleClick($event)'
   }
 })
-export class NgxMatComboboxChipRemoveDirective implements OnDestroy, AfterViewInit{
+export class NgxMatComboboxChipRemoveDirective implements OnDestroy {
 
   @Input('ngxMatComboboxChipRemove')
   set option(option: any) {
@@ -17,50 +16,25 @@ export class NgxMatComboboxChipRemoveDirective implements OnDestroy, AfterViewIn
   }
   private _option?: any;
 
+  @Output()
+  readonly removeClick: EventEmitter<any> = new EventEmitter<any>();
+
   private _destroyed: Subject<void> = new Subject<void>();
 
   constructor(
-    public _elementRef: ElementRef,
-    public _combo: NgxMatCombobox,
-    private _ngZone: NgZone
+    public _elementRef: ElementRef<any>
   ) {}
 
-  ngAfterViewInit(): void {
-
-    // TODO - process in combobox !!!
-    // emit events via @Output() and handle inside combobox component
-    // using @ContentChildren + @ViewChildren
-
-    fromEvent<any>(this._elementRef.nativeElement, 'click', {capture: true}).pipe(
-      tap(e => {
-        e.stopPropagation();
-        e.preventDefault();
-        if (this._option) {
-          this._combo.deselectOption(this._option);
-          this._ngZone.onStable.pipe(first()).subscribe(() => this._combo.alignDropdown());
-        }
-        this._ngZone.runTask(() => {
-          this._combo.focus()
-        });
-      }),
-      takeUntil(this._destroyed)
-    ).subscribe();
-
-    fromEvent<MouseEvent>(this._elementRef.nativeElement, 'focus').pipe(
-      tap(e => this._combo.onFocus(e)),
-      takeUntil(this._destroyed)
-    ).subscribe();
-
-    fromEvent<MouseEvent>(this._elementRef.nativeElement, 'blur').pipe(
-      tap(e => this._combo.onBlur(e)),
-      takeUntil(this._destroyed)
-    ).subscribe();
-
-  }
-
   ngOnDestroy(): void {
+    this.removeClick.complete();
     this._destroyed.next();
     this._destroyed.complete();
+  }
+
+  _handleClick(e: MouseEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.removeClick.emit(this._option);
   }
 
 }

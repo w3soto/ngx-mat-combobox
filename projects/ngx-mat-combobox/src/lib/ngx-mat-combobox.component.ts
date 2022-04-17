@@ -2,7 +2,7 @@ import {
   Attribute, ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ContentChild,
+  ContentChild, ContentChildren,
   Directive,
   ElementRef, EventEmitter, HostBinding,
   Inject,
@@ -43,7 +43,7 @@ import {
   takeUntil,
   tap
 } from "rxjs";
-import { delay, finalize, map, skip, throttleTime } from "rxjs/operators";
+import { delay, finalize, map } from "rxjs/operators";
 
 import { MAT_FORM_FIELD, MatFormField, MatFormFieldControl } from "@angular/material/form-field";
 
@@ -58,7 +58,8 @@ import {
 import { NgxMatComboboxOption } from "./ngx-mat-combobox-option.component";
 import { asObservable, createOptionPropertyAccessorFn, devLog, isEqual } from "./ngx-mat-combobox.utils";
 import { NgxMatComboboxInputDirective } from "./ngx-mat-combobox-input.directive";
-import { ErrorStateMatcher, mixinDisabled } from "@angular/material/core";
+import { ErrorStateMatcher } from "@angular/material/core";
+import { NgxMatComboboxChipRemoveDirective } from "./ngx-mat-combobox-chip-remove.directive";
 
 
 @Directive({
@@ -645,21 +646,28 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
    * Search/autocomplete input reference
    */
   @ViewChild(NgxMatComboboxInputDirective)
-  set _viewSearchInput(val: NgxMatComboboxInputDirective) {
-    this._input = val;
-    this._initializeSearchInput();
+  set _viewInput(val: NgxMatComboboxInputDirective) {
+    this._initializeInput(val);
   }
 
   @ContentChild(NgxMatComboboxInputDirective)
-  set _contentSearchInput(val: NgxMatComboboxInputDirective) {
-    this._input = val;
-    this._initializeSearchInput();
+  set _contentInput(val: NgxMatComboboxInputDirective) {
+    this._initializeInput(val);
   }
 
   get input(): NgxMatComboboxInputDirective | undefined {
     return this._input;
   }
   private _input?: NgxMatComboboxInputDirective;
+
+  /**
+   * Remove chips buttons
+   */
+  @ViewChildren(NgxMatComboboxChipRemoveDirective)
+  private _viewChipsRemove?: QueryList<NgxMatComboboxChipRemoveDirective>;
+
+  @ContentChildren(NgxMatComboboxChipRemoveDirective, {descendants: true})
+  private _contentChipsRemove?: QueryList<NgxMatComboboxChipRemoveDirective>;
 
   /**
    * Custom display/selection block template
@@ -830,19 +838,18 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
 
   }
 
-  _initializeSearchInput() {
+  ngAfterViewInit() {
+    this._viewChipsRemove?.changes.pipe(
+      tap(changes => changes.forEach((o: NgxMatComboboxChipRemoveDirective) => this._initializeChipRemove(o))),
+      takeUntil(this._destroyed)
+    ).subscribe();
+  }
 
-    if (this.input && !this.input._initialized) {
-      this.input.valueChanges.pipe(
-        map(val => val || ''),
-        debounceTime(400),
-        tap((query: string) => this.filter(query)),
-        takeUntil(this._destroyed)
-      ).subscribe();
-      this.input._initialized = true;
-    }
-
-    this._elementRef.nativeElement.tabIndex = this.input ? -1 : this._tabIndex;
+  ngAfterContentInit() {
+    this._contentChipsRemove?.changes.pipe(
+      tap(changes => changes.forEach((o: NgxMatComboboxChipRemoveDirective) => this._initializeChipRemove(o))),
+      takeUntil(this._destroyed)
+    ).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -855,6 +862,35 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
 
     this.openedChange.complete();
     this.selectionChange.complete();
+  }
+
+  /**
+   * Initialize search InputDirective provided by @ViewChild or @ContentChild
+   */
+  private _initializeInput(el: NgxMatComboboxInputDirective) {
+    this._input = el;
+    if (el) {
+      el.valueChanges.pipe(
+        map(val => val || ''),
+        debounceTime(this._autocompleteDebounceInterval),
+        tap((query: string) => this.filter(query)),
+        takeUntil(this._destroyed)
+      ).subscribe();
+    }
+    this._elementRef.nativeElement.tabIndex = el ? -1 : this._tabIndex;
+  }
+
+  /**
+   * Initialize ChipRemoveDirective provided by @ViewChildren or @ContentChildren
+   */
+  private _initializeChipRemove(el: NgxMatComboboxChipRemoveDirective) {
+    el.removeClick.subscribe((option) => {
+      if (option) {
+        this.deselectOption(option);
+        this._ngZone.onStable.pipe(first()).subscribe(() => this.alignDropdown());
+      }
+      this._ngZone.runTask(() => this.focus());
+    });
   }
 
   //
