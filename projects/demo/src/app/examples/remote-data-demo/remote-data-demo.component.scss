@@ -12,6 +12,47 @@
   }
 }
 
+// global selection display class
+::ng-deep .users-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #3F51B5;
+    border-radius: 4px;
+    padding: 4px;
+    color: #fff;
+    &__name {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    &__avatar {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      width: 24px;
+      height: 24px;
+      object-fit: cover;
+      border-radius: 4px;
+      background-color: #f5f5f5;
+    }
+    &__remove {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      line-height: 22px;
+      opacity: .5;
+      mat-icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
 // global dropdown panel class
 ::ng-deep .users-dropdown {
   max-height: 400px !important;
@@ -51,7 +92,6 @@
     }
   }
 
-
   .user {
     flex: 1;
     line-height: 1em;
@@ -65,7 +105,7 @@
       width: 32px;
       height: 32px;
       object-fit: cover;
-      border-radius: 50%;
+      border-radius: 4px;
       border: solid 1px lightgrey;
       background-color: #f5f5f5;
     }

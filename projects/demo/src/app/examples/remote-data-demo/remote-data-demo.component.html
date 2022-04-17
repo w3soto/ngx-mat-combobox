@@ -37,23 +37,21 @@
     placeholder="Select users...">
 
     <ng-template ngxMatComboboxDisplay let-options="selection">
-      <mat-chip-list
-        [tabIndex]="-1">
-        <mat-chip
-          disableRipple
-          [disabled]="combo.disabled"
-          *ngFor="let o of options">
-          <mat-chip-avatar>
-            <img [src]="o.image" [alt]="o.firstName + ' ' + o.lastName"/>
-          </mat-chip-avatar>
-          {{ o.firstName }} {{ o.lastName }}
+      <div class="users-chips">
+        <div
+          *ngFor="let o of options"
+          class="user-chip">
+          <img class="user-chip__avatar" [src]="o.image" [alt]="o.firstName + ' ' + o.lastName"/>
+          <span class="user-chip__name" >{{ o.firstName }} {{ o.lastName }}</span>
           <button
+            mat-icon-button
+            class="user-chip__remove"
             *ngIf="!combo.disabled && !combo.readonly"
-            matChipRemove [ngxMatComboboxChipRemove]="o">
+            [ngxMatComboboxChipRemove]="o">
             <mat-icon>cancel</mat-icon>
           </button>
-        </mat-chip>
-      </mat-chip-list>
+        </div>
+      </div>
     </ng-template>
 
     <ng-template ngxMatComboboxHeader>
