@@ -130,8 +130,7 @@ export class NgxMatComboboxNoOptionDirective {
   }],
   exportAs: 'ngxMatCombobox'
 })
-export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
-  ControlValueAccessor, MatFormFieldControl<any> {
+export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValueAccessor, MatFormFieldControl<any> {
 
   //
   // MatFormFieldControl interface
@@ -592,6 +591,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
       this._dropdownMatchFieldWidth = coerceBooleanProperty(val);
   }
   private _dropdownMatchFieldWidth: boolean = true;
+
+  /**
+   * Dropdown align
+   */
+  @Input()
+  set dropdownAlign(align: 'start' | 'center' | 'end') {
+    this._dropdownAlign = align;
+  }
+  private _dropdownAlign: 'start' | 'center' | 'end' = 'start';
 
   /**
    * Dropdown X offset
@@ -1500,17 +1508,17 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
       .withPositions([
         // bottom position
         {
-          originX: "start",
+          originX: this._dropdownAlign,
           originY: "bottom",
-          overlayX: "start",
+          overlayX: this._dropdownAlign,
           overlayY: "top",
 
         },
         // top position
         {
-          originX: "start",
+          originX: this._dropdownAlign,
           originY: "top",
-          overlayX: "start",
+          overlayX: this._dropdownAlign,
           overlayY: "bottom"
         }
       ]);
@@ -1538,10 +1546,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
     this._changeDetectorRef.detectChanges();
 
     this._dropdownOverlayDestroyed = new Subject<void>();
-
-    this._ngZone.onStable.pipe(first()).subscribe(() => {
-
-    });
 
     // focus & trap
     this._dropdownFocusTrap = this._focusTrapFactory.create(this._dropdown!.nativeElement);
