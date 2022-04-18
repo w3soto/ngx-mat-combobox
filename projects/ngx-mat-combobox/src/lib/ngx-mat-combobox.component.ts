@@ -202,7 +202,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   }
 
   get shouldLabelFloat() {
-    return this._focused || this._value.length > 0 || !!this.input?.hasValue();
+    return this._focused || this._value.length > 0 || this._autocomplete && !!this.input?.hasValue();
   }
 
   set value(value: any) {
@@ -449,7 +449,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   private _noWrap: boolean = false;
 
   /**
-   * Enable autocomplete
+   * Display autocomplete input
    */
   @Input()
   set autocomplete(val: BooleanInput) {
@@ -466,7 +466,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   @Input()
   set autocompleteDebounceInterval(val: NumberInput) {
     this._autocompleteDebounceInterval = Math.max(coerceNumberProperty(val, 400), 0);
-    this._initializeInput(this.input);
+    this._initializeInput();
   }
   get autocompleteDebounceInterval(): number {
     return this._autocompleteDebounceInterval;
@@ -479,7 +479,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   @Input()
   set autocompleteMinChars(val: NumberInput) {
     this._autocompleteMinChars = Math.max(coerceNumberProperty(val, 0), 0);
-    this._initializeInput(this.input);
+    this._initializeInput();
   }
   get autocompleteMinChars(): number {
     return this._autocompleteMinChars;
@@ -732,13 +732,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   }
 
   @ViewChild(NgxMatComboboxInputDirective)
-  set _viewInput(val: NgxMatComboboxInputDirective) {
-    this._initializeInput(val);
+  set _viewInput(input: NgxMatComboboxInputDirective) {
+    this._input = input;
+    this._initializeInput();
   }
 
   @ContentChild(NgxMatComboboxInputDirective)
-  set _contentInput(val: NgxMatComboboxInputDirective) {
-    this._initializeInput(val);
+  set _contentInput(input: NgxMatComboboxInputDirective) {
+    this._input = input;
+    this._initializeInput();
   }
 
   private _input?: NgxMatComboboxInputDirective;
@@ -946,11 +948,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   /**
    * Initialize search InputDirective provided by @ViewChild or @ContentChild
    */
-  private _initializeInput(el?: NgxMatComboboxInputDirective) {
-    this._input = el;
-    this._inputValueChangeSub?.unsubscribe();
-    if (el) {
-      this._inputValueChangeSub = el.valueChanges.pipe(
+  private _initializeInput() {
+    if (this._input) {
+      this._inputValueChangeSub?.unsubscribe();
+      this._inputValueChangeSub = this._input.valueChanges.pipe(
         map(val => val || ''),
         debounceTime(this._autocompleteDebounceInterval),
         tap((query: string) => {
@@ -961,7 +962,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
         takeUntil(this._destroyed)
       ).subscribe();
     }
-    this._elementRef.nativeElement.tabIndex = el ? -1 : this.tabIndex;
+    // delegate focus to inner input element
+    // only if input is inside host element, not in dropdown's header
+    const shouldDelegateFocus = !!this._input && this._elementRef.nativeElement.contains(this._input.nativeElement);
+    if (shouldDelegateFocus) {
+      this._input!.nativeElement.tabIndex = this.tabIndex;
+      this._elementRef.nativeElement.tabIndex = -1;
+    }
+    else {
+      this._elementRef.nativeElement.tabIndex = this.tabIndex;
+    }
   }
 
   /**
