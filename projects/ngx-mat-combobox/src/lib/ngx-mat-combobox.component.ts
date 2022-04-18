@@ -1405,14 +1405,21 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy,
   private _updateSelectedOptionsModel() {
     if (this._useValue) {
       this._mapOptionsSub?.unsubscribe();
-      this._loading++;
-      this._mapOptionsSub = this._mapOptions(this._value, this._options).pipe(
+      // map only non empty value
+      if (this._value.length) {
+        this._loading++;
+        this._mapOptionsSub = this._mapOptions(this._value, this._options).pipe(
           first(),
           finalize(() => {
             this._loading--;
             this._changeDetectorRef.markForCheck();
           })
         ).subscribe(options => this._selectedOptionsModel.next(options));
+      }
+      else {
+        this._selectedOptionsModel.next([]);
+        this._changeDetectorRef.markForCheck();
+      }
     }
     else {
       this._selectedOptionsModel.next(this._value.slice());
