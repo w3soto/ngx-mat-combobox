@@ -466,6 +466,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   @Input()
   set autocompleteDebounceInterval(val: NumberInput) {
     this._autocompleteDebounceInterval = Math.max(coerceNumberProperty(val, 400), 0);
+    this._initializeInput(this.input);
   }
   get autocompleteDebounceInterval(): number {
     return this._autocompleteDebounceInterval;
@@ -478,6 +479,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   @Input()
   set autocompleteMinChars(val: NumberInput) {
     this._autocompleteMinChars = Math.max(coerceNumberProperty(val, 0), 0);
+    this._initializeInput(this.input);
   }
   get autocompleteMinChars(): number {
     return this._autocompleteMinChars;
@@ -739,6 +741,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
 
   private _input?: NgxMatComboboxInputDirective;
 
+  private _inputValueChangeSub?: Subscription;
+
   /**
    * Remove chips buttons
    */
@@ -940,13 +944,18 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   /**
    * Initialize search InputDirective provided by @ViewChild or @ContentChild
    */
-  private _initializeInput(el: NgxMatComboboxInputDirective) {
+  private _initializeInput(el?: NgxMatComboboxInputDirective) {
     this._input = el;
+    this._inputValueChangeSub?.unsubscribe();
     if (el) {
-      el.valueChanges.pipe(
+      this._inputValueChangeSub = el.valueChanges.pipe(
         map(val => val || ''),
         debounceTime(this._autocompleteDebounceInterval),
-        tap((query: string) => this.filter(query)),
+        tap((query: string) => {
+          if (query.length >= this._autocompleteMinChars) {
+            this.filter(query)
+          }
+        }),
         takeUntil(this._destroyed)
       ).subscribe();
     }
