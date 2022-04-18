@@ -638,6 +638,33 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   private _dropdownTrapFocus: boolean = false;
 
   /**
+   * Dropdown key navigation wrap
+   */
+  @Input()
+  set dropdownKeyNavWrap(val: BooleanInput) {
+    this._dropdownKeyNavWrap = coerceBooleanProperty(val);
+  }
+  private _dropdownKeyNavWrap: boolean = true;
+
+  /**
+   * Dropdown key navigation HOME and END keys. Ignored in autocomplete mode.
+   */
+  @Input()
+  set dropdownKeyNavHomeAndEnd(val: BooleanInput) {
+    this._dropdownKeyNavHomeAndEnd = coerceBooleanProperty(val);
+  }
+  private _dropdownKeyNavHomeAndEnd?: boolean;
+
+  /**
+   * Dropdown key navigation HOME and END keys. Ignored in autocomplete mode.
+   */
+  @Input()
+  set dropdownKeyNavTypeAhead(val: BooleanInput) {
+    this._dropdownKeyNavTypeAhead = coerceBooleanProperty(val);
+  }
+  private _dropdownKeyNavTypeAhead: boolean = true;
+
+  /**
    * Custom no option text
    */
   @Input()
@@ -1558,11 +1585,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
 
     // key manager
     this._dropdownKeyManager = new ActiveDescendantKeyManager<NgxMatComboboxOption>(this._dropdownOptions);
-
-    this._dropdownKeyManager.withWrap();
-
-    if (!this._autocomplete) {
+    if (this._dropdownKeyNavWrap) {
+      this._dropdownKeyManager.withWrap();
+    }
+    if (!this._autocomplete && this._dropdownKeyNavHomeAndEnd) {
       this._dropdownKeyManager.withHomeAndEnd();
+    }
+    if (!this._autocomplete && this._dropdownKeyNavTypeAhead) {
       this._dropdownKeyManager.withTypeAhead();
     }
 
