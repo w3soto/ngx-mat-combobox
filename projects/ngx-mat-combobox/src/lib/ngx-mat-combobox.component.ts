@@ -1170,6 +1170,11 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
    */
   onDropdownKeydown(e: KeyboardEvent): void {
 
+    // skip events from custom header/footer templates
+    if (e.code == 'Enter' && !this._isTriggeredFromInnerComponent(e)) {
+      return;
+    }
+
     const index = this._dropdownKeyManager?.activeItemIndex;
 
     if (e.code == 'Escape' || e.code == 'Tab' && !this._dropdownTrapFocus) {
@@ -1485,6 +1490,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     }
     query = query.toLowerCase();
     return of(options.filter(o => ('' + this.readOptionLabel(o)).toLowerCase().startsWith(query)).slice());
+  }
+
+  // check if event is triggered from inner component (input, host or dropdown's body)
+  private _isTriggeredFromInnerComponent(e: Event): boolean {
+    const target = e.target as HTMLElement;
+    return this.input && this.input.nativeElement === target || this._elementRef.nativeElement.contains(target) ||
+      !!this._dropdownBody?.nativeElement.contains(target);
   }
 
   private _keepLastActiveElement(e?: HTMLElement) {
