@@ -854,12 +854,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
 
     // check settings
     if (isDevMode()) {
-      if (this._autoSelect && (this._multiple || this._autocomplete)) {
-        devLog("[autoSelect] setting has no effect in [multiple] or [autocomplete] mode");
-      }
-      if (this._fillInput && this._multiple) {
-        devLog("[fillInput] setting has no effect in [multiple] mode");
-      }
       if (this._useValue && !this._valueAccessor) {
         devLog('Option [useValue] is set, but no [valueAccessor] is provided!')
       }

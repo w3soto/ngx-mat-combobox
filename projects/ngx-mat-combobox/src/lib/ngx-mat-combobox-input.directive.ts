@@ -21,8 +21,6 @@ export class NgxMatComboboxInputDirective implements OnDestroy{
   @Output()
   readonly valueChanges: EventEmitter<string> = new EventEmitter<string>();
 
-  _initialized: boolean = false;
-
   private _value: string = '';
 
   constructor(
@@ -55,7 +53,7 @@ export class NgxMatComboboxInputDirective implements OnDestroy{
     return this.length > 0;
   }
 
-  _handleChanges(event: InputEvent) {
+  _handleChanges(event: KeyboardEvent) {
     const value = this._elementRef.nativeElement.value;
     if (this._value != value) {
       this.valueChanges.emit(value);
