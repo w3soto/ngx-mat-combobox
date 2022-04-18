@@ -682,9 +682,11 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
    * Whether waiting for data from mapOptionsFn's or filterOptionsFn's observable
    */
   get loading(): boolean {
-    return this._loading > 0;
+    return this._loading;
   }
-  private _loading: number = 0;
+  private _loading: boolean = false;
+
+  private _loadingTimeout?: any;
 
   /**
    * Whether dropdown is opened
@@ -1351,18 +1353,36 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   }
 
   /**
+   * Show loading animation
+   */
+  startLoading() {
+    clearTimeout(this._loadingTimeout);
+    this._loadingTimeout = setTimeout(() => {
+      this._loading = true;
+    }, 1);
+  }
+
+  /**
+   * Hide loading animation
+   */
+  stopLoading() {
+    clearTimeout(this._loadingTimeout);
+    this._loading = false;
+  }
+
+  /**
    * Filter options ba calling filterOptionsFn (then open dropdown if not already opened)
    */
   filter(query?: string) {
     query = query || '';
 
     this._filterOptionsSub?.unsubscribe();
-    this._loading++;
+    this.startLoading();
     this._changeDetectorRef.markForCheck();
     this._filterOptionsSub = this._filterOptions(query, this._options).pipe(
       first(),
       finalize(() => {
-        this._loading--;
+        this.stopLoading();
         this._changeDetectorRef.markForCheck();
       })
     ).subscribe(options => {
@@ -1445,11 +1465,11 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
       this._mapOptionsSub?.unsubscribe();
       // map only non empty value
       if (this._value.length) {
-        this._loading++;
+        this.startLoading();
         this._mapOptionsSub = this._mapOptions(this._value, this._options).pipe(
           first(),
           finalize(() => {
-            this._loading--;
+            this.stopLoading();
             this._changeDetectorRef.markForCheck();
           })
         ).subscribe(options => this._selectedOptionsModel.next(options));
