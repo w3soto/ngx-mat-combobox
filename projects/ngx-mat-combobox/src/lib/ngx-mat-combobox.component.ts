@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ContentChild, ContentChildren,
-  Directive,
+  Directive, DoCheck,
   ElementRef, EventEmitter, HostBinding,
   Inject,
   Input, isDevMode,
@@ -19,7 +19,14 @@ import {
   ViewContainerRef,
   ViewEncapsulation
 } from '@angular/core';
-import { ControlValueAccessor, NgControl, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormGroupDirective,
+  NgControl,
+  NgForm,
+  Validators
+} from "@angular/forms";
 
 import { BooleanInput, coerceBooleanProperty, coerceNumberProperty, NumberInput } from "@angular/cdk/coercion";
 import { Overlay, OverlayConfig, OverlayRef } from "@angular/cdk/overlay";
@@ -130,7 +137,8 @@ export class NgxMatComboboxNoOptionDirective {
   }],
   exportAs: 'ngxMatCombobox'
 })
-export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValueAccessor, MatFormFieldControl<any> {
+export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
+  ControlValueAccessor, MatFormFieldControl<any> {
 
   //
   // MatFormFieldControl interface
@@ -151,6 +159,11 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
 
   onContainerClick(e: MouseEvent): void {
     this.onClick(e);
+  }
+
+  @Input()
+  set errorStateMatcher(val: ErrorStateMatcher) {
+    this._errorStateMatcher = val;
   }
 
   errorState: boolean = false;
@@ -655,7 +668,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   set dropdownKeyNavHomeAndEnd(val: BooleanInput) {
     this._dropdownKeyNavHomeAndEnd = coerceBooleanProperty(val);
   }
-  private _dropdownKeyNavHomeAndEnd?: boolean;
+  private _dropdownKeyNavHomeAndEnd: boolean = true;
 
   /**
    * Dropdown key navigation HOME and END keys. Ignored in autocomplete mode.
@@ -822,6 +835,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
 
   private _filterOptionsSub?: Subscription;
 
+  // >>> code taken from MatSelect source <<<
+  // Keeps track of the previous form control assigned to the select.
+  private _previousControl: AbstractControl | null | undefined;
+
   private _destroyed: Subject<void> = new Subject<void>();
 
   constructor(
@@ -833,11 +850,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
     private _focusMonitor: FocusMonitor,
     private _focusTrapFactory: ConfigurableFocusTrapFactory,
     private _interactivityChecker: InteractivityChecker,
-    private _defaultErrorStateMatcher: ErrorStateMatcher,
+    private _errorStateMatcher: ErrorStateMatcher,
     @Attribute('tabindex') tabIndex: string,
-    @Optional() @Inject(NGX_MAT_COMBOBOX_DEFAULT_OPTIONS) private _defaults: NgxMatComboboxDefaultOptions,
     @Optional() @Self() public ngControl: NgControl,
+    @Optional() public parentForm?: NgForm,
+    @Optional() public parentFormGroup?: FormGroupDirective,
     @Optional() @Inject(MAT_FORM_FIELD) public formField?: MatFormField,
+    @Optional() @Inject(NGX_MAT_COMBOBOX_DEFAULT_OPTIONS) public _defaults?: NgxMatComboboxDefaultOptions,
   ) {
 
     if (this.ngControl != null) {
@@ -847,11 +866,26 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
     this.tabIndex = parseInt(tabIndex) || 0;
 
     // defaults
-    this._disableOptionsRipple = this._defaults?.disableOptionsRipple ?? false;
-    this._useChips = this._defaults?.useChips ?? false;
-    this._disableChipsRipple = this._defaults?.disableChipsRipple ?? false;
-    this._disableChipsRemove = this._defaults?.disableChipsRemove ?? false;
-    this._noOptionText = this._defaults?.noOptionText || 'No Results';
+    const d = _defaults;
+    if (d?.valueAccessor) {
+      this.valueAccessor = d.valueAccessor;
+    }
+    if (d?.labelAccessor) {
+      this.labelAccessor = d.labelAccessor;
+    }
+    if (d?.displayAccessor) {
+      this.displayAccessor = d.displayAccessor;
+    }
+    if (d?.disabledAccessor) {
+      this.disabledAccessor = d.disabledAccessor;
+    }
+    this.dropdownClass = d?.dropdownClass ?? this.dropdownClass;
+    this._disableOptionsRipple = d?.disableOptionsRipple ?? this._disableOptionsRipple;
+    this._disableChipsRipple = d?.disableChipsRipple ?? this._disableChipsRipple;
+    this._noOptionText = d?.noOptionText ?? this._noOptionText;
+    this._loadingSpinnerDiameter = d?.loadingSpinnerDiameter ?? this._loadingSpinnerDiameter;
+    this._loadingSpinnerStrokeWidth = d?.loadingSpinnerStrokeWidth ?? this._loadingSpinnerStrokeWidth;
+    this.loadingSpinnerColor = d?.loadingSpinnerColor ?? this.loadingSpinnerColor;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -933,6 +967,25 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
     ).subscribe();
   }
 
+  // >>> code taken from MatSelect source <<<
+  ngDoCheck() {
+    const ngControl = this.ngControl;
+    if (ngControl) {
+      // The disabled state might go out of sync if the form group is swapped out. See #17860.
+      if (this._previousControl !== ngControl.control) {
+        if (
+          this._previousControl !== undefined &&
+          ngControl.disabled !== null &&
+          ngControl.disabled !== this.disabled
+        ) {
+          this.disabled = ngControl.disabled;
+        }
+        this._previousControl = ngControl.control;
+      }
+      this._updateErrorState();
+    }
+  }
+
   ngOnDestroy(): void {
     this.closeDropdown();
     this._destroyed.next();
@@ -943,6 +996,20 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
 
     this.openedChange.complete();
     this.selectionChange.complete();
+  }
+
+  // >>> code taken from MatSelect source <<<
+  _updateErrorState() {
+    const oldState = this.errorState;
+    const parent = this.parentFormGroup || this.parentForm || null;
+    const matcher = this._errorStateMatcher;
+    const control = this.ngControl ? (this.ngControl.control as any) : null;
+    const newState = matcher.isErrorState(control, parent);
+
+    if (newState !== oldState) {
+      this.errorState = newState;
+      this._stateChanges.next();
+    }
   }
 
   /**
@@ -992,7 +1059,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   //
 
   onEnter() {
-    if (this._autoOpen) {
+    if (this._autoOpen && !this._disabled && !this._readonly) {
       this.filter();
     }
   }
@@ -1004,6 +1071,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
     }
     this._mapOptionsSub?.unsubscribe();
     this._filterOptionsSub?.unsubscribe();
+
+    this._onTouched();
     this._stateChanges.next();
   }
 
@@ -1019,6 +1088,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
     }
     if (!this._disabled) {
       this._onTouched();
+      this._stateChanges.next();
     }
   }
 
@@ -1193,7 +1263,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
         this._focused = false;
         this.onLeave();
       }
-      this._stateChanges.next();
     }
   }
 
