@@ -8,12 +8,12 @@
   line-height: 3em;
   min-height: 3em;
   cursor: pointer;
+  white-space: nowrap;
 
   &-selected:not(.ngx-mat-combobox-option-multiple) {
-    background-color: #e5e5e5;
+    background-color: rgba(0,0,0,.12);
   }
 
-  //&:focus,
   &:hover,
   &-active {
     background: rgba(0,0,0,.04);
