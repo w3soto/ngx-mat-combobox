@@ -1205,8 +1205,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
     if (this._disabled) {
       return
     }
-    if (this.input) {
-      this.input.focus();
+    // focus inner input
+    if (this._input && this._elementRef.nativeElement.contains(this._input.nativeElement)) {
+      this._input.focus();
     }
     else {
       this._elementRef.nativeElement.focus();
