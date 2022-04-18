@@ -1189,20 +1189,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       this.multiple ? this.toggleOption(option) : this.selectOption(option);
 
       // keep focused host/or input element
-      if (this.multiple) {
-        this._ngZone.onStable.pipe(first()).subscribe(() => {
-          this.focus();
-          this.alignDropdown();
-        });
-      }
-      // close on single selection mode
-      // focus host/or input element (can not focus last active element because list was re-rendered)
-      // must be called after filteredOptionsModel changes are propagated to view/DOM
-      else {
-        this._ngZone.onStable.pipe(first()).subscribe(() => {
-          this._closeDropdownAndFocus(false);
-        });
-      }
+      this._ngZone.onStable.pipe(first()).subscribe(() => {
+        if (this._multiple) {
+          this._alignDropdownAndFocus();
+        }
+        else {
+          // close on single selection mode
+          // focus host/or input element (can not focus last active element because list was re-rendered)
+          this._closeDropdownAndFocus();
+        }
+      });
 
       e.preventDefault();
     }
@@ -1215,18 +1211,14 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
 
     this._multiple ? this.toggleOption(option) : this.selectOption(option);
     this._dropdownKeyManager?.setActiveItem(this.getFilteredOptionIndex(option));
-    // single selection
-    if (!this._multiple) {
-      // must be called after filteredOptionsModel changes are propagated to view/DOM
-      this._ngZone.onStable.pipe(first()).subscribe(() => {
-        this._closeDropdownAndFocus(true);
-      });
-      return;
-    }
 
     this._ngZone.onStable.pipe(first()).subscribe(() => {
-      this._focusLastActiveElement();
-      this.alignDropdown()
+      if (this._multiple) {
+        this._alignDropdownAndFocus();
+      }
+      else {
+        this._closeDropdownAndFocus();
+      }
     });
 
     e.stopPropagation();
@@ -1509,6 +1501,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       try {
         this._lastFocusedElement?.focus();
         this._lastFocusedElement = null;
+        this._keepFocusedState();
       } catch (e) {
         this.focus();
       }
@@ -1525,13 +1518,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     }
   }
 
-  private _closeDropdownAndFocus(focusLastActiveElement: boolean) {
+  private _closeDropdownAndFocus(focusLastActiveElement?: boolean) {
     this.closeDropdown();
-    // refocus after dropdown is closed, so it will not re-focus input element inside dropdown if any
-    this._ngZone.onStable.pipe(first()).subscribe(() => {
-      focusLastActiveElement ? this._focusLastActiveElement() : this.focus();
-      this._keepFocusedState();
-    });
+    focusLastActiveElement ? this._focusLastActiveElement() : this.focus();
+    this._stateChanges.next();
+  }
+
+  private _alignDropdownAndFocus() {
+    this.alignDropdown();
+    this._focusLastActiveElement();
+    this._stateChanges.next();
   }
 
   private _configCheckOptions(options: any[]) {
