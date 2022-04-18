@@ -608,7 +608,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   set dropdownOffsetX(val: NumberInput) {
     this._dropdownOffsetX = coerceNumberProperty(val);
   }
-  private _dropdownOffsetX?: number = 0;
+  private _dropdownOffsetX: number = 0;
 
   /**
    * Dropdown Y offset
@@ -617,7 +617,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
   set dropdownOffsetY(val: NumberInput) {
     this._dropdownOffsetY = coerceNumberProperty(val);
   }
-  private _dropdownOffsetY?: number = 0;
+  private _dropdownOffsetY: number = 0;
 
   /**
    * Autofocus first element in custom dropdown template
@@ -1533,22 +1533,19 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
           originY: "bottom",
           overlayX: this._dropdownAlign,
           overlayY: "top",
-
+          offsetX: this._dropdownOffsetX,
+          offsetY: this._dropdownOffsetY
         },
         // top position
         {
           originX: this._dropdownAlign,
           originY: "top",
           overlayX: this._dropdownAlign,
-          overlayY: "bottom"
+          overlayY: "bottom",
+          offsetX: this._dropdownOffsetX,
+          offsetY: -1 * this._dropdownOffsetY
         }
       ]);
-    if (this._dropdownOffsetX) {
-      strategy.withDefaultOffsetX(this._dropdownOffsetX);
-    }
-    if (this._dropdownOffsetY) {
-      strategy.withDefaultOffsetY(this._dropdownOffsetY);
-    }
     return strategy;
   }
 
