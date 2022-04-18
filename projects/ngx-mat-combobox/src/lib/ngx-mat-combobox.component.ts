@@ -1563,8 +1563,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, ControlValu
     const scrollStrategy = this._overlay.scrollStrategies.reposition();
     const config: OverlayConfig = {
       positionStrategy: positionStrategy,
-      scrollStrategy: scrollStrategy,
-      panelClass: this.dropdownClass
+      scrollStrategy: scrollStrategy
     };
 
     // render
