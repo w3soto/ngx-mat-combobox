@@ -942,6 +942,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
         this._updateValue();
         this._updateInput();
         this.selectionChange.next(options);
+        if (this._opened) {
+          this._ngZone.onStable.pipe(first()).subscribe(() => this.alignDropdown());
+        }
       }),
       takeUntil(this._destroyed)
     ).subscribe();
