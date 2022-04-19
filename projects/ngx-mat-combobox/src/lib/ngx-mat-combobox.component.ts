@@ -1338,11 +1338,11 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
    * Remove provided option from selection
    */
   deselectOption(option: any) {
-    const options = this._selectedOptionsModel.value;
+    const options = this._selectedOptionsModel.value.slice();
     const index = this.getSelectedOptionIndex(option);
     if (index > -1) {
       options.splice(index, 1);
-      this._selectedOptionsModel.next([...options]);
+      this._selectedOptionsModel.next(options);
     }
   }
 
