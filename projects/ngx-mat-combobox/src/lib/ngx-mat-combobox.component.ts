@@ -225,19 +225,23 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     if (!Array.isArray(value)) {
       value = [value];
     }
+
     // unique values
-    value = Array.from(new Set(value));
+    // it is user responsibility to provide unique values !!!
+
     // limit
-    if (!this._multiple && value.getLength > 1) {
-      value.splice(1, value.getLength - 1);
+    if (this._multiple) {
+      if (this._maxValues > 0) {
+        value = value.slice(0, this._maxValues);
+      }
     }
-    else if (this._multiple && this._maxValues > 0) {
-      value.splice(this._maxValues, value.getLength - this._maxValues);
+    else {
+      value = value.slice(0, 1);
     }
     // check
     if (isDevMode() && this._useValue) {
       if ((value as Array<any>).find(o => typeof o == 'object')) {
-        devLog('Option [useValue] is set, but objects(s) were provided!');
+        devLog('Option [useValue] is set, but object(s) were provided!');
       }
     }
     // !!! update only on changes !!!
