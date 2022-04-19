@@ -18,7 +18,9 @@ import { BooleanInput, coerceBooleanProperty } from "@angular/cdk/coercion";
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    'class': 'mat-primary ngx-mat-combobox-option'
+    'class': 'mat-primary ngx-mat-combobox-option',
+    'tabindex': '-1',
+    'role': 'list-item',
   }
 })
 export class NgxMatComboboxOption implements OnInit, Highlightable, ListKeyManagerOption {

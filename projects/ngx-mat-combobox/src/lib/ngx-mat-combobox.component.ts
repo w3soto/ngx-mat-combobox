@@ -1190,9 +1190,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   onDropdownKeydown(e: KeyboardEvent): void {
 
     // skip events from custom header/footer templates
-    if (e.code == 'Enter' && !this._isTriggeredFromInnerComponent(e)) {
-      return;
-    }
+    // if (e.code == 'Enter' && !this._isTriggeredFromInnerComponent(e)) {
+    //   return;
+    // }
 
     const index = this._dropdownKeyManager?.activeItemIndex;
 
