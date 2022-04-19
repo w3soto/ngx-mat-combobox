@@ -917,11 +917,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     this._selectedOptionsModel.pipe(
       tap((options: any[]) => {
         this._configCheckOptions(options);
-        const value = options.map(o => this._useValue ? this.readOptionValue(o) : o).slice();
-        if (!isEqual(this._value, value)) {
-          this._value = value;
-          this._onChange(this.value);
-        }
+        this._updateValue();
         this._updateInput();
         this.selectionChange.next(options);
       }),
@@ -1067,6 +1063,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
 
   onLeave() {
     this._updateInput();
+    this._updateValue();
     this._mapOptionsSub?.unsubscribe();
     this._filterOptionsSub?.unsubscribe();
 
@@ -1541,6 +1538,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     }
   }
 
+  /**
+   * Update selection model using current value or mapOptionsFn
+   */
   private _updateSelectedOptionsModel() {
     if (this._useValue) {
       this._mapOptionsSub?.unsubscribe();
@@ -1580,6 +1580,18 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       this.input?.setValue('');
     }
     this._changeDetectorRef.markForCheck();
+  }
+
+  /**
+   * Update internal value using selection model
+   */
+  private _updateValue() {
+    const value = this._selectedOptionsModel.value.map(o => this._useValue ? this.readOptionValue(o) : o).slice();
+    if (!isEqual(this._value, value)) {
+      this._value = value;
+      this._onChange(this.value);
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   //
