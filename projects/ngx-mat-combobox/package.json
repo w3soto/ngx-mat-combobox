@@ -1,6 +1,6 @@
 {
   "name": "ngx-mat-combobox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "homepage": "https://github.com/w3soto/ngx-mat-combobox#readme",
   "keywords": ["angular", "material", "combobox", "combo", "select", "autocomplete", "typeahead"],
