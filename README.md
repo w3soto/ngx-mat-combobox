@@ -15,6 +15,7 @@ Customizable Combobox component for Angular Material
 ## TODO
 * Tests
 * Documentation 
+* Theming support
 
 ## Installation
 ```shell
@@ -158,7 +159,57 @@ Function to compare two options. By default *[valueAccessor]* is used internally
 export type NgxMatComboboxCompareOptionsFn = (o1: any, o2: any) => boolean;
 ```
 
+Defaults
+```typescript
+export interface NgxMatComboboxDefaultOptions {
+  valueAccessor?: string | NgxMatComboboxAccessorFn;
+  labelAccessor?: string | NgxMatComboboxAccessorFn;
+  displayAccessor?: string | NgxMatComboboxAccessorFn;
+  disabledAccessor?: string | NgxMatComboboxAccessorFn;
+
+  showToggleTrigger?: boolean;
+
+  showLoadingSpinner?: boolean;
+  loadingSpinnerDiameter?: number;
+  loadingSpinnerStrokeWidth?: number;
+  loadingSpinnerColor?: string;
+
+  autocompleteMinChars?: number;
+  autocompleteDebounceInterval?: number;
+
+  noWrap?: boolean;
+  noOptionText?: string;
+
+  dropdownClass?: string,
+  dropdownMatchFieldWidth?: boolean;
+  dropdownOffsetX?: number;
+  dropdownOffsetY?: number;
+
+  dropdownKeyNavWrap?: boolean;
+  dropdownKeyNavHomeAndEnd?: boolean;
+  dropdownKeyNavTypeAhead?: boolean;
+
+  disableOptionsRipple?: boolean;
+  disableChipsRipple?: boolean;
+  disableChipsRemove?: boolean;
+}
+```
 
 ## Global configuration
-
+```typescript
+  providers: [
+    //...
+    {
+      provide: NGX_MAT_COMBOBOX_DEFAULT_OPTIONS, useValue: {
+            autocompleteMinChars: 3,
+            autocompleteDebounceInterval: 250,
+            loadingSpinnerStrokeWidth: 4,
+            loadingSpinnerColor: 'accent',
+            showToggleTrigger: false,
+            dropdownMatchFieldWidth: false,
+          } as NgxMatComboboxDefaultOptions
+    },
+    //...
+  ]
+```
 
