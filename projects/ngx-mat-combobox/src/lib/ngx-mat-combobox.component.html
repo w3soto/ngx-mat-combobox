@@ -10,7 +10,7 @@
 
     <ng-template #defaultDisplayTpl>
       <mat-chip-list
-        *ngIf="useChips"
+        *ngIf="useChips && !fillInput"
         style="flex: 1"
         [tabIndex]="-1">
         <mat-chip
@@ -39,7 +39,7 @@
       </mat-chip-list>
 
       <div
-        *ngIf="!useChips"
+        *ngIf="!useChips || fillInput"
         class="ngx-mat-combobox-values"
         [class.ngx-mat-combobox-values-nowrap]="noWrap">
 

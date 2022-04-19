@@ -380,6 +380,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   @Input()
   set fillInput(val: BooleanInput) {
     this._fillInput = coerceBooleanProperty(val);
+    this._updateInput();
   }
   get fillInput(): boolean {
     return this._fillInput;
@@ -921,7 +922,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
           this._value = value;
           this._onChange(this.value);
         }
-        this._updateSearchInput();
+        this._updateInput();
         this.selectionChange.next(options);
       }),
       takeUntil(this._destroyed)
@@ -1065,10 +1066,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   }
 
   onLeave() {
-    this._updateSearchInput();
-    if (!this._fillInput) {
-      this.input?.setValue('');
-    }
+    this._updateInput();
     this._mapOptionsSub?.unsubscribe();
     this._filterOptionsSub?.unsubscribe();
 
@@ -1087,7 +1085,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       return;
     }
     if (!this._disabled) {
-      this._onTouched();
       this._stateChanges.next();
     }
   }
@@ -1255,7 +1252,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
 
     if (!isInside) {
       this.closeDropdown();
-      this._updateSearchInput();
+      this._updateInput();
       if (this._focused) {
         this._focused = false;
         this.onLeave();
@@ -1572,7 +1569,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   /**
    * Update search input value
    */
-  private _updateSearchInput() {
+  private _updateInput() {
     // only in single selection + fillInput settings
     if (!this._multiple && this._fillInput) {
       const options = this._selectedOptionsModel.value;
