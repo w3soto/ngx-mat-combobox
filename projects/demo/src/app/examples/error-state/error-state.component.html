@@ -1,0 +1,25 @@
+<div class="example-actions">
+  <button mat-flat-button color="primary" (click)="setRandomValue()">Set random value</button>
+  <button mat-stroked-button (click)="clearValue()">Reset</button>
+</div>
+
+<div class="example-model">
+  <div>
+    <code>formControl.value = {{ formControl.value | json }}</code>
+  </div>
+  <div>
+    <code>formControl.valid = {{ formControl.valid | json }}</code>
+  </div>
+</div>
+
+<mat-form-field appearance="outline">
+  <mat-label>Single selection</mat-label>
+  <ngx-mat-combobox
+    #combo
+    [formControl]="formControl"
+    [options]="options"
+    placeholder="Please select actor..."
+  ></ngx-mat-combobox>
+  <mat-error *ngIf="formControl.hasError('required')">This field is required</mat-error>
+</mat-form-field>
+

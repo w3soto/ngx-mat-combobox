@@ -1,45 +1,37 @@
-<div class="actions">
+<div class="example-actions">
   <button mat-flat-button color="primary" (click)="setRandomValue()">Set random value</button>
   <button mat-stroked-button (click)="clearValue()">Reset</button>
-  <mat-slide-toggle (change)="readonly = !readonly" [checked]="readonly">Readonly</mat-slide-toggle>
-  <mat-slide-toggle (change)="disabled = !disabled" [checked]="disabled">Disabled</mat-slide-toggle>
+  <mat-slide-toggle (change)="combo.readonly = !combo.readonly" [checked]="combo.readonly">Readonly</mat-slide-toggle>
+  <mat-slide-toggle (change)="combo.disabled = !combo.disabled" [checked]="combo.disabled">Disabled</mat-slide-toggle>
 </div>
 
-<p>
+<div class="example-settings">
+  <div>
+    <code>[fillInput]=</code> <mat-checkbox [(ngModel)]="fillInput"></mat-checkbox>
+  </div>
+  <div>
+    <code>[autocompleteMinChars]=</code> <input type="number" [(ngModel)]="autocompleteMinChars">
+  </div>
+  <div>
+    <code>[autocompleteDebounceInterval]=</code> <input type="number" [(ngModel)]="autocompleteDebounceInterval">
+  </div>
+</div>
+
+<div class="example-model">
   <code>model = {{ model | json }}</code>
-</p>
+</div>
 
 <mat-form-field appearance="outline" style="width: 400px;">
   <mat-label>Single selection</mat-label>
   <ngx-mat-combobox
-    #combo1
-    required
+    #combo
+    [fillInput]="fillInput"
     autocomplete
-    [autocompleteMinChars]="1"
+    [autocompleteMinChars]="autocompleteMinChars"
+    [autocompleteDebounceInterval]="autocompleteDebounceInterval"
     [(ngModel)]="model"
-    [readonly]="readonly"
-    [disabled]="disabled"
     [options]="options"
-    placeholder="Type at least one character..."
+    [placeholder]="placeholder"
   ></ngx-mat-combobox>
 </mat-form-field>
-
-<p>With <code>[fillInput]="true"</code>.</p>
-
-<mat-form-field appearance="outline" style="width: 400px;">
-  <mat-label>Single selection</mat-label>
-  <ngx-mat-combobox
-    #combo2
-    required
-    autocomplete
-    fillInput
-    [(ngModel)]="model"
-    [readonly]="readonly"
-    [disabled]="disabled"
-    [options]="options"
-    placeholder="Please select actor..."
-  ></ngx-mat-combobox>
-</mat-form-field>
-
-
 

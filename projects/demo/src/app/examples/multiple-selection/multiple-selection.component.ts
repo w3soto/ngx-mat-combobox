@@ -14,6 +14,10 @@ export class MultipleSelectionComponent implements OnInit {
 
   model: string[] = [];
 
+  maxValues: number = 0;
+
+  noWrap: boolean = false;
+
   constructor() {
   }
 

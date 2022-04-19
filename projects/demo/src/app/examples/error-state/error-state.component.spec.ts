@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InteractiveDemoComponent } from './interactive-demo.component';
+import { ErrorStateComponent } from './error-state.component';
 
-describe('InteractiveDemoComponent', () => {
-  let component: InteractiveDemoComponent;
-  let fixture: ComponentFixture<InteractiveDemoComponent>;
+describe('ErrorStateComponent', () => {
+  let component: ErrorStateComponent;
+  let fixture: ComponentFixture<ErrorStateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InteractiveDemoComponent ]
+      declarations: [ ErrorStateComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InteractiveDemoComponent);
+    fixture = TestBed.createComponent(ErrorStateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

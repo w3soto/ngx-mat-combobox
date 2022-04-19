@@ -28,6 +28,7 @@
     useChips
     dropdownClass="users-dropdown"
     dropdownAutoFocus
+    dropdownTrapFocus
     [(ngModel)]="model"
     valueAccessor="id"
     [labelAccessor]="getUserName"
@@ -68,6 +69,7 @@
         <span class="user__email">{{ option.email }}</span>
       </div>
       <mat-slide-toggle
+        tabindex="-1"
         (click)="$event.preventDefault()"
         color="primary"
         [checked]="combo.isOptionSelected(option)"></mat-slide-toggle>

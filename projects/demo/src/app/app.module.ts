@@ -22,6 +22,8 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatInputModule } from "@angular/material/input";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSelectModule } from "@angular/material/select";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatRadioModule } from "@angular/material/radio";
 
 import { NgxMatComboboxModule } from "../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.module";
 import { ExampleViewerComponent } from './example-viewer/example-viewer.component';
@@ -30,9 +32,18 @@ import { SingleSelectionComponent } from './examples/single-selection/single-sel
 import { MultipleSelectionComponent } from "./examples/multiple-selection/multiple-selection.component";
 import { SingleSelectionWithAutocompleteComponent } from './examples/single-selection-with-autocomplete/single-selection-with-autocomplete.component';
 import { WithChipsComponent } from './examples/with-chips/with-chips.component';
-import { InteractiveDemoComponent } from './examples/interactive-demo/interactive-demo.component';
 import { RemoteDataDemoComponent } from "./examples/remote-data-demo/remote-data-demo.component";
 import { WithObjectOptionsComponent } from "./examples/with-object-options/with-object-options.component";
+import { DropdownPositionAndStyleComponent } from './examples/dropdown-position-and-style/dropdown-position-and-style.component';
+import { WithInputInDropdownComponent } from "./examples/with-input-in-dropdown/with-input-in-dropdown.component";
+import { ErrorStateComponent } from './examples/error-state/error-state.component';
+import { MultipleSelectionWithAutocompleteComponent } from './examples/multiple-selection-with-autocomplete/multiple-selection-with-autocomplete.component';
+import { CustomContentTemplatesComponent } from './examples/custom-content-templates/custom-content-templates.component';
+
+import {
+  NGX_MAT_COMBOBOX_DEFAULT_OPTIONS,
+  NgxMatComboboxDefaultOptions
+} from "../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.model";
 
 
 // @ts-ignore
@@ -41,12 +52,16 @@ import { WithObjectOptionsComponent } from "./examples/with-object-options/with-
     AppComponent,
     ExampleViewerComponent,
     SingleSelectionComponent,
-    MultipleSelectionComponent,
     SingleSelectionWithAutocompleteComponent,
+    MultipleSelectionComponent,
+    MultipleSelectionWithAutocompleteComponent,
+    ErrorStateComponent,
     WithChipsComponent,
     WithObjectOptionsComponent,
-    InteractiveDemoComponent,
+    DropdownPositionAndStyleComponent,
+    WithInputInDropdownComponent,
     RemoteDataDemoComponent,
+    CustomContentTemplatesComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,6 +83,8 @@ import { WithObjectOptionsComponent } from "./examples/with-object-options/with-
     MatSidenavModule,
     MatSlideToggleModule,
     MatSelectModule,
+    MatCheckboxModule,
+    MatRadioModule,
     MatChipsModule,
     MatListModule,
 
@@ -89,7 +106,17 @@ import { WithObjectOptionsComponent } from "./examples/with-object-options/with-
     },
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2000, verticalPosition: 'top'}
-    }
+    },
+    // {
+    //   provide: NGX_MAT_COMBOBOX_DEFAULT_OPTIONS, useValue: {
+    //     autocompleteMinChars: 3,
+    //     autocompleteDebounceInterval: 250,
+    //     loadingSpinnerStrokeWidth: 4,
+    //     loadingSpinnerColor: 'accent',
+    //     showToggleTrigger: false,
+    //     dropdownMatchFieldWidth: false
+    //   } as NgxMatComboboxDefaultOptions
+    // }
   ],
   bootstrap: [AppComponent]
 })

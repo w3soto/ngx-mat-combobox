@@ -1,0 +1,64 @@
+<div class="example-actions">
+  <button mat-flat-button color="primary" (click)="setRandomValue()">Set random value</button>
+  <button mat-stroked-button (click)="clearValue()">Reset</button>
+  <mat-slide-toggle (change)="combo.readonly = !combo.readonly" [checked]="combo.readonly">Readonly</mat-slide-toggle>
+  <mat-slide-toggle (change)="combo.disabled = !combo.disabled" [checked]="combo.disabled">Disabled</mat-slide-toggle>
+</div>
+
+<div class="example-settings">
+  <div>
+    <code>[dropdownMatchFieldWidth]=</code> <mat-checkbox [(ngModel)]="dropdownMatchFieldWidth"></mat-checkbox>
+  </div>
+  <div>
+    <code>[dropdownAlign]=</code>
+    <mat-radio-group [(ngModel)]="dropdownAlign">
+      <mat-radio-button value="start">start</mat-radio-button>
+      <mat-radio-button value="center">center</mat-radio-button>
+      <mat-radio-button value="end">end</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div>
+    <code>[dropdownOffsetX]=</code> <input type="number" [(ngModel)]="dropdownOffsetX">
+  </div>
+  <div>
+    <code>[dropdownOffsetY]=</code> <input type="number" [(ngModel)]="dropdownOffsetY">
+  </div>
+  <div>
+    <code>[dropdownClass]=</code> <mat-checkbox [(ngModel)]="applyDropdownClass">rainbow</mat-checkbox>
+  </div>
+</div>
+
+<div class="example-model">
+  <code>preferredColor = {{ preferredColor | json }}</code>
+</div>
+
+<mat-form-field appearance="outline" style="width: 400px">
+  <mat-label>Preferred color</mat-label>
+  <ngx-mat-combobox
+    #combo
+    autoSelect
+    [dropdownMatchFieldWidth]="dropdownMatchFieldWidth"
+    [dropdownAlign]="$any(dropdownAlign)"
+    [dropdownClass]="applyDropdownClass ? 'rainbow' : ''"
+    [dropdownOffsetX]="dropdownOffsetX"
+    [dropdownOffsetY]="dropdownOffsetY"
+    [(ngModel)]="preferredColor"
+    [options]="colors"
+    placeholder="Please select preferred color...">
+
+    <ng-template ngxMatComboboxDisplay let-options>
+      <div *ngFor="let option of options" class="color-option">
+        <span class="color-option__preview" [ngStyle]="{backgroundColor: option}"></span>
+        <span class="color-option__name" >{{ option | titlecase }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template ngxMatComboboxOption let-option>
+      <div class="color-option">
+        <span class="color-option__preview" [ngStyle]="{backgroundColor: option}"></span>
+        <span class="color-option__name" >{{ option | titlecase }}</span>
+      </div>
+    </ng-template>
+
+  </ngx-mat-combobox>
+</mat-form-field>

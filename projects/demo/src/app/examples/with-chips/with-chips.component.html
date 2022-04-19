@@ -1,43 +1,57 @@
-<div class="actions">
+<div class="example-actions">
   <button mat-flat-button color="primary" (click)="setRandomValue()">Set random value</button>
   <button mat-stroked-button (click)="clearValue()">Reset</button>
   <mat-slide-toggle (change)="readonly = !readonly" [checked]="readonly">Readonly</mat-slide-toggle>
   <mat-slide-toggle (change)="disabled = !disabled" [checked]="disabled">Disabled</mat-slide-toggle>
 </div>
 
-<p>
+<div class="example-settings">
+  <div>
+    <code>[useChips]=</code> <mat-checkbox [(ngModel)]="useChips"></mat-checkbox>
+  </div>
+  <div>
+    <code>[disableChipsRipple]=</code> <mat-checkbox [(ngModel)]="disableChipsRipple"></mat-checkbox>
+  </div>
+  <div>
+    <code>[disableChipsRemove]=</code> <mat-checkbox [(ngModel)]="disableChipsRemove"></mat-checkbox>
+  </div>
+</div>
+
+<div class="example-model">
   <code>singleModel = {{ singleModel | json }}</code>
-</p>
+</div>
 
 <mat-form-field appearance="outline" style="width: 480px;">
   <mat-label>Single selection</mat-label>
   <ngx-mat-combobox
-    required
-    useChips
+    [useChips]="useChips"
+    [disableChipsRipple]="disableChipsRipple"
+    [disableChipsRemove]="disableChipsRemove"
     autocomplete
     [(ngModel)]="singleModel"
+    [options]="options"
     [readonly]="readonly"
     [disabled]="disabled"
-    [options]="options"
     placeholder="Please select movie..."
   ></ngx-mat-combobox>
 </mat-form-field>
 
-<p>
+<div class="example-model">
   <code>multiModel = {{ multiModel | json }}</code>
-</p>
+</div>
 
 <mat-form-field appearance="outline" style="width: 480px;">
   <mat-label>Multiple selection</mat-label>
   <ngx-mat-combobox
-    required
-    useChips
+    [useChips]="useChips"
+    [disableChipsRipple]="disableChipsRipple"
+    [disableChipsRemove]="disableChipsRemove"
     autocomplete
     multiple
     [(ngModel)]="multiModel"
+    [options]="options"
     [readonly]="readonly"
     [disabled]="disabled"
-    [options]="options"
     placeholder="Please select movies..."
   ></ngx-mat-combobox>
 </mat-form-field>

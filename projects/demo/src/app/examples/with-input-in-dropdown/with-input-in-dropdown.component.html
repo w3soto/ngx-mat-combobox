@@ -7,10 +7,7 @@
 
 <div class="example-settings">
   <div>
-    <code>[autoActivate]=</code> <mat-checkbox [(ngModel)]="autoActivate"></mat-checkbox> // auto activate first item in dropdown
-  </div>
-  <div>
-    <code>[autoSelect]=</code> <mat-checkbox [(ngModel)]="autoSelect"></mat-checkbox> // auto select active item
+    <code>[autoOpen]=</code> <mat-checkbox [(ngModel)]="autoOpen"></mat-checkbox> // expand when combobox is focused (for key navigation)
   </div>
 </div>
 
@@ -18,15 +15,24 @@
   <code>model = {{ model | json }}</code>
 </div>
 
-<mat-form-field appearance="outline">
+<mat-form-field appearance="outline" style="width: 400px;">
   <mat-label>Single selection</mat-label>
   <ngx-mat-combobox
     #combo
-    [autoSelect]="autoSelect"
-    [autoActivate]="autoActivate"
+    [autoOpen]="autoOpen"
     [(ngModel)]="model"
     [options]="options"
-    placeholder="Please select actor..."
-  ></ngx-mat-combobox>
+    [dropdownKeyNavTypeAhead]="false"
+    [dropdownKeyNavHomeAndEnd]="false"
+    placeholder="Select actor...">
+
+    <ng-template ngxMatComboboxHeader>
+      <div class="custom-autocomplete-header">
+        <mat-icon>search</mat-icon>
+        <input ngxMatComboboxInput placeholder="Search..." />
+      </div>
+    </ng-template>
+
+  </ngx-mat-combobox>
 </mat-form-field>
 

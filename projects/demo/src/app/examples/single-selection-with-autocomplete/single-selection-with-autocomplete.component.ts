@@ -14,9 +14,19 @@ export class SingleSelectionWithAutocompleteComponent implements OnInit {
 
   model: string | null = null;
 
-  readonly: boolean = false;
+  fillInput: boolean = false;
 
-  disabled: boolean = false;
+  autocompleteMinChars: number = 0;
+
+  autocompleteDebounceInterval: number = 400;
+
+  get placeholder() {
+    const c = this.autocompleteMinChars;
+    if (c > 0) {
+      return `Type at least ${c} character${c > 1 ? 's' : ''}...`;
+    }
+    return 'Search...';
+  }
 
   constructor() {
   }

@@ -5,15 +5,6 @@
   <mat-slide-toggle (change)="combo.disabled = !combo.disabled" [checked]="combo.disabled">Disabled</mat-slide-toggle>
 </div>
 
-<div class="example-settings">
-  <div>
-    <code>[noWrap]=</code> <mat-checkbox [(ngModel)]="noWrap"></mat-checkbox>
-  </div>
-  <div>
-    <code>[maxValues]=</code> <input type="number" min="0" [(ngModel)]="maxValues"> // 0 = no limit; changes does not update actual selection or value model
-  </div>
-</div>
-
 <div class="example-model">
   <code>model = {{ model | json }}</code>
 </div>
@@ -23,13 +14,31 @@
   <ngx-mat-combobox
     #combo
     multiple
-    [maxValues]="maxValues"
-    [noWrap]="noWrap"
+    noWrap
     [(ngModel)]="model"
     [options]="options"
-    placeholder="Please select actors..."
-  ></ngx-mat-combobox>
-</mat-form-field>
+    (selectionChange)="selectionChanged($event)"
+    dropdownAutoFocus
+    dropdownTrapFocus
+    placeholder="Please select actors...">
 
+    <ng-template ngxMatComboboxHeader>
+      <div class="custom-dropdown-header">
+        <mat-checkbox
+          tabindex="-1"
+          (change)="toggleAll()"
+          color="primary"
+          [checked]="allSelected">Select/Deselect all</mat-checkbox>
+      </div>
+    </ng-template>
+
+    <ng-template ngxMatComboboxFooter>
+      <div class="custom-dropdown-footer">
+        {{ getFooterText() }}
+      </div>
+    </ng-template>
+
+  </ngx-mat-combobox>
+</mat-form-field>
 
 

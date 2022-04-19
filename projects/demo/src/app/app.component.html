@@ -15,16 +15,21 @@
   <mat-sidenav #drawer mode="side" fixedInViewport opened class="mat-elevation-z2">
 
     <mat-nav-list class="menu">
-      <a mat-list-item href="#single-selection">Single Selection</a>
-      <a mat-list-item href="#single-selection-with-autocomplete">Single Selection with Autocomplete</a>
-      <a mat-list-item href="#multiple-selection">Multiple Selection</a>
+      <a mat-list-item href="#single-selection">Single selection</a>
+      <a mat-list-item href="#single-selection-with-autocomplete">Single selection with autocomplete</a>
+      <a mat-list-item href="#multiple-selection">Multiple selection</a>
+      <a mat-list-item href="#multiple-selection-with-autocomplete">Multiple selection with autocomplete</a>
 
-      <a mat-list-item href="#with-object-options">With Object Options</a>
+      <a mat-list-item href="#error-state">Error state</a>
 
-      <a mat-list-item href="#with-chips">With Chips</a>
+      <a mat-list-item href="#with-object-options">With object options</a>
+      <a mat-list-item href="#with-chips">With chips</a>
 
-      <a mat-list-item href="#interactive-demo">Interactive Demo</a>
-      <a mat-list-item href="#remote-data-demo">Remote data Demo</a>
+      <a mat-list-item href="#custom-content-templates">Custom content templates</a>
+      <a mat-list-item href="#dropdown-position-and-style">Dropdown position and style</a>
+      <a mat-list-item href="#with-input-in-dropdown">With input in dropdown</a>
+
+      <a mat-list-item href="#remote-data-demo">Remote data demo</a>
     </mat-nav-list>
 
   </mat-sidenav>
@@ -36,43 +41,71 @@
       <app-example-viewer
         id="single-selection"
         forComponent="app-single-selection"
-        title="Single Selection">
+        title="Single selection">
         <app-single-selection></app-single-selection>
       </app-example-viewer>
 
       <app-example-viewer
         id="single-selection-with-autocomplete"
         forComponent="app-single-selection-with-autocomplete"
-        title="Single Selection with Autocomplete">
+        title="Single selection with autocomplete">
         <app-single-selection-with-autocomplete></app-single-selection-with-autocomplete>
       </app-example-viewer>
 
       <app-example-viewer
         id="multiple-selection"
         forComponent="app-multiple-selection"
-        title="Multiple Selection">
+        title="Multiple selection">
         <app-multiple-selection></app-multiple-selection>
+      </app-example-viewer>
+
+      <app-example-viewer
+        id="multiple-selection-with-autocomplete"
+        forComponent="app-multiple-selection-with-autocomplete"
+        title="Multiple selection with autocomplete">
+        <app-multiple-selection-with-autocomplete></app-multiple-selection-with-autocomplete>
+      </app-example-viewer>
+
+      <app-example-viewer
+        id="error-state"
+        forComponent="app-error-state"
+        title="Error state">
+        <app-error-state></app-error-state>
       </app-example-viewer>
 
       <app-example-viewer
         id="with-object-options"
         forComponent="app-with-object-options"
-        title="With Object Options">
+        title="With object options">
         <app-with-object-options></app-with-object-options>
       </app-example-viewer>
 
       <app-example-viewer
         id="with-chips"
         forComponent="app-with-chips"
-        title="With Chips">
+        title="With chips">
         <app-with-chips></app-with-chips>
       </app-example-viewer>
 
       <app-example-viewer
-        id="interactive-demo"
-        forComponent="interactive-demo"
-        title="Interactive demo">
-        <app-interactive-demo></app-interactive-demo>
+        id="custom-content-templates"
+        forComponent="app-custom-content-templates"
+        title="Custom content templates">
+        <app-custom-content-templates></app-custom-content-templates>
+      </app-example-viewer>
+
+      <app-example-viewer
+        id="dropdown-position-and-style"
+        forComponent="dropdown-position-and-style"
+        title="Dropdown position and style">
+        <app-dropdown-position-and-style></app-dropdown-position-and-style>
+      </app-example-viewer>
+
+      <app-example-viewer
+        id="with-input-in-dropdown"
+        forComponent="with-input-in-dropdown"
+        title="With autocomplete input in dropdown panel">
+        <app-with-input-in-dropdown></app-with-input-in-dropdown>
       </app-example-viewer>
 
       <app-example-viewer

@@ -13,11 +13,13 @@ export class WithChipsComponent implements OnInit {
   ].sort((a, b) => a.localeCompare(b));
 
   singleModel: string | null = null;
-
   multiModel: string[] | null = null;
 
-  readonly: boolean = false;
+  useChips: boolean = true;
+  disableChipsRipple: boolean = false;
+  disableChipsRemove: boolean = false;
 
+  readonly: boolean = false;
   disabled: boolean = false;
 
   constructor() {

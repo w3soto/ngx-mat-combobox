@@ -1,0 +1,46 @@
+:host {
+
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+  gap: 24px;
+
+}
+
+
+::ng-deep {
+
+  .color-option {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    &__preview {
+      display: block;
+      width: 1.125em;
+      height: 1.125em;
+      border-radius: 50%;
+    }
+  }
+
+  .rainbow {
+    color: white;
+    // https://www.w3schools.com/colors/color_tryit.asp
+    background: linear-gradient(
+        -45deg,
+        rgba(255, 0, 0, .5), //red
+        rgba(255,165,0, .5), //orange
+        rgba(255, 255, 0, .5), //yellow
+        rgba(0, 255, 0, .5), //green
+        rgba(0, 0, 255, .5), //blue
+        rgba(75, 0, 130, .5), //indigo
+        rgba(238,130,238, .5) //violet
+    );
+
+    .ngx-mat-combobox-option-selected {
+      color: #fff;
+      font-weight: 500;
+    }
+  }
+
+}

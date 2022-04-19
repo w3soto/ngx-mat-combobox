@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from "@angular/forms";
-
 
 @Component({
-  selector: 'app-single-selection',
-  templateUrl: './single-selection.component.html',
-  styleUrls: ['./single-selection.component.scss']
+  selector: 'app-with-input-in-dropdown',
+  templateUrl: './with-input-in-dropdown.component.html',
+  styleUrls: ['./with-input-in-dropdown.component.scss']
 })
-export class SingleSelectionComponent implements OnInit {
+export class WithInputInDropdownComponent implements OnInit {
 
   options: string[] = [
     'Tom Hanks', 'Jack Nicholson', 'Anthony Hopkins', 'Morgan Freeman', 'Al Pacino',
@@ -16,9 +14,7 @@ export class SingleSelectionComponent implements OnInit {
 
   model: string | null = null;
 
-  autoActivate: boolean = false;
-
-  autoSelect: boolean = true;
+  autoOpen: boolean = false;
 
   constructor() {
   }
@@ -27,12 +23,12 @@ export class SingleSelectionComponent implements OnInit {
   }
 
   setRandomValue() {
-    const value = this.options[Math.floor(Math.random() * this.options.length)]
-    this.model = value;
+    this.model = this.options[Math.floor(Math.random() * this.options.length)];
   }
 
   clearValue() {
-    this.model = null;;
+    this.model = null;
   }
+
 
 }
