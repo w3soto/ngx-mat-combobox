@@ -10,8 +10,10 @@
   cursor: pointer;
   white-space: nowrap;
 
-  &-selected:not(.ngx-mat-combobox-option-multiple) {
-    background-color: rgba(0,0,0,.12);
+  &-selected {
+    &:not(.ngx-mat-combobox-option-multiple) {
+      background-color: rgba(0,0,0,.12);
+    }
   }
 
   &:hover,

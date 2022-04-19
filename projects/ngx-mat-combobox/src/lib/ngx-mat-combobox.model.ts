@@ -19,26 +19,36 @@ export type NgxMatComboboxCompareOptionsFn = (o1: any, o2: any) => boolean;
 
 
 export interface NgxMatComboboxDefaultOptions {
+  valueAccessor?: string | NgxMatComboboxAccessorFn;
+  labelAccessor?: string | NgxMatComboboxAccessorFn;
+  displayAccessor?: string | NgxMatComboboxAccessorFn;
+  disabledAccessor?: string | NgxMatComboboxAccessorFn;
 
-  valueAccessor?: string | NgxMatComboboxAccessorFn,
-  labelAccessor?: string | NgxMatComboboxAccessorFn,
-  selectedLabelAccessor?: string | NgxMatComboboxAccessorFn,
-  disabledAccessor?: string | NgxMatComboboxAccessorFn,
+  showToggleTrigger?: boolean;
 
+  showLoadingSpinner?: boolean;
+  loadingSpinnerDiameter?: number;
+  loadingSpinnerStrokeWidth?: number;
+  loadingSpinnerColor?: string;
+
+  autocompleteMinChars?: number;
+  autocompleteDebounceInterval?: number;
+
+  noWrap?: boolean;
   noOptionText?: string;
 
-  loadingSpinnerDiameter?: number,
-  loadingSpinnerStrokeWidth?: number,
-  loadingSpinnerColor?: string,
-
   dropdownClass?: string,
+  dropdownMatchFieldWidth?: boolean;
+  dropdownOffsetX?: number;
+  dropdownOffsetY?: number;
 
-  disableOptionsRipple?: boolean,
-  // chips
-  useChips: false,
-  chipsColor?: string,
-  disableChipsRemove?: boolean,
-  disableChipsRipple?: boolean,
+  dropdownKeyNavWrap?: boolean;
+  dropdownKeyNavHomeAndEnd?: boolean;
+  dropdownKeyNavTypeAhead?: boolean;
+
+  disableOptionsRipple?: boolean;
+  disableChipsRipple?: boolean;
+  disableChipsRemove?: boolean;
 }
 
 

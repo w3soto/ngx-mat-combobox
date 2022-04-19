@@ -310,6 +310,17 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   };
 
   /**
+   * TrackByFunction
+   */
+  @Input()
+  set trackOptionByFn(fn: TrackByFunction<any>) {
+    this._trackOptionByFn = fn;
+  }
+  _trackOptionByFn: TrackByFunction<any> = (index: number, option: any) => {
+    return 'ngx-combobox-option-' + (this._valueAccessor ? this._valueAccessor(option) : JSON.stringify(option));
+  };
+
+  /**
    * Static options
    */
   @Input()
@@ -354,17 +365,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     this._disabledAccessor = typeof accessor == 'string' ? createOptionPropertyAccessorFn(accessor) : accessor;
   }
   private _disabledAccessor?: NgxMatComboboxAccessorFn;
-
-  /**
-   * TrackByFunction
-   */
-  @Input()
-  set trackOptionByFn(fn: TrackByFunction<any>) {
-    this._trackOptionByFn = fn;
-  }
-  _trackOptionByFn: TrackByFunction<any> = (index: number, option: any) => {
-    return 'ngx-combobox-option-' + (this._valueAccessor ? this._valueAccessor(option) : JSON.stringify(option));
-  };
 
   /**
    * If set, component will emit option's value using provided valueAccessor.
@@ -676,7 +676,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   private _dropdownKeyNavHomeAndEnd: boolean = true;
 
   /**
-   * Dropdown key navigation HOME and END keys. Ignored in autocomplete mode.
+   * Dropdown key navigation type ahead. Ignored in autocomplete mode.
    */
   @Input()
   set dropdownKeyNavTypeAhead(val: BooleanInput) {
@@ -884,13 +884,31 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     if (d?.disabledAccessor) {
       this.disabledAccessor = d.disabledAccessor;
     }
-    this.dropdownClass = d?.dropdownClass ?? this.dropdownClass;
-    this._disableOptionsRipple = d?.disableOptionsRipple ?? this._disableOptionsRipple;
-    this._disableChipsRipple = d?.disableChipsRipple ?? this._disableChipsRipple;
-    this._noOptionText = d?.noOptionText ?? this._noOptionText;
+
+    this._showToggleTrigger = d?.showToggleTrigger ?? this._showToggleTrigger;
+
+    this._showLoadingSpinner = d?.showLoadingSpinner ?? this._showLoadingSpinner;
     this._loadingSpinnerDiameter = d?.loadingSpinnerDiameter ?? this._loadingSpinnerDiameter;
     this._loadingSpinnerStrokeWidth = d?.loadingSpinnerStrokeWidth ?? this._loadingSpinnerStrokeWidth;
     this.loadingSpinnerColor = d?.loadingSpinnerColor ?? this.loadingSpinnerColor;
+
+    this._autocompleteMinChars = d?.autocompleteMinChars ?? this._autocompleteMinChars;
+    this._autocompleteDebounceInterval = d?.autocompleteDebounceInterval ?? this._autocompleteDebounceInterval;
+
+    this.dropdownClass = d?.dropdownClass ?? this.dropdownClass;
+    this._dropdownMatchFieldWidth = d?.dropdownMatchFieldWidth ?? this._dropdownMatchFieldWidth;
+    this._dropdownOffsetX = d?.dropdownOffsetX ?? this._dropdownOffsetX;
+    this._dropdownOffsetY = d?.dropdownOffsetY ?? this._dropdownOffsetY;
+
+    this._dropdownKeyNavWrap = d?.dropdownKeyNavWrap ?? this._dropdownKeyNavWrap;
+    this._dropdownKeyNavHomeAndEnd = d?.dropdownKeyNavHomeAndEnd ?? this._dropdownKeyNavHomeAndEnd;
+    this._dropdownKeyNavTypeAhead = d?.dropdownKeyNavTypeAhead ?? this._dropdownKeyNavTypeAhead;
+
+    this._disableOptionsRipple = d?.disableOptionsRipple ?? this._disableOptionsRipple;
+    this._disableChipsRipple = d?.disableChipsRipple ?? this._disableChipsRipple;
+
+    this._noWrap = d?.noWrap ?? this._noWrap;
+    this._noOptionText = d?.noOptionText ?? this._noOptionText;
   }
 
   ngOnChanges(changes: SimpleChanges) {
