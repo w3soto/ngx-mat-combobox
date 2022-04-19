@@ -2,10 +2,6 @@
 
 Customizable Combobox component for Angular Material
 
-
-!!! WORK IN PROGRESS !!!
-
-
 [Demo + code examples](https://ngx-mat-combobox.web.app/)
 
 ![Screenshot](https://raw.githubusercontent.com/w3soto/ngx-mat-combobox/master/readme.png "Screenshot")
@@ -19,14 +15,6 @@ Customizable Combobox component for Angular Material
 ## TODO
 * Tests
 * Documentation 
-* More examples
-* Handle error state
-* Fix issues with key events (Enter) inside header and footer templates
-* Add support for select/deselect multiple options 
-* Config dropdown size
-* Config key navigation
-* ...
-
 
 ## Installation
 ```shell
@@ -35,7 +23,7 @@ npm -i ngx-mat-combobox
 
 ## Example
 
-For more details see *projects/demo* application
+For more details see [examples](https://ngx-mat-combobox.web.app/) or *projects/demo* application
 
 ## Components
  
@@ -44,27 +32,45 @@ For more details see *projects/demo* application
 | @Input | Type | Description |
 | ------ | ---- | ----------- |
 | **options** | any[] | List of strings or complex objects. Default []. |
-| **valueAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'value' or *NgxMatComboboxAccessorFn*. |
-| **labelAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'label' or *NgxMatComboboxAccessorFn*. |
-| **displayAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'selected label' or *NgxMatComboboxAccessorFn*. If not defined *labelAccessor* will be used. |
-| **disabledAccessor** | string or NgxMatComboboxAccessorFn | Property of option's object which holds the 'disabled state' or *NgxMatComboboxAccessorFn*. |
-| **autoSelect** | boolean | If set, value model is updated when option is activated (e.g. focused by key navigation). Default false. |
-| **fillInput** | boolean | If set, search input is updated using *displayAccessor* value. Works only in single selection mode. Default false. |
+| **valueAccessor** | string &#124; NgxMatComboboxAccessorFn | Property of option's object which holds the 'value' or *NgxMatComboboxAccessorFn*. |
+| **labelAccessor** | string &#124; NgxMatComboboxAccessorFn | Property of option's object which holds the 'label' or *NgxMatComboboxAccessorFn*. |
+| **displayAccessor** | string &#124; NgxMatComboboxAccessorFn | Property of option's object which holds the 'selected label' or *NgxMatComboboxAccessorFn*. If not defined *labelAccessor* will be used. |
+| **disabledAccessor** | string &#124; NgxMatComboboxAccessorFn | Property of option's object which holds the 'disabled state' or *NgxMatComboboxAccessorFn*. |
+| **mapOptionsFn** | NgxMatComboboxMapOptionsFn | Default undefined. |
+| **filterOptionsFn** | NgxMatComboboxFilterOptionsFn | Default undefined. |
+| **compareOptionsFn** | NgxMatComboboxCompareOptionsFn | |
+| **trackOptionByFn** | TrackByFunction | |
 | **multiple** | boolean | Multiple selection mode. Default false. |
 | **maxValues** | number | Limit maximum selected options. Default 0 (no limit). |
+| **useValue** | boolean | If set, component will emit option's value using provided *valueAccessor*. Default false. |
+| **autoActivate** | boolean | If set, first available option id dropdown will be activated. Default false. |
+| **autoOpen** | boolean | If set, dropdown will open when form field is focused. Default false. |
+| **autoSelect** | boolean | If set, value model is updated when option is activated (e.g. focused by key navigation). Default false. |
+| **fillInput** | boolean | If set, search input is updated using *displayAccessor* value. Works only in single selection mode. Default false. |
 | **autocomplete** | boolean | Autocomplete mode. Default false. |
 | **autocompleteMinChars** | number | Default 0. |
 | **autocompleteDebounceInterval** | number | Default 400. |
+| **noWrap** | boolean | If set,selected options list will wrap. Default false. |
+| **showToggleTrigger** | boolean | Default true. |
+| **showLoadingSpinner** | boolean | Default true. |
+| **loadingSpinnerDiameter** | number | Default undefined. |
+| **loadingSpinnerStrokeWidth** | number | Default 2. |
+| **loadingSpinnerColor** | string | Default 'primary'. |
+| **disableOptionsRipple** | boolean | Default false.
 | **useChips** | boolean | Default false. |
 | **disableChipsRipple** | boolean | Default false. |
 | **disableChipsRemove**| boolean | Default false. |
+| **dropdownAlign** | 'start' &#124; 'center' &#124; 'end' | Dropdown align. Default 'start'. |
 | **dropdownOffsetX** | number | Default 0. |
 | **dropdownOffsetY** | number | Default 0. |
-| **dropdownAutoFocus** | boolean | Default false. |
-| **dropdownTrapFocus** | boolean | Default false. |
+| **dropdownAutoFocus** | boolean | Autofocus first element in custom dropdown template. Default false. |
+| **dropdownTrapFocus** | boolean |  Trap focus in custom dropdown template. Default false. |
+| **dropdownClass** | string | Default undefined. |
+| **dropdownMatchFieldWidth** | boolean | Dropdown width based on parent form field width. Default true. |
+| **dropdownKeyNavWrap** | boolean | Dropdown key navigation wrap. Default true. |
+| **dropdownKeyNavHomeAndEnd** | boolean | Dropdown key navigation HOME and END keys. Ignored in autocomplete mode. Default true. |
+| **dropdownKeyNavTypeAhead** | boolean | Dropdown key navigation type ahead. Ignored in autocomplete mode. Default true. |
 | **noOptionText** | string | Default 'No Results'. |
-| **mapOptionsFn** | NgxMatComboboxMapOptionsFn | Default undefined. |
-| **filterOptionsFn** | NgxMatComboboxFilterOptionsFn | Default undefined. |
 
 
 | @Output | Type | Description |
@@ -81,17 +87,25 @@ For more details see *projects/demo* application
 | **input?** | NgxMatComboboxInput | |
 
 
-| Method | type | Description |
+| Method | Returns | Description |
 | ------ | ---- | ----------- |
-| **openDropdown()** | |
-| **closeDropdown()** | |
-| **toggleDropdown()** | |
-| **selectOption(option: any)** | |
-| **deselectOption(option: any)** | |
-| **toggleOption(option: any)** | |
-| **clear()** | |
-| **filter(query: string)** | |
-| **alignDropdown()** | |
+| **focus()** | void | |
+| **closeDropdown()** | void | |
+| **toggleDropdown()** | void | |
+| **selectOption(option: any)** | void | |
+| **selectOptions(option: any[])** | void | |
+| **deselectOption(option: any)** | void | |
+| **deselectOptions(option: any[])** | void | |
+| **toggleOption(option: any)** | void | |
+| **clear()** | void | |
+| **isOptionSelected(option: any)** | boolean | |
+| **getSelectedOptionIndex(option: any)** | number | |
+| **getFilteredOptionIndex(option: any)** | number | |
+| **filter(query: string)** | void |  |
+| **alignDropdown()** | void | |
+| **scrollToOption(index: number)** | void | |
+| **startLoading()** | void | |
+| **stopLoading()** | void | |
 
 Exported as **ngxMatCombobox**
 
@@ -104,7 +118,7 @@ Exported as **ngxMatComboboxInput**
 
 * **ngxMatComboboxRemove** or **ngx-mat-combobox-remove**
 
-Exported as **ngxMatComboboxRemove**
+Exported as **ngxMatComboboxRemove**.
 
 
 ## Custom content templates
