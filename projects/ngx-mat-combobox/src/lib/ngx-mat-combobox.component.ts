@@ -685,6 +685,21 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   private _dropdownKeyNavTypeAhead: boolean = true;
 
   /**
+   * Add overlay backdrop
+   */
+  @Input()
+  set dropdownBackdrop(val: BooleanInput) {
+    this._dropdownBackdrop = coerceBooleanProperty(val);
+  }
+  private _dropdownBackdrop: boolean = false;
+
+  /**
+   * Overlay backdrop class
+   */
+  @Input()
+  dropdownBackdropClass?: string;
+
+  /**
    * Custom no option text
    */
   @Input()
@@ -1702,7 +1717,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     const scrollStrategy = this._overlay.scrollStrategies.reposition();
     const config: OverlayConfig = {
       positionStrategy: positionStrategy,
-      scrollStrategy: scrollStrategy
+      scrollStrategy: scrollStrategy,
+      backdropClass: this.dropdownBackdropClass,
+      hasBackdrop: this._dropdownBackdrop,
     };
 
     // render

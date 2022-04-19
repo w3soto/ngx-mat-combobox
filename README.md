@@ -72,6 +72,8 @@ For more details see [examples](https://ngx-mat-combobox.web.app/) or *projects/
 | **dropdownKeyNavHomeAndEnd** | boolean | Dropdown key navigation HOME and END keys. Ignored in autocomplete mode. Default true. |
 | **dropdownKeyNavTypeAhead** | boolean | Dropdown key navigation type ahead. Ignored in autocomplete mode. Default true. |
 | **noOptionText** | string | Default 'No Results'. |
+| **dropdownBackdrop** | boolean | Default false. |
+| **dropdownBackdropClass** | string | Default undefined. |
 
 
 | @Output | Type | Description |
