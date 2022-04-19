@@ -1304,13 +1304,14 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
    */
   selectOption(option: any) {
     if (this._multiple) {
-      if (this._maxValues > 0 && this._selectedOptionsModel.value.length < this._maxValues) {
+      if (this._maxValues == 0 || this._selectedOptionsModel.value.length < this._maxValues) {
+        // select if not already selected
         if (!this.isOptionSelected(option)) {
           this._selectedOptionsModel.next([...this._selectedOptionsModel.value, option]);
         }
       }
     }
-    else {
+    else if (!this.isOptionSelected(option)) {
       this._selectedOptionsModel.next([option]);
     }
   }
@@ -1321,13 +1322,16 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   selectOptions(options: any[]) {
     if (options.length) {
       if (this._multiple) {
-        let newOptions = Array.from(new Set([...this._selectedOptionsModel.value, ...options]));
-        if (this._maxValues > 0) {
-          newOptions.splice(this._maxValues - 1, newOptions.length - this._maxValues);
+        let newOptions = [
+          ...this._selectedOptionsModel.value,
+          ...options.filter(o => !this.isOptionSelected(o))
+        ];
+        // update only changed list
+        if (this._selectedOptionsModel.value.length != newOptions.length) {
+          this._selectedOptionsModel.next(this._maxValues > 0 ? newOptions.slice(0, this._maxValues) : newOptions);
         }
-        this._selectedOptionsModel.next(newOptions);
       }
-      else {
+      else if (!this.isOptionSelected(options[0])) {
         this._selectedOptionsModel.next([options[0]]);
       }
     }
@@ -1351,24 +1355,14 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   deselectOptions(options: any[]) {
     const newOptions = this._selectedOptionsModel.value
       .filter(a => options.find(b => !this._compareOptionsFn(a, b))).slice();
-    this._selectedOptionsModel.next(newOptions);
+    // update only changed list
+    if (this._selectedOptionsModel.value.length != newOptions.length) {
+      this._selectedOptionsModel.next(newOptions);
+    }
   }
 
   toggleOption(option: any) {
-    const options = this._selectedOptionsModel.value;
-    const index = this.getSelectedOptionIndex(option);
-    if (index > -1) {
-      options.splice(index, 1);
-      this._selectedOptionsModel.next([...options]);
-    }
-    else {
-      if (this._multiple) {
-        this._selectedOptionsModel.next([...options, option]);
-      }
-      else {
-        this._selectedOptionsModel.next([option]);
-      }
-    }
+    this.isOptionSelected(option) ? this.deselectOption(option) : this.selectOption(option);
   }
 
   selectAllFilteredOptions() {
@@ -1384,7 +1378,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   }
 
   clear() {
-    this._selectedOptionsModel.next([]);
+    if (this._selectedOptionsModel.value.length) {
+      this._selectedOptionsModel.next([]);
+    }
   }
 
   isOptionSelected(option: any): boolean {
