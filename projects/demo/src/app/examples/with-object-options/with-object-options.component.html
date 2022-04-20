@@ -6,40 +6,42 @@
 </div>
 
 <div class="example-model">
-  <code>singleModel = {{ singleModel | json }}</code>
+  <code>model = {{ model | json }}</code>
 </div>
 
 <mat-form-field appearance="outline" style="width: 480px;">
-  <mat-label>Single selection</mat-label>
-  <ngx-mat-combobox
-    autocomplete
-    fillInput
-    [(ngModel)]="singleModel"
-    [readonly]="readonly"
-    [disabled]="disabled"
-    [options]="options"
-    valueAccessor="id"
-    labelAccessor="title"
-    placeholder="Please select movie..."
-  ></ngx-mat-combobox>
-</mat-form-field>
-
-<div class="example-model">
-  <code>multiModel = {{ multiModel | json }}</code>
-</div>
-
-<mat-form-field appearance="outline" style="width: 480px;">
-  <mat-label>Multiple selection</mat-label>
+  <mat-label>Select movies...</mat-label>
   <ngx-mat-combobox
     autocomplete
     multiple
-    [(ngModel)]="multiModel"
+    [(ngModel)]="model"
     [readonly]="readonly"
     [disabled]="disabled"
     [options]="options"
     valueAccessor="id"
     labelAccessor="title"
+    disabledAccessor="disabled"
     placeholder="Please select movies..."
   ></ngx-mat-combobox>
 </mat-form-field>
 
+<div class="example-model">
+  <code>valueModel = {{ valueModel | json }}</code>
+</div>
+
+<mat-form-field appearance="outline" style="width: 480px;">
+  <mat-label>Selecte movies...</mat-label>
+  <ngx-mat-combobox
+    autocomplete
+    multiple
+    useValue
+    [(ngModel)]="valueModel"
+    [readonly]="readonly"
+    [disabled]="disabled"
+    [options]="options"
+    valueAccessor="id"
+    labelAccessor="title"
+    disabledAccessor="disabled"
+    placeholder="Please select movies..."
+  ></ngx-mat-combobox>
+</mat-form-field>
