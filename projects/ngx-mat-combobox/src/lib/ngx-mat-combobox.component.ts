@@ -913,6 +913,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
 
     this.dropdownClass = d?.dropdownClass ?? this.dropdownClass;
     this._dropdownMatchFieldWidth = d?.dropdownMatchFieldWidth ?? this._dropdownMatchFieldWidth;
+    this._dropdownAlign = d?.dropdownAlign ?? this._dropdownAlign;
     this._dropdownOffsetX = d?.dropdownOffsetX ?? this._dropdownOffsetX;
     this._dropdownOffsetY = d?.dropdownOffsetY ?? this._dropdownOffsetY;
 
@@ -985,7 +986,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
 
     // handle outside click
     fromEvent<MouseEvent>(document.body, 'click').pipe(
-      tap((e: any) => this.onOutsideClick(e)),
+      tap((e: any) => !this._opened && this.onOutsideClick(e)),
       takeUntil(this._destroyed)
     ).subscribe();
 

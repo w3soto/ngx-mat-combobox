@@ -38,6 +38,7 @@ export interface NgxMatComboboxDefaultOptions {
   noOptionText?: string;
 
   dropdownClass?: string,
+  dropdownAlign?: 'start' | 'center' | 'end',
   dropdownMatchFieldWidth?: boolean;
   dropdownOffsetX?: number;
   dropdownOffsetY?: number;
