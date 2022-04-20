@@ -18,6 +18,14 @@
     </mat-radio-group>
   </div>
   <div>
+    <code>[dropdownBehavior]=</code>
+    <mat-radio-group [(ngModel)]="dropdownBehavior">
+      <mat-radio-button value="standard">standard</mat-radio-button>
+      <mat-radio-button value="cover">cover</mat-radio-button>
+      <mat-radio-button value="dialog">dialog</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div>
     <code>[dropdownOffsetX]=</code> <input type="number" [(ngModel)]="dropdownOffsetX">
   </div>
   <div>
@@ -25,6 +33,12 @@
   </div>
   <div>
     <code>[dropdownClass]=</code> <mat-checkbox [(ngModel)]="applyDropdownClass">rainbow</mat-checkbox>
+  </div>
+  <div>
+    <code>[dropdownBackdrop]=</code> <mat-checkbox [(ngModel)]="dropdownBackdrop"></mat-checkbox>
+  </div>
+  <div>
+    <code>[dropdownBackdropClass]=</code> <mat-checkbox [(ngModel)]="applyDropdownBackdropClass">rainbow</mat-checkbox>
   </div>
 </div>
 
@@ -39,9 +53,12 @@
     autoSelect
     [dropdownMatchFieldWidth]="dropdownMatchFieldWidth"
     [dropdownAlign]="$any(dropdownAlign)"
+    [dropdownBehavior]="$any(dropdownBehavior)"
     [dropdownClass]="applyDropdownClass ? 'rainbow' : ''"
     [dropdownOffsetX]="dropdownOffsetX"
     [dropdownOffsetY]="dropdownOffsetY"
+    [dropdownBackdrop]="dropdownBackdrop"
+    [dropdownBackdropClass]="applyDropdownBackdropClass ? 'rainbow' : 'cdk-overlay-transparent-backdrop'"
     [(ngModel)]="preferredColor"
     [options]="colors"
     placeholder="Please select preferred color...">

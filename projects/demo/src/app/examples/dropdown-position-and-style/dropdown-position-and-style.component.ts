@@ -30,10 +30,15 @@ export class DropdownPositionAndStyleComponent implements OnInit {
   // config
   dropdownMatchFieldWidth: boolean = true;
   dropdownAlign = 'start';
+  dropdownBehavior = 'standard';
   dropdownOffsetX: number = 0;
   dropdownOffsetY: number = 0;
 
   applyDropdownClass: boolean = false;
+
+  dropdownBackdrop: boolean = false;
+
+  applyDropdownBackdropClass: boolean = false;
 
   constructor() {
   }

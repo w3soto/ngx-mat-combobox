@@ -19,8 +19,17 @@
     [options]="options"
     (selectionChange)="selectionChanged($event)"
     dropdownAutoFocus
-    dropdownTrapFocus
-    placeholder="Please select actors...">
+    dropdownTrapFocus>
+
+    <ng-template ngxMatComboboxDisplay let-options>
+      <div class="custom-dropdown-display">
+        <span *ngFor="let option of options.slice(0, 4)">
+          {{ option }} <button [ngxMatComboboxChipRemove]="option">&times;</button>
+        </span>
+        <span *ngIf="options.length > 4">+{{ options.length - 3 }} more...</span>
+        <input ngxMatComboboxInput placeholder="Please select actors...">
+      </div>
+    </ng-template>
 
     <ng-template ngxMatComboboxHeader>
       <div class="custom-dropdown-header">
