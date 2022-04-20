@@ -1218,23 +1218,31 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       return;
     }
 
-    if ((e.code == 'Enter' || e.code == 'Space') && option && !this.isOptionDisabled(option)) {
+    const index = this._dropdownKeyManager?.activeItemIndex;
 
-      this.multiple ? this.toggleOption(option) : this.selectOption(option);
+    if ((e.code == 'Enter' || e.code == 'Space') && typeof index != 'undefined' && index != null && index > -1) {
 
-      // keep focused host/or input element
-      this._ngZone.onStable.pipe(first()).subscribe(() => {
-        if (this._multiple) {
-          this._alignDropdownAndFocus();
-        }
-        else {
-          // close on single selection mode
-          // focus host/or input element (can not focus last active element because list was re-rendered)
-          this._closeDropdownAndFocus();
-        }
-      });
+      const option = this._filteredOptionsModel.value[index];
 
-      e.preventDefault();
+      if (!this.isOptionDisabled(option)) {
+
+        this.multiple ? this.toggleOption(option) : this.selectOption(option);
+
+        // keep focused host/or input element
+        this._ngZone.onStable.pipe(first()).subscribe(() => {
+          if (this._multiple) {
+            this._alignDropdownAndFocus();
+          } else {
+            // close on single selection mode
+            // focus host/or input element (can not focus last active element because list was re-rendered)
+            this._closeDropdownAndFocus();
+          }
+        });
+
+        e.stopPropagation();
+        e.preventDefault();
+
+      }
     }
 
     // handle default keydown action by onDropdownOptionActiveStateChanged()
