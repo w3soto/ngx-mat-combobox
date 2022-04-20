@@ -7,7 +7,7 @@ export function createOptionPropertyAccessorFn(key: string) {
     if (key in option) {
       return option[key];
     }
-    return option;
+    return undefined;
   }
 }
 

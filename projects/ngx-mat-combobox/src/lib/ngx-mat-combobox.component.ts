@@ -1204,12 +1204,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
    */
   onDropdownKeydown(e: KeyboardEvent): void {
 
-    // skip events from custom header/footer templates
-    // if (e.code == 'Enter' && !this._isTriggeredFromInnerComponent(e)) {
-    //   return;
-    // }
-
-    const index = this._dropdownKeyManager?.activeItemIndex;
+    const index = this._dropdownKeyManager?.activeItemIndex || -1;
+    const option = index > -1 ? this._filteredOptionsModel.value[index] : null;
 
     if (e.code == 'Escape' || e.code == 'Tab' && !this._dropdownTrapFocus) {
       if (!this._fillInput) {
@@ -1221,9 +1217,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       return;
     }
 
-    if ((e.code == 'Enter' || e.code == 'Space') && index != null && index > -1) {
-
-      const option = this._filteredOptionsModel.value[index];
+    if ((e.code == 'Enter' || e.code == 'Space') && option && !this.isOptionDisabled(option)) {
 
       this.multiple ? this.toggleOption(option) : this.selectOption(option);
 
@@ -1248,17 +1242,20 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
 
   onDropdownOptionClick(option: any, e: MouseEvent) {
 
-    this._multiple ? this.toggleOption(option) : this.selectOption(option);
-    this._dropdownKeyManager?.setActiveItem(this.getFilteredOptionIndex(option));
+    if (!this.isOptionDisabled(option)) {
 
-    this._ngZone.onStable.pipe(first()).subscribe(() => {
-      if (this._multiple) {
-        this._alignDropdownAndFocus();
-      }
-      else {
-        this._closeDropdownAndFocus();
-      }
-    });
+      this._multiple ? this.toggleOption(option) : this.selectOption(option);
+      this._dropdownKeyManager?.setActiveItem(this.getFilteredOptionIndex(option));
+
+      this._ngZone.onStable.pipe(first()).subscribe(() => {
+        if (this._multiple) {
+          this._alignDropdownAndFocus();
+        } else {
+          this._closeDropdownAndFocus();
+        }
+      });
+
+    }
 
     e.stopPropagation();
   }
@@ -1419,6 +1416,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
 
   isOptionSelected(option: any): boolean {
     return this.getSelectedOptionIndex(option) > -1;
+  }
+
+  isOptionDisabled(option: any): boolean {
+    return this.readOptionDisabled(option);
   }
 
   getSelectedOptionIndex(option: any): number {

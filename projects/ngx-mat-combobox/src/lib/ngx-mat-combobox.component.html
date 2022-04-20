@@ -123,6 +123,7 @@
 
           *ngFor="let o of filteredOptions | async; trackBy: _trackOptionByFn"
           [selected]="isOptionSelected(o)"
+          [disabled]="isOptionDisabled(o)"
           (click)="onDropdownOptionClick(o, $event)">
 
           <ng-content select="ng-template[ngxMatComboboxOption]"></ng-content>
@@ -131,6 +132,7 @@
             <mat-pseudo-checkbox
               *ngIf="multiple"
               class="ngx-mat-combobox-option-checkbox"
+              [disabled]="isOptionDisabled(option)"
               [state]="isOptionSelected(option) ? 'checked' : 'unchecked'"></mat-pseudo-checkbox>
             <span class="mat-primary ngx-mat-combobox-option-text">{{ readOptionLabel(option) }}</span>
           </ng-template>
