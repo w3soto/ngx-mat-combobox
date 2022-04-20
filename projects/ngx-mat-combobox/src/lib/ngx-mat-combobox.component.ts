@@ -697,7 +697,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
    * Overlay backdrop class
    */
   @Input()
-  dropdownBackdropClass?: string;
+  dropdownBackdropClass?: string = 'cdk-overlay-transparent-backdrop';
 
   /**
    * Custom no option text
