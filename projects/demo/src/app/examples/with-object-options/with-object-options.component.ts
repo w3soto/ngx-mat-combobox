@@ -28,13 +28,13 @@ export class WithObjectOptionsComponent implements OnInit {
     {id: 10, title: 'Big Lebowski'},
   ].sort((a, b) => a.title.localeCompare(b.title));
 
-  model: Movie[] = [];
-
-  valueModel: number[] = [];
+  model: Movie[] | number[] = [];
 
   readonly: boolean = false;
 
   disabled: boolean = false;
+
+  useValue: boolean = false;
 
   constructor() {
   }
@@ -44,19 +44,28 @@ export class WithObjectOptionsComponent implements OnInit {
 
   setRandomValue() {
     const options: Movie[] = [];
-    const values: number[] = [];
-    while(values.length < 3){
+    while(options.length < 3){
       let o: Movie = this.options[Math.floor(Math.random() * this.options.length)];
       options.indexOf(o) == -1 && !o.disabled && options.push(o);
-      values.indexOf(o.id) == -1 && !o.disabled && values.push(o.id);
     }
-    this.model = options;
-    this.valueModel = values;
+    this.model = this.useValue ? options.map(o => o.id) : options;
   }
 
   clearValue() {
     this.model = [];
-    this.valueModel = [];
+  }
+
+  modelChanged() {
+    // update current model
+    if (this.useValue) {
+      // form object to ids
+      this.model = this.model.map((o: any) => o.id).slice();
+    }
+    else {
+      // form ids to objects
+      // @ts-ignore
+      this.model = this.model.map(v => this.options.find(o => o.id == v)).slice();
+    }
   }
 
 }

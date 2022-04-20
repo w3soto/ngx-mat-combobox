@@ -5,6 +5,12 @@
   <mat-slide-toggle (change)="disabled = !disabled" [checked]="disabled">Disabled</mat-slide-toggle>
 </div>
 
+<div class="example-settings">
+  <div>
+    <code>[useValue]=</code> <mat-checkbox (change)="modelChanged()" [(ngModel)]="useValue"></mat-checkbox>
+  </div>
+</div>
+
 <div class="example-model">
   <code>model = {{ model | json }}</code>
 </div>
@@ -14,28 +20,8 @@
   <ngx-mat-combobox
     autocomplete
     multiple
+    [useValue]="useValue"
     [(ngModel)]="model"
-    [readonly]="readonly"
-    [disabled]="disabled"
-    [options]="options"
-    valueAccessor="id"
-    labelAccessor="title"
-    disabledAccessor="disabled"
-    placeholder="Please select movies..."
-  ></ngx-mat-combobox>
-</mat-form-field>
-
-<div class="example-model">
-  <code>valueModel = {{ valueModel | json }}</code>
-</div>
-
-<mat-form-field appearance="outline" style="width: 480px;">
-  <mat-label>Selecte movies...</mat-label>
-  <ngx-mat-combobox
-    autocomplete
-    multiple
-    useValue
-    [(ngModel)]="valueModel"
     [readonly]="readonly"
     [disabled]="disabled"
     [options]="options"
