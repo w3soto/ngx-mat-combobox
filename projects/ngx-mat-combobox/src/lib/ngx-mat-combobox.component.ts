@@ -1618,8 +1618,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       const options = this._selectedOptionsModel.value;
       this.input?.setValue(options.length ? this.readOptionDisplay(options[0]) : '')
     }
-    // always clear when selection changed
-    else {
+    // clear when leaving
+    else if (!this._focused) {
       this.input?.setValue('');
     }
     this._changeDetectorRef.markForCheck();
