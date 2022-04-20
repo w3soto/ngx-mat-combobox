@@ -761,22 +761,23 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
    * Autocomplete input reference
    */
   get input(): NgxMatComboboxInputDirective | undefined {
-    return this._input;
+    return this._viewInput || this._contentInput;
   }
 
   @ViewChild(NgxMatComboboxInputDirective)
-  set _viewInput(input: NgxMatComboboxInputDirective) {
-    this._input = input;
+  set _setViewInput(input: NgxMatComboboxInputDirective) {
+    this._viewInput = input;
     this._initializeInput();
   }
 
   @ContentChild(NgxMatComboboxInputDirective)
-  set _contentInput(input: NgxMatComboboxInputDirective) {
-    this._input = input;
+  set _setContentInput(input: NgxMatComboboxInputDirective) {
+    this._contentInput = input;
     this._initializeInput();
   }
 
-  private _input?: NgxMatComboboxInputDirective;
+  private _viewInput?: NgxMatComboboxInputDirective;
+  private _contentInput?: NgxMatComboboxInputDirective;
 
   private _inputValueChangeSub?: Subscription;
 
@@ -1053,9 +1054,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
    * Initialize search InputDirective provided by @ViewChild or @ContentChild
    */
   private _initializeInput() {
-    if (this._input) {
+    if (this.input) {
       this._inputValueChangeSub?.unsubscribe();
-      this._inputValueChangeSub = this._input.valueChanges.pipe(
+      this._inputValueChangeSub = this.input.valueChanges.pipe(
         map(val => val || ''),
         debounceTime(this._autocompleteDebounceInterval),
         tap((query: string) => {
@@ -1068,9 +1069,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     }
     // delegate focus to inner input element
     // only if input is inside host element, not in dropdown's header
-    const shouldDelegateFocus = !!this._input && this._elementRef.nativeElement.contains(this._input.nativeElement);
+    const shouldDelegateFocus = !!this.input && this._elementRef.nativeElement.contains(this.input.nativeElement);
     if (shouldDelegateFocus) {
-      this._input!.nativeElement.tabIndex = this.tabIndex;
+      this.input!.nativeElement.tabIndex = this.tabIndex;
       this._elementRef.nativeElement.tabIndex = -1;
     }
     else {
@@ -1132,6 +1133,9 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     }
 
     this._keepLastActiveElement(e.target as HTMLElement);
+
+    this.focus();
+
     if (!this._autocomplete || this._autocomplete && this._autocompleteMinChars == 0) {
       if (!this._opened) {
         this.filter();
@@ -1203,9 +1207,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
    * Handle dropdown keyboard navigation
    */
   onDropdownKeydown(e: KeyboardEvent): void {
-
-    const index = this._dropdownKeyManager?.activeItemIndex || -1;
-    const option = index > -1 ? this._filteredOptionsModel.value[index] : null;
 
     if (e.code == 'Escape' || e.code == 'Tab' && !this._dropdownTrapFocus) {
       if (!this._fillInput) {
@@ -1303,8 +1304,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       return
     }
     // focus inner input
-    if (this._input && this._elementRef.nativeElement.contains(this._input.nativeElement)) {
-      this._input.focus();
+    if (this.input && this._elementRef.nativeElement.contains(this.input.nativeElement)) {
+      this.input.focus();
     }
     else {
       this._elementRef.nativeElement.focus();
@@ -1523,13 +1524,6 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     return of(options.filter(o => ('' + this.readOptionLabel(o)).toLowerCase().startsWith(query)).slice());
   }
 
-  // check if event is triggered from inner component (input, host or dropdown's body)
-  private _isTriggeredFromInnerComponent(e: Event): boolean {
-    const target = e.target as HTMLElement;
-    return this.input && this.input.nativeElement === target || this._elementRef.nativeElement.contains(target) ||
-      !!this._dropdownBody?.nativeElement.contains(target);
-  }
-
   private _keepLastActiveElement(e?: HTMLElement) {
     let el = (e || document.activeElement) as HTMLElement;
     this._lastFocusedElement = null;
@@ -1731,12 +1725,12 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     this._dropdownOverlayDestroyed = new Subject<void>();
 
     // focus & trap
-    this._dropdownFocusTrap = this._focusTrapFactory.create(this._dropdown!.nativeElement);
-    if (this._dropdownTrapFocus) {
-      this._dropdownFocusTrap._enable();
-    }
-    if (this._dropdownFocusTrap || this._dropdownAutoFocus) {
+    if (this._dropdownTrapFocus || this._dropdownAutoFocus) {
+      this._dropdownFocusTrap = this._focusTrapFactory.create(this._dropdown!.nativeElement);
       this._dropdownFocusTrap.focusInitialElement();
+      if (this._dropdownTrapFocus) {
+        this._dropdownFocusTrap._enable();
+      }
     }
 
     // key manager
