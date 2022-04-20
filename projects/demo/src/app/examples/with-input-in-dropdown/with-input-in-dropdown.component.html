@@ -9,12 +9,6 @@
   <div>
     <code>[autoOpen]=</code> <mat-checkbox [(ngModel)]="autoOpen"></mat-checkbox> // expand when combobox is focused (for key navigation)
   </div>
-  <div>
-    <code>[dropdownBackdrop]=</code> <mat-checkbox [(ngModel)]="dropdownBackdrop"></mat-checkbox>
-  </div>
-  <div>
-    <code>[dropdownBackdropClass]=</code> <mat-checkbox [(ngModel)]="applyDropdownBackdropClass">rainbow</mat-checkbox>
-  </div>
 </div>
 
 <div class="example-model">
@@ -28,8 +22,6 @@
     [autoOpen]="autoOpen"
     [(ngModel)]="model"
     [options]="options"
-    [dropdownBackdrop]="dropdownBackdrop"
-    [dropdownBackdropClass]="applyDropdownBackdropClass ? 'rainbow' : 'cdk-overlay-transparent-backdrop'"
     [dropdownKeyNavTypeAhead]="false"
     [dropdownKeyNavHomeAndEnd]="false"
     dropdownAutoFocus

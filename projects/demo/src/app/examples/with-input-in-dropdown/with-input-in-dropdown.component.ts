@@ -16,10 +16,6 @@ export class WithInputInDropdownComponent implements OnInit {
 
   autoOpen: boolean = false;
 
-  dropdownBackdrop: boolean = false;
-
-  applyDropdownBackdropClass: boolean = false;
-
   constructor() {
   }
 
