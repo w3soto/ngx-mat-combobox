@@ -1346,7 +1346,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     if (this._multiple) {
       if (this._maxValues == 0 || this._selectedOptionsModel.value.length < this._maxValues) {
         // select if not already selected
-        if (!this.isOptionSelected(option)) {
+        if (!this.isOptionSelected(option) && !this.isOptionDisabled(option)) {
           this._selectedOptionsModel.next([...this._selectedOptionsModel.value, option]);
         }
       }
@@ -1365,7 +1365,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
         let newOptions = [
           ...this._selectedOptionsModel.value,
           ...options.filter(o => !this.isOptionSelected(o))
-        ];
+        ].filter(o => !this.isOptionDisabled(o));
         // update only changed list
         if (this._selectedOptionsModel.value.length != newOptions.length) {
           this._selectedOptionsModel.next(this._maxValues > 0 ? newOptions.slice(0, this._maxValues) : newOptions);
