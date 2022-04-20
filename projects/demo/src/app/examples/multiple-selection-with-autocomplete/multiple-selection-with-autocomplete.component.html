@@ -12,6 +12,12 @@
   <div>
     <code>[maxValues]=</code> <input type="number" min="0" [(ngModel)]="maxValues"> // 0 = no limit; changes does not update actual selection or value model
   </div>
+  <div>
+    <code>[autocompleteMinChars]=</code> <input type="number" [(ngModel)]="autocompleteMinChars">
+  </div>
+  <div>
+    <code>[autocompleteDebounceInterval]=</code> <input type="number" [(ngModel)]="autocompleteDebounceInterval">
+  </div>
 </div>
 
 <div class="example-model">
@@ -24,11 +30,13 @@
     #combo
     multiple
     autocomplete
+    [autocompleteMinChars]="autocompleteMinChars"
+    [autocompleteDebounceInterval]="autocompleteDebounceInterval"
     [maxValues]="maxValues"
     [noWrap]="noWrap"
     [(ngModel)]="model"
     [options]="options"
-    placeholder="Please select actors..."
+    [placeholder]="placeholder"
   ></ngx-mat-combobox>
 </mat-form-field>
 
