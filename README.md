@@ -10,11 +10,12 @@ Customizable Combobox component for Angular Material
 * Single & Multiple selection :)
 * Autocomplete
 * Chips
-* Custom templates for options, header, footer, loading overlay, no options etc..
+* Custom templates for options, header, footer, no data etc..
 
 ## TODO
 * Tests
 * Documentation 
+* Dropdown animations
 * Theming support
 
 ## Installation
@@ -74,6 +75,7 @@ For more details see [examples](https://ngx-mat-combobox.web.app/) or *projects/
 | **noOptionText** | string | Default 'No Results'. |
 | **dropdownBackdrop** | boolean | Default false. |
 | **dropdownBackdropClass** | string | Default undefined. |
+| **dropdownBehavior** | 'standard' &#124; 'cover' &#124; 'dialog' | Default 'standard. |
 
 
 | @Output | Type | Description |
@@ -165,35 +167,40 @@ Defaults
 ```typescript
 export interface NgxMatComboboxDefaultOptions {
   valueAccessor?: string | NgxMatComboboxAccessorFn;
-  labelAccessor?: string | NgxMatComboboxAccessorFn;
-  displayAccessor?: string | NgxMatComboboxAccessorFn;
-  disabledAccessor?: string | NgxMatComboboxAccessorFn;
-
-  showToggleTrigger?: boolean;
-
-  showLoadingSpinner?: boolean;
-  loadingSpinnerDiameter?: number;
-  loadingSpinnerStrokeWidth?: number;
-  loadingSpinnerColor?: string;
-
-  autocompleteMinChars?: number;
-  autocompleteDebounceInterval?: number;
-
-  noWrap?: boolean;
-  noOptionText?: string;
-
-  dropdownClass?: string,
-  dropdownMatchFieldWidth?: boolean;
-  dropdownOffsetX?: number;
-  dropdownOffsetY?: number;
-
-  dropdownKeyNavWrap?: boolean;
-  dropdownKeyNavHomeAndEnd?: boolean;
-  dropdownKeyNavTypeAhead?: boolean;
-
-  disableOptionsRipple?: boolean;
-  disableChipsRipple?: boolean;
-  disableChipsRemove?: boolean;
+    labelAccessor?: string | NgxMatComboboxAccessorFn;
+    displayAccessor?: string | NgxMatComboboxAccessorFn;
+    disabledAccessor?: string | NgxMatComboboxAccessorFn;
+  
+    showToggleTrigger?: boolean;
+  
+    showLoadingSpinner?: boolean;
+    loadingSpinnerDiameter?: number;
+    loadingSpinnerStrokeWidth?: number;
+    loadingSpinnerColor?: string;
+  
+    autocompleteMinChars?: number;
+    autocompleteDebounceInterval?: number;
+  
+    noWrap?: boolean;
+    noOptionText?: string;
+  
+    dropdownClass?: string,
+    dropdownAlign?: 'start' | 'center' | 'end',
+    dropdownMatchFieldWidth?: boolean;
+    dropdownOffsetX?: number;
+    dropdownOffsetY?: number;
+  
+    dropdownKeyNavWrap?: boolean;
+    dropdownKeyNavHomeAndEnd?: boolean;
+    dropdownKeyNavTypeAhead?: boolean;
+  
+    dropdownBehavior?: 'standard' | 'cover' | 'dialog',
+    dropdownBackdrop?: boolean,
+    dropdownBackdropClass?: string;
+  
+    disableOptionsRipple?: boolean;
+    disableChipsRipple?: boolean;
+    disableChipsRemove?: boolean;
 }
 ```
 
