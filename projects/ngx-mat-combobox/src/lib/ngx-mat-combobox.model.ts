@@ -47,6 +47,10 @@ export interface NgxMatComboboxDefaultOptions {
   dropdownKeyNavHomeAndEnd?: boolean;
   dropdownKeyNavTypeAhead?: boolean;
 
+  dropdownBehavior?: 'standard' | 'cover' | 'dialog',
+  dropdownBackdrop?: boolean,
+  dropdownBackdropClass?: string;
+
   disableOptionsRipple?: boolean;
   disableChipsRipple?: boolean;
   disableChipsRemove?: boolean;

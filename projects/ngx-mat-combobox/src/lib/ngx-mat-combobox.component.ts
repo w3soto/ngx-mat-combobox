@@ -622,6 +622,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   private _dropdownAlign: 'start' | 'center' | 'end' = 'start';
 
   /**
+   * Dropdown behavior
+   */
+  @Input()
+  set dropdownBehavior(behavior: 'standard' | 'cover' | 'dialog') {
+    this._dropdownBehavior = behavior;
+  }
+  private _dropdownBehavior: 'standard' | 'cover' | 'dialog' = 'standard';
+
+  /**
    * Dropdown X offset
    */
   @Input()
@@ -920,6 +929,10 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     this._dropdownKeyNavWrap = d?.dropdownKeyNavWrap ?? this._dropdownKeyNavWrap;
     this._dropdownKeyNavHomeAndEnd = d?.dropdownKeyNavHomeAndEnd ?? this._dropdownKeyNavHomeAndEnd;
     this._dropdownKeyNavTypeAhead = d?.dropdownKeyNavTypeAhead ?? this._dropdownKeyNavTypeAhead;
+
+    this._dropdownBackdrop = d?.dropdownBackdrop ?? this._dropdownBackdrop;
+    this.dropdownBackdropClass = d?.dropdownBackdropClass ?? this.dropdownBackdropClass;
+    this._dropdownBehavior = d?.dropdownBehavior ?? this._dropdownBehavior;
 
     this._disableOptionsRipple = d?.disableOptionsRipple ?? this._disableOptionsRipple;
     this._disableChipsRipple = d?.disableChipsRipple ?? this._disableChipsRipple;
@@ -1690,30 +1703,37 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   //
 
   private _createOverlayPositionStrategy() {
-    const origin: ElementRef = this.formField?.getConnectedOverlayOrigin() || this._elementRef;
-    const strategy = this._overlay.position()
-      .flexibleConnectedTo(origin)
-      .withPositions([
-        // bottom position
-        {
-          originX: this._dropdownAlign,
-          originY: "bottom",
-          overlayX: this._dropdownAlign,
-          overlayY: "top",
-          offsetX: this._dropdownOffsetX,
-          offsetY: this._dropdownOffsetY
-        },
-        // top position
-        {
-          originX: this._dropdownAlign,
-          originY: "top",
-          overlayX: this._dropdownAlign,
-          overlayY: "bottom",
-          offsetX: this._dropdownOffsetX,
-          offsetY: -1 * this._dropdownOffsetY
-        }
-      ]);
-    return strategy;
+    if (this._dropdownBehavior == 'dialog') {
+      return this._overlay.position()
+        .global()
+        .centerVertically()
+        .centerHorizontally();
+    }
+    else {
+      const origin: ElementRef = this.formField?.getConnectedOverlayOrigin() || this._elementRef;
+      return this._overlay.position()
+        .flexibleConnectedTo(origin)
+        .withPositions([
+          // bottom position
+          {
+            originX: this._dropdownAlign,
+            originY: this._dropdownBehavior == 'cover' ? 'center' : 'bottom',
+            overlayX: this._dropdownAlign,
+            overlayY: this._dropdownBehavior == 'cover' ? 'center' : 'top',
+            offsetX: this._dropdownOffsetX,
+            offsetY: this._dropdownOffsetY
+          },
+          // top position
+          {
+            originX: this._dropdownAlign,
+            originY: this._dropdownBehavior == 'cover' ? 'center' : 'top',
+            overlayX: this._dropdownAlign,
+            overlayY: this._dropdownBehavior == 'cover' ? 'center' : 'bottom',
+            offsetX: this._dropdownOffsetX,
+            offsetY: -1 * this._dropdownOffsetY
+          }
+        ]);
+    }
   }
 
   private _createDropdown() {
