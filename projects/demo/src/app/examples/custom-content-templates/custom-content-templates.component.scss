@@ -11,30 +11,8 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px;
   span {
     white-space: nowrap;
-    padding: 2px 4px;
-    border-radius: 4px;
-    background-color: #3F51B5;
-    color: #fff;
-    cursor: default;
-  }
-  button {
-    cursor: pointer;
-    border: none;
-    padding: 0;
-    background-color: #fff;
-    color: #3F51B5;
-    font-weight: bold;
-    margin: 0;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    opacity: .8;
   }
   input {
     min-width: 100px;

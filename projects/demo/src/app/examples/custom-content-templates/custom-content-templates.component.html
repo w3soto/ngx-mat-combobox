@@ -9,7 +9,7 @@
   <code>model = {{ model | json }}</code>
 </div>
 
-<mat-form-field appearance="outline" style="width: 480px">
+<mat-form-field appearance="outline" style="width: 600px">
   <mat-label>Multiple selection</mat-label>
   <ngx-mat-combobox
     #combo
@@ -23,11 +23,11 @@
 
     <ng-template ngxMatComboboxDisplay let-options>
       <div class="custom-dropdown-display">
-        <span *ngFor="let option of options.slice(0, 4)">
-          {{ option }} <button [ngxMatComboboxChipRemove]="option">&times;</button>
+        <span *ngFor="let option of options.slice(0, 3); let last = last;">
+          {{ option }}
+          <ng-container *ngIf="!last">,&nbsp;</ng-container>
         </span>
-        <span *ngIf="options.length > 4">+{{ options.length - 3 }} more...</span>
-        <input ngxMatComboboxInput placeholder="Please select actors...">
+        <span *ngIf="options.length > 3" style="opacity: .5;">&nbsp;(+{{ options.length - 3 }} more)</span>
       </div>
     </ng-template>
 
