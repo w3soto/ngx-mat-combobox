@@ -2,11 +2,12 @@
   <button mat-icon-button (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
-  <h1>NgxMatCombobox examples
-    <small>(package version {{ $any(pkg).version }})</small>
-  </h1>
-  <a mat-icon-button target="_blank" href="https://github.com/w3soto/ngx-mat-combobox">
+  <a href="#home" class="title">NgxMatCombobox examples
+    <span>(package version {{ $any(pkg).version }})</span>
+  </a>
+  <a class="github" mat-button target="_blank" href="https://github.com/w3soto/ngx-mat-combobox">
     <mat-icon svgIcon="github"></mat-icon>
+    GitHub
   </a>
 </mat-toolbar>
 
@@ -35,6 +36,12 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
+
+    <div id="home" class="banner">
+      <h1 class="mat-display-3">Angular Material Combobox</h1>
+      <p>Customizable <a href="https://material.angular.io/" target="_blank">Angular material</a> Combobox component</p>
+      <pre class="install">npm install ngx-mat-combobox --save</pre>
+    </div>
 
     <section class="content">
 

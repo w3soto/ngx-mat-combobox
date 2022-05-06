@@ -1,5 +1,7 @@
 :host {
 
+  $header-height: 64px;
+
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -8,28 +10,79 @@
   .header {
     position: fixed;
     top: 0;
-    height: 56px;
-    z-index: 999;
+    height: $header-height;
+    z-index: 9999;
     display: flex;
+    align-items: center;
     gap: 8px;
-    h1 {
+    a.title {
       flex: 1;
+      color: white;
+      text-decoration: none;
+      span {
+        font-size: .8em;
+      }
+    }
+    a.github {
+      mat-icon {
+        margin-right: 4px;
+        margin-top: -3px;
+      }
     }
   }
 
   .body {
-    margin-top: 56px;
+    margin-top: $header-height;
     flex: 1;
     overflow-y: auto;
   }
 
   .menu {
-    padding-top: 56px;
+    padding-top: $header-height;
     width: 236px;
     z-index: 998;
     .mat-list-item {
       font-size: 14px !important;
     }
+  }
+
+  .banner {
+    position: relative;
+    background-color: #3F51B5;
+    padding: 96px 48px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    > * {
+      margin: 0;
+    }
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 300px;
+      height: 300px;
+      background-image: url("/assets/angular.svg");
+      background-repeat: no-repeat;
+      background-size: contain;
+      opacity: .2;
+    }
+
+    a {
+      color: white;
+    }
+
+    .install {
+      background-color: #323232;
+      padding: 24px 48px;
+      border-radius: 4px;
+    }
+
   }
 
   .content {
