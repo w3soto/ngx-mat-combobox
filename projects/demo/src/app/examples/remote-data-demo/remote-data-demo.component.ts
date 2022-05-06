@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { filter, map, tap } from "rxjs/operators";
+import { delay, filter, map, tap } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
 import { NgxMatCombobox } from "../../../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.component";
 
@@ -78,6 +78,7 @@ export class RemoteDataDemoComponent {
     const skip = this.page * this.pageSize;
     return this._http.get(`${this._baseUrl}&q=${query}&skip=${skip}&limit=${this.pageSize}`)
       .pipe(
+        delay(1500),
         tap((resp: any) => {
           this.totalPages = Math.floor(resp.total / this.pageSize) + (resp.total % this.pageSize > 0 ? 1 : 0);
           this.hasNextPage = resp.total > this.pageSize * (this.page + 1);

@@ -21,7 +21,7 @@ export class ErrorStateComponent implements OnInit {
   }
 
   setRandomValue() {
-    const value = this.options[Math.floor(Math.random() * this.options.length)]
+    const value = this.options[Math.floor(Math.random() * this.options.length)];
     this.formControl.setValue(value);
   }
 

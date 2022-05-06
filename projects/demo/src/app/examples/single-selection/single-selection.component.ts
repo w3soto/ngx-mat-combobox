@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from "@angular/forms";
 
 
 @Component({
@@ -27,12 +26,11 @@ export class SingleSelectionComponent implements OnInit {
   }
 
   setRandomValue() {
-    const value = this.options[Math.floor(Math.random() * this.options.length)]
-    this.model = value;
+    this.model = this.options[Math.floor(Math.random() * this.options.length)];
   }
 
   clearValue() {
-    this.model = null;;
+    this.model = null;
   }
 
 }

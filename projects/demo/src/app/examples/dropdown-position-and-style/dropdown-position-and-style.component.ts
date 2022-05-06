@@ -35,9 +35,7 @@ export class DropdownPositionAndStyleComponent implements OnInit {
   dropdownOffsetY: number = 0;
 
   applyDropdownClass: boolean = false;
-
   dropdownBackdrop: boolean = false;
-
   applyDropdownBackdropClass: boolean = false;
 
   constructor() {

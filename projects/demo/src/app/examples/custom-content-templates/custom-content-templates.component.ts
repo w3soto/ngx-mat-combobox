@@ -1,6 +1,5 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgxMatCombobox } from "../../../../../ngx-mat-combobox/src/lib/ngx-mat-combobox.component";
-import { first } from "rxjs/operators";
 
 @Component({
   selector: 'app-custom-content-templates',
@@ -21,9 +20,7 @@ export class CustomContentTemplatesComponent implements OnInit {
 
   allSelected: boolean = false;
 
-  constructor(
-    private _ngZone: NgZone
-  ) {
+  constructor() {
   }
 
   ngOnInit(): void {
