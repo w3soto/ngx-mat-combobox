@@ -1295,11 +1295,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   onDropdownOptionActiveStateChanged(index: number) {
     // select in single mode without autocomplete
     // - in autocomplete user has to confirm selection by hitting Enter key
-    if (!this._multiple && !this._autocomplete) {
-
-      if (this._autoSelect) {
-        this.selectOption(this._filteredOptionsModel.value[index]);
-      }
+    if (!this._multiple && !this._autocomplete && this._autoSelect) {
+      this.selectOption(this._filteredOptionsModel.value[index]);
     }
 
     this.scrollToOption(index);
@@ -1531,8 +1528,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       if (!this._opened) {
         this.openDropdown();
       }
+      this.autoActivateOption();
       this._ngZone.onStable.pipe(first()).subscribe(() => this.alignDropdown());
-      this._activateDropdownOption();
     });
   }
 
@@ -1589,13 +1586,13 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   private _closeDropdownAndFocus(focusLastActiveElement?: boolean) {
     this.closeDropdown();
     focusLastActiveElement ? this._focusLastActiveElement() : this.focus();
-    this._stateChanges.next();
+    //this._stateChanges.next();
   }
 
   private _alignDropdownAndFocus() {
     this.alignDropdown();
     this._focusLastActiveElement();
-    this._stateChanges.next();
+    //this._stateChanges.next();
   }
 
   private _configCheckOptions(options: any[]) {
@@ -1791,7 +1788,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     ).subscribe();
 
     // activate first option (must be called after KeyManager is initialized
-    this._activateDropdownOption();
+    let activatedOptionIndex = this.autoActivateOption();
+    this.scrollToOption(activatedOptionIndex);
 
     // key events
     this._dropdownOverlay.keydownEvents().pipe(
@@ -1818,42 +1816,56 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       takeUntil(this._dropdownOverlayDestroyed!)
     ).subscribe();
 
-    // emit changes
-    this._ngZone.onStable.pipe(
-      delay(1),
-      tap(() => this.openedChange.next(true)),
-      first()
-    ).subscribe();
+    // emit opened changes
+    this._ngZone.onStable.pipe(delay(1), first()).subscribe(() => this.openedChange.next(true));
   }
 
-  private _activateDropdownOption() {
+  /**
+   * Automatically activate "first available" option
+   * 1. try to activate option representing last value from current selectionModel, if selection is empty
+   * 2. try to activate first available (non disabled) option
+   * @return Index of activated option or -1
+   */
+  autoActivateOption(): number {
     let index = -1;
-    let options = this._selectedOptionsModel.value;
+    const selectedOptions = this._selectedOptionsModel.value;
     // activate option representing last value from selectionModel
-    if (options.length) {
-      index = this.getFilteredOptionIndex(options[options.length - 1]);
+    if (selectedOptions.length) {
+      index = this.getFilteredOptionIndex(selectedOptions[selectedOptions.length - 1]);
       this._dropdownKeyManager?.setActiveItem(index);
     }
     // or activate first available option
     else if (this._autoActivate && index == -1 && this._filteredOptionsModel.value.length) {
       this._dropdownKeyManager?.setFirstItemActive();
-      index = this._dropdownKeyManager?.activeItemIndex || -1;
+      index = this._dropdownKeyManager?.activeItemIndex || index;
     }
     // no option is active
     else {
-      this._dropdownKeyManager?.setActiveItem(-1);
+      this._dropdownKeyManager?.setActiveItem(index);
     }
+    return index;
+  }
 
-    this._ngZone.onStable.pipe(
-      tap(() => this.scrollToOption(index)),
-      first()
-    ).subscribe();
+  /**
+   * Activate option by index
+   * @param index
+   */
+  activateOption(index: number) {
+    this._dropdownKeyManager?.setActiveItem(index);
+  }
+
+  /**
+   * Get currently active option's index
+   */
+  getActiveOptionIndex(): number {
+    const index = this._dropdownKeyManager?.activeItemIndex;
+    return typeof index == 'undefined' || index === null ? -1 : index;
   }
 
   /**
    * Align dropdown
    */
-  public alignDropdown() {
+  alignDropdown() {
     const originElement: HTMLElement = this.formField?._elementRef.nativeElement || this._elementRef.nativeElement;
     this._dropdownOverlay?.updateSize({
       minWidth: this._dropdownMatchFieldWidth ? originElement.offsetWidth : 'auto'
@@ -1869,11 +1881,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     this._dropdownOverlay?.dispose();
     this._changeDetectorRef.markForCheck();
 
-    this._ngZone.onStable.pipe(
-      delay(1),
-      tap(() => this.openedChange.next(false)),
-      first()
-    ).subscribe();
+    // emit opened changes
+    this._ngZone.onStable.pipe(delay(1), first()).subscribe(() => this.openedChange.next(false));
   }
 
 }

@@ -120,8 +120,6 @@ $icon-size: 1.125em;
     border-radius: 4px;
     overflow: hidden;
 
-    min-height: 48px;
-
     &-header {
     }
 
@@ -129,8 +127,7 @@ $icon-size: 1.125em;
       position: relative;
       flex: 1;
       overflow: auto;
-      min-height: 48px;
-      max-height: 240px // display 5 options
+      max-height: 25vh;
     }
 
     &-footer {
