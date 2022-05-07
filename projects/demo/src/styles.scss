@@ -32,6 +32,8 @@ p {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  font-family: monospace;
+  white-space: pre;
   div,
   mat-radio-group {
     display: flex;
@@ -40,7 +42,7 @@ p {
   }
   input {
     border: solid 2px rgba(0,0,0,.54);
-    border-radius: 3px;
+    border-radius: 2px;
     background-color: transparent;
     &[type=number] {
       width: 50px;

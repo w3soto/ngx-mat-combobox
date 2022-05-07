@@ -15,15 +15,13 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    a.title {
+    .version {
       flex: 1;
       color: white;
-      text-decoration: none;
-      span {
-        font-size: .8em;
-      }
+      text-align: right;
+      font-size: .8em;
     }
-    a.github {
+    .github {
       mat-icon {
         margin-right: 4px;
         margin-top: -3px;
