@@ -17,6 +17,10 @@ p {
   margin-bottom: 0;
 }
 
+mat-sidenav-content {
+  scroll-behavior: smooth;
+}
+
 
 .example-actions {
   display: flex;
