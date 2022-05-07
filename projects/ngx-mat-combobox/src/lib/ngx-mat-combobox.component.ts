@@ -649,6 +649,15 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
   private _dropdownOffsetY: number = 0;
 
   /**
+   * Dropdown Always Visible
+   */
+  @Input()
+  set dropdownPush(val: BooleanInput) {
+    this._dropdownPush = coerceBooleanProperty(val);
+  }
+  private _dropdownPush: boolean = true;
+
+  /**
    * Autofocus first element in custom dropdown template
    */
   @Input()
@@ -1713,6 +1722,8 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
       const origin: ElementRef = this.formField?.getConnectedOverlayOrigin() || this._elementRef;
       return this._overlay.position()
         .flexibleConnectedTo(origin)
+        .withPush(this._dropdownPush)
+        .withFlexibleDimensions(false)
         .withPositions([
           // bottom position
           {

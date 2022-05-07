@@ -28,9 +28,10 @@ export class DropdownPositionAndStyleComponent implements OnInit {
   preferredColor?: string;
 
   // config
-  dropdownMatchFieldWidth: boolean = true;
+  dropdownMatchFieldWidth: boolean = false;
   dropdownAlign = 'start';
   dropdownBehavior = 'standard';
+  dropdownPush: boolean = false;
   dropdownOffsetX: number = 0;
   dropdownOffsetY: number = 0;
 

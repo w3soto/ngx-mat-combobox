@@ -26,6 +26,9 @@
     </mat-radio-group>
   </div>
   <div>
+    <code>[dropdownPush]=</code> <mat-checkbox [(ngModel)]="dropdownPush"></mat-checkbox>
+  </div>
+  <div>
     <code>[dropdownOffsetX]=</code> <input type="number" [(ngModel)]="dropdownOffsetX">
   </div>
   <div>
@@ -54,6 +57,7 @@
     [dropdownMatchFieldWidth]="dropdownMatchFieldWidth"
     [dropdownAlign]="$any(dropdownAlign)"
     [dropdownBehavior]="$any(dropdownBehavior)"
+    [dropdownPush]="dropdownPush"
     [dropdownClass]="applyDropdownClass ? 'rainbow' : ''"
     [dropdownOffsetX]="dropdownOffsetX"
     [dropdownOffsetY]="dropdownOffsetY"
