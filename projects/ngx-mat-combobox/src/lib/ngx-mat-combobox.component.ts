@@ -932,6 +932,7 @@ export class NgxMatCombobox implements OnInit, OnChanges, OnDestroy, DoCheck,
     this.dropdownClass = d?.dropdownClass ?? this.dropdownClass;
     this._dropdownMatchFieldWidth = d?.dropdownMatchFieldWidth ?? this._dropdownMatchFieldWidth;
     this._dropdownAlign = d?.dropdownAlign ?? this._dropdownAlign;
+    this._dropdownPush = d?.dropdownPush ?? this._dropdownPush;
     this._dropdownOffsetX = d?.dropdownOffsetX ?? this._dropdownOffsetX;
     this._dropdownOffsetY = d?.dropdownOffsetY ?? this._dropdownOffsetY;
 
